@@ -2,10 +2,11 @@
 
 ### For contributors:
 
-run ```npm install``` will install all dependencies on api and client (important!!!).
-run ```docker-compose up --build```
+-  run ```npm install``` will install all dependencies on api and client (important!!! cd into api/client first).
 
-To generate prisma use ```npx prisma generate```
+-  run ```docker-compose up --build```
+
+-  To generate prisma use ```npx prisma generate```
 
 if any issue, just post in [Issues](https://github.com/261361-Project-SE/Clinichub-backend/issues).
 
