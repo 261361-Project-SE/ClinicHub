@@ -1,0 +1,98 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Clinic Hub API",
+    "version": "0.1.0",
+    "description": "API Documentation for Clinic Hub api endpoints"
+  },
+  "tags": [
+    {
+      "name": "Appointment",
+      "description": "Operations related to products"
+    }
+  ],
+  "paths": {
+    "/appointment": {
+      "get": {
+        "summary": "Get all appointment",
+        "description": "Returns a list of all appointment",
+        "tags": ["Appointment"],
+        "responses": {
+          "200": {
+            "description": "A list of appointment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "test": {
+                        "type": "string"
+                      },
+                      "price": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointment/create": {
+      "post": {
+        "summary": "Create Appointment",
+        "description": "Create and return the appointment",
+        "tags": ["Appointment"],
+        "requestBody": {
+          "description": "Appointment data to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "test": {
+                    "type": "string",
+                    "description": "The name of the test",
+                    "example": "Blood Test"
+                  }
+                },
+                "required": ["test"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A appointment detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "test": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

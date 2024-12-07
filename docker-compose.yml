@@ -1,0 +1,62 @@
+services:
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - "7777:80"
+    networks:
+      - client
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - api
+    environment:
+      - API_END_POINT=http://api:5000
+    networks:
+      - client
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    environment:
+      - NODE_ENV=development
+    networks:
+      - pg-db
+      - client
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=prisma
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - pg-db
+
+networks:
+  client:
+  pg-db:
+
+volumes:
+  pgdata:

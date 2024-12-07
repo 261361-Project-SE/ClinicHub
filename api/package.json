@@ -1,0 +1,43 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run:dev": "set NODE_ENV=development && nodemon src/app.ts",
+    "start:dev": "set NODE_ENV=development && node dist/app.js",
+    "start:prod": "set NODE_ENV=production && nodemon src/app.ts",
+    "prisma:format": "dotenv -e .env.development -- npx prisma format",
+    "prisma:generate": "dotenv -e .env.development -- npx prisma generate",
+    "prisma:migrate": "dotenv -e .env.development -- npx prisma migrate dev",
+    "prisma:push": "dotenv -e .env.development -- npx prisma db push",
+    "prisma:studio": "dotenv -e .env.development -- npx prisma studio",
+    "build": "tsc -p ."
+  },
+  "keywords": [],
+  "author": "jamess66",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.10.1",
+    "@types/swagger-ui-express": "^4.1.7",
+    "dotenv-cli": "^7.4.4",
+    "prisma": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0",
+    "nodeserve": "file:",
+    "server": "file:",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
