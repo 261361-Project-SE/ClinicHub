@@ -14,6 +14,8 @@
 
 /api/build
 
+node_modules
+
 .DS_Store
 .env.local
 .env.development.local
