@@ -7,7 +7,6 @@ dotenv.config();
 const app = express();
 const port = 5001;
 
-// Setup Google OAuth2 client
 const oAuth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET
@@ -23,16 +22,15 @@ const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
 
 app.use(express.json());
 
-// GET /list-events เพื่อดึงข้อมูลเหตุการณ์
+// GET
 app.get("/list-events", (req, res) => {
   const now = new Date();
 
-  // ดึงเหตุการณ์จาก Google Calendar (เช่นในช่วงเวลาปัจจุบัน)
   calendar.events.list(
     {
-      calendarId: "primary", // ใช้ primary calendar
-      timeMin: now.toISOString(), // เริ่มจากเวลาปัจจุบัน
-      timeMax: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(), // ระยะเวลา 30 วัน
+      calendarId: "primary",
+      timeMin: now.toISOString(),
+      timeMax: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       singleEvents: true,
       orderBy: "startTime",
     },
@@ -45,12 +43,25 @@ app.get("/list-events", (req, res) => {
 
       const events = response?.data.items || [];
       if (events.length) {
-        // แสดงรายชื่อเหตุการณ์พร้อม eventId
-        const eventIds = events.map((event) => ({
-          summary: event.summary,
-          eventId: event.id, // นี่คือลักษณะของ eventId
-          startTime: event.start?.dateTime || event.start?.date,
-        }));
+        const eventIds = events.map((event) => {
+          const startTime = new Date(
+            event.start?.dateTime || event.start?.date || ""
+          );
+          const formattedStartTime = startTime.toLocaleString("en-GB", {
+            timeZone: "Asia/Bangkok",
+            hour12: false,
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          return {
+            summary: event.summary,
+            eventId: event.id,
+            startTime: formattedStartTime,
+            description: event.description || "- No description -",
+          };
+        });
+
         return res.status(200).json({ events: eventIds });
       } else {
         return res.status(404).json({ message: "No upcoming events found." });
@@ -59,35 +70,32 @@ app.get("/list-events", (req, res) => {
   );
 });
 
-// POST: Create event
+// POST
 app.post("/create-event", (req: Request, res: Response): void => {
-  const { year, month, day, hour, minute } = req.body;
+  const { year, month, day, hour, minute, description } = req.body;
 
   if (!year || !month || !day || !hour || !minute) {
     res
       .status(400)
       .json({ message: "Please provide complete date and time information." });
-    return; // Return to stop further processing
+    return;
   }
 
-  // Set event start time
   const eventStartTime = new Date(year, month - 1, day, hour, minute);
 
-  // Ensure 15-minute interval
   if (eventStartTime.getMinutes() % 15 !== 0) {
     res.status(400).json({
       message: "Please select a time that is a multiple of 15 minutes.",
     });
-    return; // Return to stop further processing
+    return;
   }
 
-  // Set event end time (15 minutes after start)
   const eventEndTime = new Date(eventStartTime.getTime() + 15 * 60000);
 
   const calendarEvent: calendar_v3.Schema$Event = {
     summary: `Event on ${eventStartTime.toISOString()}`,
     location: "Test location Mongkol Clinic",
-    description: "Test description",
+    description: description || "- No description -",
     colorId: "1",
     start: {
       dateTime: eventStartTime.toISOString(),
@@ -99,7 +107,6 @@ app.post("/create-event", (req: Request, res: Response): void => {
     },
   };
 
-  // Check availability before creating event
   calendar.freebusy.query(
     {
       requestBody: {
@@ -114,7 +121,7 @@ app.post("/create-event", (req: Request, res: Response): void => {
         res
           .status(500)
           .json({ error: "Free Busy Query Error", message: err.message });
-        return; // Return to stop further processing
+        return;
       }
 
       const busyTimes = resFreebusy?.data?.calendars?.primary?.busy || [];
@@ -127,7 +134,7 @@ app.post("/create-event", (req: Request, res: Response): void => {
                 error: "Error Creating Calendar Event",
                 message: err.message,
               });
-              return; // Return to stop further processing
+              return;
             }
             res
               .status(200)
@@ -141,13 +148,13 @@ app.post("/create-event", (req: Request, res: Response): void => {
   );
 });
 
-// DELETE: Delete event
+// DELETE
 app.delete("/delete-event", (req: Request, res: Response): void => {
   const { eventId } = req.body;
 
   if (!eventId) {
     res.status(400).json({ message: "Please provide the event ID to delete." });
-    return; // Return to stop further processing
+    return;
   }
 
   calendar.events.delete(
@@ -158,14 +165,13 @@ app.delete("/delete-event", (req: Request, res: Response): void => {
           error: "Error Deleting Calendar Event",
           message: err.message,
         });
-        return; // Return to stop further processing
+        return;
       }
       res.status(200).json({ message: "Calendar event successfully deleted." });
     }
   );
 });
 
-// Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
