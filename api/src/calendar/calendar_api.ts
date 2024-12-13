@@ -47,6 +47,16 @@ app.get("/list-events", (req, res) => {
           const startTime = new Date(
             event.start?.dateTime || event.start?.date || ""
           );
+
+          const formattedDate = startTime.toLocaleDateString("en-GB", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            timeZone: "Asia/Bangkok",
+          });
+
+          // Format the time as "HH:MM"
           const formattedStartTime = startTime.toLocaleString("en-GB", {
             timeZone: "Asia/Bangkok",
             hour12: false,
@@ -57,7 +67,7 @@ app.get("/list-events", (req, res) => {
           return {
             summary: event.summary,
             eventId: event.id,
-            startTime: formattedStartTime,
+            startTime: `${formattedDate} at ${formattedStartTime}`,
             description: event.description || "- No description -",
           };
         });
@@ -93,8 +103,8 @@ app.post("/create-event", (req: Request, res: Response): void => {
   const eventEndTime = new Date(eventStartTime.getTime() + 15 * 60000);
 
   const calendarEvent: calendar_v3.Schema$Event = {
-    summary: `Event on ${eventStartTime.toISOString()}`,
-    location: "Test location Mongkol Clinic",
+    summary: `Patient - ${hour}:${minute}`,
+    location: "Mongkol Clinic",
     description: description || "- No description -",
     colorId: "1",
     start: {
