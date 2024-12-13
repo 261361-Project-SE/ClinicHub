@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Booking" ALTER COLUMN "appointment_date" SET DATA TYPE TEXT,
+ALTER COLUMN "appointment_time" SET DATA TYPE TEXT,
+ALTER COLUMN "updatedAt" SET DATA TYPE TIMESTAMP(6);

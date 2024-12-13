@@ -23,8 +23,8 @@ model Booking {
   age          Int
   phone_number String
   details      String
-  appointment_date  DateTime @db.Date 
-  appointment_time  DateTime @db.Time 
+  appointment_date  String 
+  appointment_time  String 
   status       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @db.Timestamp(6)
