@@ -183,5 +183,5 @@ app.delete("/delete-event", (req: Request, res: Response): void => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Calendar API running on port ${port}`);
 });
