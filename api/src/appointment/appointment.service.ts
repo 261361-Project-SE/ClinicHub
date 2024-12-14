@@ -1,4 +1,5 @@
 import { PrismaClient, Status } from "@prisma/client";
+import { log } from "console";
 
 class AppointmentService {
   private prisma: PrismaClient;
@@ -156,7 +157,8 @@ class AppointmentService {
         },
       });
 
-      if (checkBooking.length > 0) {
+
+      if (checkBooking.length <= 0) {
         throw new Error("Appointment not found");
       }
       const booking = await this.prisma.appointments.update({
