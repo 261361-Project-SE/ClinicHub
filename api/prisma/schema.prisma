@@ -15,3 +15,17 @@ model Appointments {
   test      String
   createdAt DateTime @default(now())
 }
+
+model Booking {
+  UID           String   @id @default(uuid())
+  firstname    String
+  lastname     String
+  age          Int
+  phone_number String
+  details      String
+  appointment_date  String 
+  appointment_time  String 
+  status       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+}
