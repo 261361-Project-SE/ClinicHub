@@ -56,7 +56,7 @@ app.get("/list-events", (req, res) => {
             timeZone: "Asia/Bangkok",
           });
 
-          // Format the time as "HH:MM"
+          //"HH:MM"
           const formattedStartTime = startTime.toLocaleString("en-GB", {
             timeZone: "Asia/Bangkok",
             hour12: false,
