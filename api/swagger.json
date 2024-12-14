@@ -7,10 +7,6 @@
   },
   "tags": [
     {
-<<<<<<< Updated upstream
-      "name": "Appointment",
-      "description": "Operations related to products"
-=======
       "name": "Doctor",
       "description": "Operations related to doctors"
     },
@@ -21,7 +17,6 @@
     {
       "name": "Shared",
       "description": "Operations shared between doctors and patients"
->>>>>>> Stashed changes
     }
   ],
   "paths": {
@@ -183,31 +178,6 @@
           }
         },
         "responses": {
-<<<<<<< Updated upstream
-          "200": {
-            "description": "A appointment detail",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    },
-                    "test": {
-                      "type": "string"
-                    },
-                    "price": {
-                      "type": "number"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-=======
           "201": {
             "description": "Appointment created successfully"
           }
@@ -242,7 +212,6 @@
           }
         }
       }
->>>>>>> Stashed changes
     }
   }
 }

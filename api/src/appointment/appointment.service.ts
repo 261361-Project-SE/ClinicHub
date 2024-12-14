@@ -16,19 +16,20 @@ class AppointmentService {
         phone_number,
         symptom,
         appointment_dateTime,
-        status
+        status,
       } = data;
 
       const checkBooking = await this.prisma.appointments.findMany({
         where: {
-          appointment_dateTime: data.appointment_dateTime
-        }, orderBy: {
+          appointment_dateTime: data.appointment_dateTime,
+        },
+        orderBy: {
           appointment_dateTime: "asc",
-        }
+        },
       });
 
       if (checkBooking.length > 0) {
-        throw new Error('Time slot already taken');
+        throw new Error("Time slot already taken");
       }
 
       const booking = await this.prisma.appointments.create({
@@ -39,14 +40,13 @@ class AppointmentService {
           phone_number,
           symptom,
           appointment_dateTime,
-          status
+          status,
         },
       });
 
       return booking;
-
     } catch (error) {
-      throw new Error('Error while creating appointment');
+      throw new Error("Error while creating appointment");
     }
   }
 
@@ -55,7 +55,7 @@ class AppointmentService {
       const appointments = await this.prisma.appointments.findMany({
         orderBy: {
           appointment_dateTime: "asc",
-        }
+        },
       });
 
       if (appointments.length === 0) {
@@ -64,7 +64,7 @@ class AppointmentService {
 
       return appointments;
     } catch (error) {
-      throw new Error('Error while fetching all doctor appointment');
+      throw new Error("Error while fetching all doctor appointment");
     }
   }
 
@@ -83,7 +83,7 @@ class AppointmentService {
       }
       return appointments;
     } catch (error) {
-      throw new Error('Error while fetching doctor appointment by date');
+      throw new Error("Error while fetching doctor appointment by date");
     }
   }
 
@@ -92,7 +92,7 @@ class AppointmentService {
       const appointments = await this.prisma.appointments.findMany({
         where: {
           firstname: firstname,
-          lastname: lastname
+          lastname: lastname,
         },
         orderBy: {
           appointment_dateTime: "asc",
@@ -103,7 +103,9 @@ class AppointmentService {
       }
       return appointments;
     } catch (error) {
-      throw new Error('Error while fetching doctor appointment by patient name');
+      throw new Error(
+        "Error while fetching doctor appointment by patient name"
+      );
     }
   }
 
@@ -112,7 +114,7 @@ class AppointmentService {
       const status_prisma = Status[status as keyof typeof Status];
       const appointments = await this.prisma.appointments.findMany({
         where: {
-          status: status_prisma
+          status: status_prisma,
         },
         orderBy: {
           appointment_dateTime: "asc",
@@ -123,7 +125,7 @@ class AppointmentService {
       }
       return appointments;
     } catch (error) {
-      throw new Error('Error while fetching doctor appointment by status');
+      throw new Error("Error while fetching doctor appointment by status");
     }
   }
 
@@ -131,7 +133,7 @@ class AppointmentService {
     try {
       const appointments = await this.prisma.appointments.findMany({
         where: {
-          phone_number: phone
+          phone_number: phone,
         },
       });
       if (appointments.length === 0) {
@@ -139,7 +141,9 @@ class AppointmentService {
       }
       return appointments;
     } catch (error) {
-      throw new Error('Error while fetching doctor appointment by phone number');
+      throw new Error(
+        "Error while fetching doctor appointment by phone number"
+      );
     }
   }
 
@@ -153,7 +157,7 @@ class AppointmentService {
       });
 
       if (checkBooking.length > 0) {
-        throw new Error('Appointment not found');
+        throw new Error("Appointment not found");
       }
       const booking = await this.prisma.appointments.update({
         where: {
@@ -170,7 +174,6 @@ class AppointmentService {
       });
 
       return booking;
-
     } catch (error) {
       throw error;
     }
@@ -188,7 +191,7 @@ class AppointmentService {
         where: {
           phone_number: phone_number,
           firstname: firstname,
-          lastname: lastname
+          lastname: lastname,
         },
         orderBy: {
           appointment_dateTime: "asc",
@@ -202,7 +205,6 @@ class AppointmentService {
       return {
         appointmentDetails: appointments,
       };
-
     } catch (error) {
       console.error("Error fetching appointment status:", error);
       throw error;
@@ -219,9 +221,9 @@ class AppointmentService {
       });
 
       if (checkBooking.length > 0) {
-        throw new Error('Appointment not found');
+        throw new Error("Appointment not found");
       }
-      const status_prisma = data.status
+      const status_prisma = data.status;
       const booking = await this.prisma.appointments.update({
         where: {
           id: data.id,
@@ -234,7 +236,6 @@ class AppointmentService {
       });
 
       return booking;
-
     } catch (error) {
       throw error;
     }
@@ -253,18 +254,18 @@ class AppointmentService {
       });
 
       if (!booking) {
-        throw new Error('Booking not found');
+        throw new Error("Booking not found");
       }
 
-      const status_prisma = "Canceled"
+      const status_prisma = "Canceled";
       return await this.prisma.appointments.update({
         where: {
           id: booking.id,
-        }, data: {
-          status: status_prisma
-        }
+        },
+        data: {
+          status: status_prisma,
+        },
       });
-
     } catch (error) {
       console.error("Error deleting booking:", error);
       throw error;
