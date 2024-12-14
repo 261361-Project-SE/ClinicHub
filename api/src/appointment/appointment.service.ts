@@ -241,7 +241,7 @@ class AppointmentService {
     }
   }
 
-  // ลบการจอง ของคนไข่
+  // ลบการจอง ของคนไข้
   // ต้องแก้ ถ้า  user จองซ้ำเยอะๆจะมีปัญหา และ ต้อง  check status ก่อนลบ
   async cancelAppointment(data: any) {
     try {

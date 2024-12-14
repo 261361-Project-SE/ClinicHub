@@ -13,7 +13,7 @@ enum Status {
 class AppointmentController {
   constructor() { }
 
-  // สร้างการจอง ทั้งหมอและ คนไข่
+  // สร้างการจอง ทั้งหมอและ คนไข้
   async createAppointment(req: Request, res: Response) {
     try {
       const result = await appointmentService.creteBooking(req.body);
@@ -51,7 +51,7 @@ class AppointmentController {
     }
   }
 
-  //  update การจอง ทั้งหมอและ คนไข่
+  //  update การจอง ทั้งหมอและ คนไข้
   //  รับ UID เพื่อ หา และ อัพเดทข้อมูล
   async updateDoctorAppointment(req: Request, res: Response) {
     try {
@@ -95,7 +95,7 @@ class AppointmentController {
     }
   }
 
-  // อัพเดทข้อมูลการจอง ของคนไข่ update ได้หมด
+  // อัพเดทข้อมูลการจอง ของคนไข้ update ได้หมด
   async updatePatientAppointment(req: Request, res: Response) {
     try {
       const result = await appointmentService.updatePatientAppointment(req.body);
@@ -109,7 +109,7 @@ class AppointmentController {
   //  รับ UID
 
 
-  //  delete (ยกเลิกการจอง) การจอง ของคนไข่
+  //  delete (ยกเลิกการจอง) การจอง ของคนไข้
   //  รับ firstname และ lastname
   async cancelAppoitnment(req: Request, res: Response) {
     try {
