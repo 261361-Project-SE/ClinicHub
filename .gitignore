@@ -14,7 +14,10 @@
 
 /api/build
 
+
 node_modules
+
+.next
 
 .DS_Store
 .env.local
