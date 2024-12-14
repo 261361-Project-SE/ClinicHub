@@ -7,19 +7,32 @@
   },
   "tags": [
     {
+<<<<<<< Updated upstream
       "name": "Appointment",
       "description": "Operations related to products"
+=======
+      "name": "Doctor",
+      "description": "Operations related to doctors"
+    },
+    {
+      "name": "Patient",
+      "description": "Operations related to patients"
+    },
+    {
+      "name": "Shared",
+      "description": "Operations shared between doctors and patients"
+>>>>>>> Stashed changes
     }
   ],
   "paths": {
-    "/appointment": {
+    "/doctor/appointment": {
       "get": {
-        "summary": "Get all appointment",
-        "description": "Returns a list of all appointment",
-        "tags": ["Appointment"],
+        "summary": "Get Doctor's Appointments",
+        "description": "Retrieve all appointments associated with a doctor.",
+        "tags": ["Doctor"],
         "responses": {
           "200": {
-            "description": "A list of appointment",
+            "description": "A list of doctor's appointments",
             "content": {
               "application/json": {
                 "schema": {
@@ -27,15 +40,9 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {
-                        "type": "integer"
-                      },
-                      "test": {
-                        "type": "string"
-                      },
-                      "price": {
-                        "type": "number"
-                      }
+                      "appointmentId": { "type": "string" },
+                      "date": { "type": "string", "format": "date-time" },
+                      "patientName": { "type": "string" }
                     }
                   }
                 }
@@ -45,31 +52,138 @@
         }
       }
     },
-    "/appointment/create": {
-      "post": {
-        "summary": "Create Appointment",
-        "description": "Create and return the appointment",
-        "tags": ["Appointment"],
+    "/doctor/appointment/update": {
+      "patch": {
+        "summary": "Update Doctor's Appointment",
+        "description": "Update the details of a doctor's appointment.",
+        "tags": ["Doctor"],
         "requestBody": {
-          "description": "Appointment data to create",
+          "description": "Details to update a doctor's appointment",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "test": {
+                  "appointmentId": {
                     "type": "string",
-                    "description": "The name of the test",
-                    "example": "Blood Test"
+                    "description": "ID of the appointment to update"
+                  },
+                  "updates": {
+                    "type": "object",
+                    "description": "Fields to update in the appointment",
+                    "example": { "date": "2024-12-31T10:00:00Z" }
                   }
-                },
-                "required": ["test"]
+                }
               }
             }
           }
         },
         "responses": {
+          "200": {
+            "description": "Appointment updated successfully"
+          }
+        }
+      }
+    },
+    "/patient/appointment": {
+      "get": {
+        "summary": "Get Patient's Appointments",
+        "description": "Retrieve all appointments associated with a patient.",
+        "tags": ["Patient"],
+        "responses": {
+          "200": {
+            "description": "A list of patient's appointments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "appointmentId": { "type": "string" },
+                      "date": { "type": "string", "format": "date-time" },
+                      "doctorName": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patient/appointment/update": {
+      "patch": {
+        "summary": "Update Patient's Appointment",
+        "description": "Update the details of a patient's appointment.",
+        "tags": ["Patient"],
+        "requestBody": {
+          "description": "Details to update a patient's appointment",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appointmentId": {
+                    "type": "string",
+                    "description": "ID of the appointment to update"
+                  },
+                  "updates": {
+                    "type": "object",
+                    "description": "Fields to update in the appointment",
+                    "example": { "reason": "Follow-up consultation" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Appointment updated successfully"
+          }
+        }
+      }
+    },
+    "/appointment/create": {
+      "post": {
+        "summary": "Create Appointment",
+        "description": "Create a new appointment for a doctor or patient.",
+        "tags": ["Shared"],
+        "requestBody": {
+          "description": "Details to create an appointment",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorId": {
+                    "type": "string",
+                    "description": "ID of the doctor"
+                  },
+                  "patientId": {
+                    "type": "string",
+                    "description": "ID of the patient"
+                  },
+                  "dateTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date and time of the appointment"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Reason for the appointment"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+<<<<<<< Updated upstream
           "200": {
             "description": "A appointment detail",
             "content": {
@@ -93,6 +207,42 @@
           }
         }
       }
+=======
+          "201": {
+            "description": "Appointment created successfully"
+          }
+        }
+      }
+    },
+    "/appointment/delete": {
+      "delete": {
+        "summary": "Cancel an Appointment",
+        "description": "Delete an existing appointment.",
+        "tags": ["Shared"],
+        "requestBody": {
+          "description": "Details of the appointment to cancel",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appointmentId": {
+                    "type": "string",
+                    "description": "ID of the appointment to cancel"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Appointment deleted successfully"
+          }
+        }
+      }
+>>>>>>> Stashed changes
     }
   }
 }
