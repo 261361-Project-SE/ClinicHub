@@ -22,6 +22,9 @@ const config: Config = {
         "pink-200": "#FB6F92",
         "pink-300": "#FFC2D1",
       },
+      fontFamily: {
+        noto: ["Noto Sans Thai Looped", "sans-serif"],
+      },
     },
   },
   plugins: [],
