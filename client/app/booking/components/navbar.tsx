@@ -118,8 +118,8 @@ const Logo = ({ src, alt }: { src: string; alt: string }) => (
       <Image
         src={src}
         alt={alt}
-        width={64}
-        height={64}
+        width={192}
+        height={192}
         className="w-full h-full object-cover"
         priority
       />
