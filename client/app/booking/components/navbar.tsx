@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, memo } from "react";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -25,7 +25,7 @@ interface ButtonProps {
   icon: React.ReactNode;
 }
 
-const IconButton = ({ onClick, ariaLabel, href, icon }: ButtonProps) => {
+const IconButton = memo(({ onClick, ariaLabel, href, icon }: ButtonProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleClick = () => {
@@ -84,35 +84,41 @@ const IconButton = ({ onClick, ariaLabel, href, icon }: ButtonProps) => {
       {renderSidebar()}
     </>
   );
-};
+});
 
-const NotificationButton = ({
-  onNotificationClick,
-}: Pick<NavbarProps, "onNotificationClick">) => (
-  <IconButton
-    href="/notifications"
-    ariaLabel="Notifications"
-    onClick={onNotificationClick}
-    icon={
-      <BellIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
-    }
-  />
+IconButton.displayName = "IconButton";
+
+const NotificationButton = memo(
+  ({ onNotificationClick }: Pick<NavbarProps, "onNotificationClick">) => (
+    <IconButton
+      href="/notifications"
+      ariaLabel="Notifications"
+      onClick={onNotificationClick}
+      icon={
+        <BellIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
+      }
+    />
+  )
 );
 
-const MessageButton = ({
-  onMessageClick,
-}: Pick<NavbarProps, "onMessageClick">) => (
-  <IconButton
-    href="/messages"
-    ariaLabel="Messages"
-    onClick={onMessageClick}
-    icon={
-      <MessagesSquare className="h-6 w-6 text-black transition-transform hover:scale-110" />
-    }
-  />
+NotificationButton.displayName = "NotificationButton";
+
+const MessageButton = memo(
+  ({ onMessageClick }: Pick<NavbarProps, "onMessageClick">) => (
+    <IconButton
+      href="/messages"
+      ariaLabel="Messages"
+      onClick={onMessageClick}
+      icon={
+        <MessagesSquare className="h-6 w-6 text-black transition-transform hover:scale-110" />
+      }
+    />
+  )
 );
 
-const Logo = ({ src, alt }: { src: string; alt: string }) => (
+MessageButton.displayName = "MessageButton";
+
+const Logo = memo(({ src, alt }: { src: string; alt: string }) => (
   <Link href="/">
     <div className="rounded-full overflow-hidden w-16 h-16 transition-transform hover:scale-105">
       <Image
@@ -125,82 +131,96 @@ const Logo = ({ src, alt }: { src: string; alt: string }) => (
       />
     </div>
   </Link>
-);
+));
 
-const ActionButtons = ({
-  onMessageClick,
-  onNotificationClick,
-}: Pick<NavbarProps, "onMessageClick" | "onNotificationClick">) => (
-  <div className="flex items-center space-x-4">
-    <MessageButton onMessageClick={onMessageClick} />
-    <NotificationButton onNotificationClick={onNotificationClick} />
-  </div>
-);
+Logo.displayName = "Logo";
 
-const MobileNav = ({
-  onMenuClick,
-  onMessageClick,
-  onNotificationClick,
-  logoSrc = "/logo.png",
-  logoAlt = "Mongkhonsi",
-  greeting,
-}: NavbarProps & { greeting: string }) => (
-  <div className="md:hidden">
-    <div className="flex justify-between items-center p-4 bg-gradient-pink shadow-bg h-[220px] rounded-b-[12px]">
-      <div className="flex flex-col w-full">
-        <div className="flex justify-between w-full">
-          <IconButton
-            href=""
-            ariaLabel="Menu"
-            onClick={onMenuClick}
-            icon={
-              <AlignLeft className="h-6 w-6 text-black transition-transform" />
-            }
-          />
-          <ActionButtons
-            onMessageClick={onMessageClick}
-            onNotificationClick={onNotificationClick}
-          />
-        </div>
-        <div className="mt-8 flex items-center justify-start px-12 space-x-8">
-          <Logo src={logoSrc} alt={logoAlt} />
-          <div className="text-black">
-            <div className="text-lg font-noto font-medium">สวัสดี,</div>
-            <div className="text-2xl font-semibold font-noto">{greeting}</div>
-          </div>
-        </div>
-      </div>
+const ActionButtons = memo(
+  ({
+    onMessageClick,
+    onNotificationClick,
+  }: Pick<NavbarProps, "onMessageClick" | "onNotificationClick">) => (
+    <div className="flex items-center gap-4">
+      <MessageButton onMessageClick={onMessageClick} />
+      <NotificationButton onNotificationClick={onNotificationClick} />
     </div>
-  </div>
+  )
 );
 
-const DesktopNav = ({
-  onMessageClick,
-  onNotificationClick,
-  logoSrc = "/logo.png",
-  logoAlt = "Mongkhonsi",
-}: Pick<
-  NavbarProps,
-  "onMessageClick" | "onNotificationClick" | "logoSrc" | "logoAlt"
->) => (
-  <div className="hidden md:block">
-    <div className="bg-gradient-pink shadow-bg h-[654px]">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16 pt-8">
-          <div className="flex-shrink-0">
-            <div className="block transition-transform">
-              <Logo src={logoSrc} alt={logoAlt} />
+ActionButtons.displayName = "ActionButtons";
+
+const MobileNav = memo(
+  ({
+    onMenuClick,
+    onMessageClick,
+    onNotificationClick,
+    logoSrc = "/logo.png",
+    logoAlt = "Mongkhonsi",
+    greeting,
+  }: NavbarProps & { greeting: string }) => (
+    <div className="md:hidden">
+      <div className="flex justify-between items-center p-4 bg-gradient-pink shadow-bg h-[220px] rounded-b-[12px]">
+        <div className="flex flex-col w-full">
+          <div className="flex justify-between w-full">
+            <IconButton
+              href=""
+              ariaLabel="Menu"
+              onClick={onMenuClick}
+              icon={
+                <AlignLeft className="h-6 w-6 text-black transition-transform" />
+              }
+            />
+            <ActionButtons
+              onMessageClick={onMessageClick}
+              onNotificationClick={onNotificationClick}
+            />
+          </div>
+          <div className="mt-8 flex items-center justify-start px-12 space-x-8">
+            <Logo src={logoSrc} alt={logoAlt} />
+            <div className="text-black">
+              <div className="text-lg font-noto font-medium">สวัสดี,</div>
+              <div className="text-2xl font-semibold font-noto">{greeting}</div>
             </div>
           </div>
-          <ActionButtons
-            onMessageClick={onMessageClick}
-            onNotificationClick={onNotificationClick}
-          />
         </div>
       </div>
     </div>
-  </div>
+  )
 );
+
+MobileNav.displayName = "MobileNav";
+
+const DesktopNav = memo(
+  ({
+    onMessageClick,
+    onNotificationClick,
+    logoSrc = "/logo.png",
+    logoAlt = "Mongkhonsi",
+  }: Pick<
+    NavbarProps,
+    "onMessageClick" | "onNotificationClick" | "logoSrc" | "logoAlt"
+  >) => (
+    <div className="hidden md:flex">
+      <div className="flex w-full shadow-bg min-h-20">
+        <div className="flex max-w-7xl mx-auto px-4 w-full">
+          <div className="flex justify-between items-center min-h-max w-full">
+            <div className="flex">
+              <div className="flex transition-transform">
+                <Logo src={logoSrc} alt={logoAlt} />
+              </div>
+            </div>
+            <ActionButtons
+              onMessageClick={onMessageClick}
+              onNotificationClick={onNotificationClick}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+);
+
+DesktopNav.displayName = "DesktopNav";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -209,33 +229,37 @@ const getGreeting = () => {
   return "ตอนเย็น";
 };
 
-const Navbar = ({
-  onMenuClick,
-  onNotificationClick,
-  onMessageClick,
-  logoSrc = "/logo.png",
-  logoAlt = "Mongkhonsi",
-}: NavbarProps) => {
-  const greeting = useMemo(getGreeting, []);
+const Navbar = memo(
+  ({
+    onMenuClick,
+    onNotificationClick,
+    onMessageClick,
+    logoSrc = "/logo.png",
+    logoAlt = "Mongkhonsi",
+  }: NavbarProps) => {
+    const greeting = useMemo(getGreeting, []);
 
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
-      <MobileNav
-        onMenuClick={onMenuClick}
-        onNotificationClick={onNotificationClick}
-        onMessageClick={onMessageClick}
-        logoSrc={logoSrc}
-        logoAlt={logoAlt}
-        greeting={greeting}
-      />
-      <DesktopNav
-        onMessageClick={onMessageClick}
-        onNotificationClick={onNotificationClick}
-        logoSrc={logoSrc}
-        logoAlt={logoAlt}
-      />
-    </nav>
-  );
-};
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50">
+        <MobileNav
+          onMenuClick={onMenuClick}
+          onNotificationClick={onNotificationClick}
+          onMessageClick={onMessageClick}
+          logoSrc={logoSrc}
+          logoAlt={logoAlt}
+          greeting={greeting}
+        />
+        <DesktopNav
+          onMessageClick={onMessageClick}
+          onNotificationClick={onNotificationClick}
+          logoSrc={logoSrc}
+          logoAlt={logoAlt}
+        />
+      </nav>
+    );
+  }
+);
+
+Navbar.displayName = "Navbar";
 
 export default Navbar;
