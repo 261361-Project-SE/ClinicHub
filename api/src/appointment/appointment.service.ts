@@ -1,5 +1,5 @@
 import { PrismaClient, Status } from "@prisma/client";
-import { log } from "console";
+import { calendarService } from "../calendar/calendar.service";
 
 class AppointmentService {
   private prisma: PrismaClient;
@@ -8,10 +8,10 @@ class AppointmentService {
     this.prisma = new PrismaClient();
   }
 
+  // ME
   async creteBooking(data: any) {
     try {
       const {
-        eventId,
         firstname,
         lastname,
         phone_number,
@@ -23,6 +23,9 @@ class AppointmentService {
       const checkBooking = await this.prisma.appointments.findMany({
         where: {
           appointment_dateTime: data.appointment_dateTime,
+          NOT: {
+            status: "Canceled",
+          },
         },
         orderBy: {
           appointment_dateTime: "asc",
@@ -32,6 +35,16 @@ class AppointmentService {
       if (checkBooking.length > 0) {
         throw new Error("Time slot already taken");
       }
+      // Create Google Calendar Event
+      const dateTime = new Date(appointment_dateTime);
+      const eventId = await calendarService.createEvent({
+        year: dateTime.getFullYear(),
+        month: dateTime.getMonth() + 1,
+        day: dateTime.getDate(),
+        hour: dateTime.getHours(),
+        minute: dateTime.getMinutes(),
+        description: symptom || "No description",
+      });
 
       const booking = await this.prisma.appointments.create({
         data: {
@@ -47,7 +60,11 @@ class AppointmentService {
 
       return booking;
     } catch (error) {
-      throw new Error("Error while creating appointment");
+      console.error(
+        "Error creating appointment and Google Calendar event:",
+        error
+      );
+      throw new Error("Error while creating appointment......");
     }
   }
 
@@ -148,19 +165,42 @@ class AppointmentService {
     }
   }
 
+  //fix
+  //ME
   async updateDoctorAppointment(data: any) {
     try {
       // ตรวจสอบว่ามีการจองอยู่หรือไม่
-      const checkBooking = await this.prisma.appointments.findMany({
+      const checkBooking = await this.prisma.appointments.findUnique({
         where: {
           id: data.id,
         },
       });
 
-
-      if (checkBooking.length <= 0) {
+      if (!checkBooking) {
         throw new Error("Appointment not found");
       }
+
+      if (checkBooking.appointment_dateTime !== data.appointment_dateTime) {
+        if (checkBooking.eventId) {
+          //delete
+          await calendarService.deleteEvent(checkBooking.eventId);
+        }
+        // create
+        const dateTime = new Date(data.appointment_dateTime);
+        const newEventId = await calendarService.createEvent({
+          year: dateTime.getFullYear(),
+          month: dateTime.getMonth() + 1,
+          day: dateTime.getDate(),
+          hour: dateTime.getHours(),
+          minute: dateTime.getMinutes(),
+          description: data.symptom || "No description",
+        });
+
+        data.eventId = newEventId;
+      } else {
+        data.eventId = checkBooking.eventId;
+      }
+
       const booking = await this.prisma.appointments.update({
         where: {
           id: data.id,
@@ -172,6 +212,7 @@ class AppointmentService {
           symptom: data.symptom,
           appointment_dateTime: data.appointment_dateTime,
           status: data.status,
+          eventId: data.eventId,
         },
       });
 
@@ -213,18 +254,42 @@ class AppointmentService {
     }
   }
 
+  //Me
+
   async updatePatientAppointment(data: any) {
     try {
       // ตรวจสอบว่ามีการจองอยู่หรือไม่
-      const checkBooking = await this.prisma.appointments.findMany({
+      const checkBooking = await this.prisma.appointments.findUnique({
         where: {
           id: data.id,
         },
       });
 
-      if (checkBooking.length > 0) {
+      if (!checkBooking) {
         throw new Error("Appointment not found");
       }
+
+      if (checkBooking.appointment_dateTime !== data.appointment_dateTime) {
+        if (checkBooking.eventId) {
+          //delete
+          await calendarService.deleteEvent(checkBooking.eventId);
+        }
+        // create
+        const dateTime = new Date(data.appointment_dateTime);
+        const newEventId = await calendarService.createEvent({
+          year: dateTime.getFullYear(),
+          month: dateTime.getMonth() + 1,
+          day: dateTime.getDate(),
+          hour: dateTime.getHours(),
+          minute: dateTime.getMinutes(),
+          description: data.symptom || "No description",
+        });
+
+        data.eventId = newEventId;
+      } else {
+        data.eventId = checkBooking.eventId;
+      }
+
       const status_prisma = data.status;
       const booking = await this.prisma.appointments.update({
         where: {
@@ -234,6 +299,7 @@ class AppointmentService {
           symptom: data.symptom,
           appointment_dateTime: data.appointment_dateTime,
           status: status_prisma,
+          eventId: data.eventId,
         },
       });
 
@@ -243,6 +309,7 @@ class AppointmentService {
     }
   }
 
+  // Me
   // ลบการจอง ของคนไข้
   // ต้องแก้ ถ้า  user จองซ้ำเยอะๆจะมีปัญหา และ ต้อง  check status ก่อนลบ
   async cancelAppointment(data: any) {
@@ -256,9 +323,16 @@ class AppointmentService {
       });
 
       if (!booking) {
+        console.error("Booking not found with data:", data);
         throw new Error("Booking not found");
       }
 
+      //Delete the google calendar event
+      if (booking.eventId) {
+        await calendarService.deleteEvent(booking.eventId);
+      }
+
+      //Update status to canceled in database
       const status_prisma = "Canceled";
       return await this.prisma.appointments.update({
         where: {
