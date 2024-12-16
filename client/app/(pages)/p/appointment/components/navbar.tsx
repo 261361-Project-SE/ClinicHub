@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useMemo, useState, memo } from "react";
+import React, { useMemo, useState, memo, useEffect } from "react";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -222,13 +222,6 @@ const DesktopNav = memo(
 
 DesktopNav.displayName = "DesktopNav";
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return "ตอนเช้า";
-  if (hour >= 12 && hour < 17) return "ตอนบ่าย";
-  return "ตอนเย็น";
-};
-
 const Navbar = memo(
   ({
     onMenuClick,
@@ -237,7 +230,18 @@ const Navbar = memo(
     logoSrc = "/logo.png",
     logoAlt = "Mongkhonsi",
   }: NavbarProps) => {
-    const greeting = useMemo(getGreeting, []);
+    const [greeting, setGreeting] = useState("");
+
+    useEffect(() => {
+      const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return "ตอนเช้า";
+        if (hour >= 12 && hour < 17) return "ตอนบ่าย";
+        return "ตอนเย็น";
+      };
+
+      setGreeting(getGreeting());
+    }, []);
 
     return (
       <nav className="fixed top-0 left-0 right-0 z-50">
