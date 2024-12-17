@@ -64,7 +64,7 @@ class AppointmentService {
         "Error creating appointment and Google Calendar event:",
         error
       );
-      throw new Error("Error while creating appointment......");
+      throw new Error("Error while creating appointment.");
     }
   }
 
@@ -309,7 +309,7 @@ class AppointmentService {
     }
   }
 
-  // Me
+  // Consider bettween date and id for cancellaiton
   // ลบการจอง ของคนไข้
   // ต้องแก้ ถ้า  user จองซ้ำเยอะๆจะมีปัญหา และ ต้อง  check status ก่อนลบ
   async cancelAppointment(data: any) {
@@ -319,6 +319,10 @@ class AppointmentService {
           firstname: data.firstname,
           lastname: data.lastname,
           phone_number: data.phone_number,
+          appointment_dateTime: data.appointment_dateTime, // Add date when request
+          NOT: {
+            status: "Canceled",
+          },
         },
       });
 
@@ -329,7 +333,17 @@ class AppointmentService {
 
       //Delete the google calendar event
       if (booking.eventId) {
-        await calendarService.deleteEvent(booking.eventId);
+        try {
+          await calendarService.deleteEvent(booking.eventId);
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(
+              "Error deleting Google Calendar event:",
+              error.message
+            );
+            throw new Error("Failed to delete the Google Calendar event.");
+          }
+        }
       }
 
       //Update status to canceled in database
