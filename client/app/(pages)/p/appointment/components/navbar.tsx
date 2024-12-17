@@ -109,32 +109,10 @@ const NotificationButton = memo(
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>ตรวจสอบนัดหมาย</DialogTitle>
-          <DialogDescription>
-            กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการตรวจสอบนัดหมาย
-          </DialogDescription>
+          <DialogTitle>Notifications</DialogTitle>
+          <DialogDescription>Here are your notifications.</DialogDescription>
         </DialogHeader>
-        <div className="mt-4 flex flex-col space-y-4">
-          <input
-            type="text"
-            placeholder="ชื่อ - นามสกุล"
-            className="border rounded-md p-2"
-            required
-            pattern="^[\p{L} ]+$"
-            title="กรุณากรอกชื่อและนามสกุลที่ถูกต้อง"
-          />
-          <input
-            type="tel"
-            placeholder="เบอร์โทรศัพท์"
-            className="border rounded-md p-2"
-            required
-            pattern="^[0-9]{10}$"
-            title="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"
-          />
-          <button className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-[100px] ml-auto font-noto text-center font-medium">
-            ตรวจสอบ
-          </button>
-        </div>
+        {/* Add notification content here */}
       </DialogContent>
     </Dialog>
   )
