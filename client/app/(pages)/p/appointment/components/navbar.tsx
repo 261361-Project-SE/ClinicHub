@@ -1,6 +1,14 @@
 "use client";
 
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import {
   Bell as BellIcon,
   AlignLeft,
   MessagesSquare,
@@ -8,7 +16,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useMemo, useState, memo, useEffect } from "react";
+import React, { useState, memo, useEffect } from "react";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -19,20 +27,20 @@ interface NavbarProps {
 }
 
 interface ButtonProps {
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   ariaLabel: string;
-  href: string;
   icon: React.ReactNode;
 }
 
-const IconButton = memo(({ onClick, ariaLabel, href, icon }: ButtonProps) => {
+const IconButton = memo(({ onClick, ariaLabel, icon }: ButtonProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleClick = () => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (React.isValidElement(icon) && icon.type === AlignLeft) {
-      setIsSidebarOpen(!isSidebarOpen);
+      setIsSidebarOpen((prev) => !prev);
     }
-    onClick?.();
+    event.preventDefault();
+    onClick?.(event);
   };
 
   const renderSidebar = () => {
@@ -90,14 +98,45 @@ IconButton.displayName = "IconButton";
 
 const NotificationButton = memo(
   ({ onNotificationClick }: Pick<NavbarProps, "onNotificationClick">) => (
-    <IconButton
-      href="/notifications"
-      ariaLabel="Notifications"
-      onClick={onNotificationClick}
-      icon={
-        <BellIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
-      }
-    />
+    <Dialog>
+      <DialogTrigger asChild>
+        <button
+          className="flex items-center justify-center p-2 hover:bg-white/10 rounded-full transition-colors relative"
+          aria-label="Notifications"
+        >
+          <BellIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
+        </button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>ตรวจสอบนัดหมาย</DialogTitle>
+          <DialogDescription>
+            กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการตรวจสอบนัดหมาย
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-4 flex flex-col space-y-4">
+          <input
+            type="text"
+            placeholder="ชื่อ - นามสกุล"
+            className="border rounded-md p-2"
+            required
+            pattern="^[\p{L} ]+$"
+            title="กรุณากรอกชื่อและนามสกุลที่ถูกต้อง"
+          />
+          <input
+            type="tel"
+            placeholder="เบอร์โทรศัพท์"
+            className="border rounded-md p-2"
+            required
+            pattern="^[0-9]{10}$"
+            title="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"
+          />
+          <button className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-[100px] ml-auto font-noto text-center font-medium">
+            ตรวจสอบ
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 );
 
@@ -106,7 +145,6 @@ NotificationButton.displayName = "NotificationButton";
 const MessageButton = memo(
   ({ onMessageClick }: Pick<NavbarProps, "onMessageClick">) => (
     <IconButton
-      href="/messages"
       ariaLabel="Messages"
       onClick={onMessageClick}
       icon={
@@ -163,7 +201,6 @@ const MobileNav = memo(
         <div className="flex flex-col w-full">
           <div className="flex justify-between w-full">
             <IconButton
-              href=""
               ariaLabel="Menu"
               onClick={onMenuClick}
               icon={
@@ -204,11 +241,7 @@ const DesktopNav = memo(
       <div className="flex w-full shadow-bg min-h-20">
         <div className="flex max-w-7xl mx-auto px-4 w-full">
           <div className="flex justify-between items-center min-h-max w-full">
-            <div className="flex">
-              <div className="flex transition-transform">
-                <Logo src={logoSrc} alt={logoAlt} />
-              </div>
-            </div>
+            <Logo src={logoSrc} alt={logoAlt} />
             <ActionButtons
               onMessageClick={onMessageClick}
               onNotificationClick={onNotificationClick}
@@ -233,13 +266,12 @@ const Navbar = memo(
     const [greeting, setGreeting] = useState("");
 
     useEffect(() => {
+      const hour = new Date().getHours();
       const getGreeting = () => {
-        const hour = new Date().getHours();
         if (hour >= 5 && hour < 12) return "ตอนเช้า";
         if (hour >= 12 && hour < 17) return "ตอนบ่าย";
         return "ตอนเย็น";
       };
-
       setGreeting(getGreeting());
     }, []);
 

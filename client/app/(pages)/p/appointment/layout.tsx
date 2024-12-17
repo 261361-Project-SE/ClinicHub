@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "../../../globals.css";
+import Footer from "./components/footer";
 import Navbar from "./components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -49,6 +50,7 @@ export default function AppointmentLayout({ children }: Readonly<LayoutProps>) {
           <div className="max-w-7xl mx-auto">{children}</div>
         </div>
       </main>
+      {/* <Footer className=" fixed bottom-0 left-0 w-full" /> */}
     </div>
   );
 }
