@@ -39,11 +39,17 @@ class CalendarService {
   }): Promise<string> {
     const { year, month, day, hour, minute, description } = eventDetails;
 
-    const eventStartTime = new Date(year, month - 1, day, hour, minute);
+    // const eventStartTime = new Date(year, month - 1, day, hour, minute);
+    const eventStartTime = new Date(
+      Date.UTC(year, month - 1, day, hour - 7, minute)
+    ); // Use UTC directly
     if (eventStartTime.getMinutes() % 15 !== 0) {
       throw new Error("Please select a time that is a multiple of 15 minutes.");
     }
-    const eventEndTime = new Date(eventStartTime.getTime() + 15 * 60000);
+    // const eventEndTime = new Date(eventStartTime.getTime() + 15 * 60000);
+    const eventEndTime = new Date(
+      eventStartTime.getTime() + 15 * 60000 // Adjust for 15 minutes duration
+    );
 
     const calendarEvent: calendar_v3.Schema$Event = {
       summary: `Patient - ${hour}:${minute}`,
