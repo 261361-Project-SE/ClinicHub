@@ -7,24 +7,30 @@
   },
   "tags": [
     {
-      "name": "Appointment",
-      "description": "Operations related to products"
+
+      "name": "Doctor",
+      "description": "Operations related to doctors"
     },
     {
-      "name": "Booking",
-      "description": "Operations related to Doctors and Patients"
+      "name": "Patient",
+      "description": "Operations related to patients"
+    },
+    {
+      "name": "Shared",
+      "description": "Operations shared between doctors and patients"
+
     }
   ],
 
   "paths": {
-    "/appointment": {
+    "/doctor/appointment": {
       "get": {
-        "summary": "Get all appointment",
-        "description": "Returns a list of all appointment",
-        "tags": ["Appointment"],
+        "summary": "Get Doctor's Appointments",
+        "description": "Retrieve all appointments associated with a doctor.",
+        "tags": ["Doctor"],
         "responses": {
           "200": {
-            "description": "A list of appointment",
+            "description": "A list of doctor's appointments",
             "content": {
               "application/json": {
                 "schema": {
@@ -32,20 +38,111 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {
-                        "type": "integer"
-                      },
-                      "test": {
-                        "type": "string"
-                      },
-                      "price": {
-                        "type": "number"
-                      }
+                      "appointmentId": { "type": "string" },
+                      "date": { "type": "string", "format": "date-time" },
+                      "patientName": { "type": "string" }
                     }
                   }
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/doctor/appointment/update": {
+      "patch": {
+        "summary": "Update Doctor's Appointment",
+        "description": "Update the details of a doctor's appointment.",
+        "tags": ["Doctor"],
+        "requestBody": {
+          "description": "Details to update a doctor's appointment",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appointmentId": {
+                    "type": "string",
+                    "description": "ID of the appointment to update"
+                  },
+                  "updates": {
+                    "type": "object",
+                    "description": "Fields to update in the appointment",
+                    "example": { "date": "2024-12-31T10:00:00Z" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Appointment updated successfully"
+          }
+        }
+      }
+    },
+    "/patient/appointment": {
+      "get": {
+        "summary": "Get Patient's Appointments",
+        "description": "Retrieve all appointments associated with a patient.",
+        "tags": ["Patient"],
+        "responses": {
+          "200": {
+            "description": "A list of patient's appointments",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "appointmentId": { "type": "string" },
+                      "date": { "type": "string", "format": "date-time" },
+                      "doctorName": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patient/appointment/update": {
+      "patch": {
+        "summary": "Update Patient's Appointment",
+        "description": "Update the details of a patient's appointment.",
+        "tags": ["Patient"],
+        "requestBody": {
+          "description": "Details to update a patient's appointment",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appointmentId": {
+                    "type": "string",
+                    "description": "ID of the appointment to update"
+                  },
+                  "updates": {
+                    "type": "object",
+                    "description": "Fields to update in the appointment",
+                    "example": { "reason": "Follow-up consultation" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+
+            "description": "Appointment updated successfully"
           }
         }
       }
@@ -53,572 +150,73 @@
     "/appointment/create": {
       "post": {
         "summary": "Create Appointment",
-        "description": "Create and return the appointment",
-        "tags": ["Appointment"],
+        "description": "Create a new appointment for a doctor or patient.",
+        "tags": ["Shared"],
         "requestBody": {
-          "description": "Appointment data to create",
+          "description": "Details to create an appointment",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "test": {
+                  "doctorId": {
                     "type": "string",
-                    "description": "The name of the test",
-                    "example": "Blood Test"
+                    "description": "ID of the doctor"
+                  },
+                  "patientId": {
+                    "type": "string",
+                    "description": "ID of the patient"
+                  },
+                  "dateTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date and time of the appointment"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Reason for the appointment"
                   }
-                },
-                "required": ["test"]
+                }
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "A appointment detail",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "json",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    },
-                    "test": {
-                      "type": "string"
-                    },
-                    "price": {
-                      "type": "number"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Booking/AllBooking": {
-      "get": {
-        "summary": "Get all booking",
-        "description": "Returns a list of all booking",
-        "tags": ["Booking"],
-        "responses": {
-          "200": {
-            "description": "The details of the created appointment",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "UID": {
-                        "type": "string",
-                        "description": "Unique identifier for the booking",
-                        "example": "d29701c8-ec7a-4da5-9b9b-06df448ea3f0"
-                      },
-                      "firstname": {
-                        "type": "string",
-                        "description": "The first name of the person booking",
-                        "example": "John"
-                      },
-                      "lastname": {
-                        "type": "string",
-                        "description": "The last name of the person booking",
-                        "example": "Doe"
-                      },
-                      "age": {
-                        "type": "integer",
-                        "description": "The age of the person booking",
-                        "example": 30
-                      },
-                      "phone_number": {
-                        "type": "string",
-                        "description": "The phone number of the person booking",
-                        "example": "+1234567890"
-                      },
-                      "details": {
-                        "type": "string",
-                        "description": "Additional details about the appointment",
-                        "example": "First-time appointment"
-                      },
-                      "appointment_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The date of the appointment",
-                        "example": "2024-12-15T00:00:00.000Z"
-                      },
-                      "appointment_time": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The time of the appointment",
-                        "example": "1970-01-01T10:30:00.000Z"
-                      },
-                      "status": {
-                        "type": "string",
-                        "description": "The current status of the booking",
-                        "example": "ready"
-                      },
-                      "createdAt": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The creation timestamp of the booking",
-                        "example": "2024-12-09T10:59:35.466Z"
-                      },
-                      "updatedAt": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The last update timestamp of the booking",
-                        "example": "2024-12-09T10:59:35.466Z"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Booking/NameBooking/{firstname}/{lastname}": {
-      "get": {
-        "summary": "Retrieve bookings with matching first and last names.",
-        "description": "Fetches a list of all bookings where the provided first name and last name match the records.",
-        "tags": ["Booking"],
-        "parameters": [
-          {
-            "name": "firstname",
-            "in": "path",
-            "required": true,
-            "description": "The firstname of the person booking",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "lastname",
-            "in": "path",
-            "required": true,
-            "description": "The lastname of the person booking",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The details of the created appointment",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "UID": {
-                      "type": "string",
-                      "description": "Unique identifier for the booking",
-                      "example": "d29701c8-ec7a-4da5-9b9b-06df448ea3f0"
-                    },
-                    "firstname": {
-                      "type": "string",
-                      "description": "The first name of the person booking",
-                      "example": "John"
-                    },
-                    "lastname": {
-                      "type": "string",
-                      "description": "The last name of the person booking",
-                      "example": "Doe"
-                    },
-                    "age": {
-                      "type": "integer",
-                      "description": "The age of the person booking",
-                      "example": 30
-                    },
-                    "phone_number": {
-                      "type": "string",
-                      "description": "The phone number of the person booking",
-                      "example": "+1234567890"
-                    },
-                    "details": {
-                      "type": "string",
-                      "description": "Additional details about the appointment",
-                      "example": "First-time appointment"
-                    },
-                    "appointment_date": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The date of the appointment",
-                      "example": "2024-12-15T00:00:00.000Z"
-                    },
-                    "appointment_time": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The time of the appointment",
-                      "example": "1970-01-01T10:30:00.000Z"
-                    },
-                    "status": {
-                      "type": "string",
-                      "description": "The current status of the booking",
-                      "example": "ready"
-                    },
-                    "createdAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The creation timestamp of the booking",
-                      "example": "2024-12-09T10:59:35.466Z"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The last update timestamp of the booking",
-                      "example": "2024-12-09T10:59:35.466Z"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Booking": {
-      "post": {
-        "summary": "Create Booking",
-        "description": "Create and return the appointment",
-        "tags": ["Booking"],
-        "requestBody": {
-          "description": "Booking data to create",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "firstname": {
-                    "type": "string",
-                    "description": "The first name of the person booking",
-                    "example": "Fulkaaaa"
-                  },
-                  "lastname": {
-                    "type": "string",
-                    "description": "The last name of the person booking",
-                    "example": "Doe"
-                  },
-                  "age": {
-                    "type": "integer",
-                    "description": "The age of the person booking",
-                    "example": 30
-                  },
-                  "phone_number": {
-                    "type": "string",
-                    "description": "The phone number of the person booking",
-                    "example": "+1234567890"
-                  },
-                  "details": {
-                    "type": "string",
-                    "description": "Additional details about the appointment",
-                    "example": "First-time appointment"
-                  },
-                  "appointment_date": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "The date of the appointment",
-                    "example": "2024-12-15T00:00:00.000Z"
-                  },
-                  "appointment_time": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "The time of the appointment",
-                    "example": "1970-01-01T10:30:00.000Z"
-                  },
-                  "status": {
-                    "type": "string",
-                    "description": "The current status of the booking",
-                    "example": "ready"
-                  }
-                },
-                "required": [
-                  "firstname",
-                  "lastname",
-                  "age",
-                  "phone_number",
-                  "details",
-                  "appointment_date",
-                  "appointment_time",
-                  "status"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The details of the created appointment",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "UID": {
-                      "type": "string",
-                      "description": "Unique identifier for the booking",
-                      "example": "d29701c8-ec7a-4da5-9b9b-06df448ea3f0"
-                    },
-                    "firstname": {
-                      "type": "string",
-                      "description": "The first name of the person booking",
-                      "example": "John"
-                    },
-                    "lastname": {
-                      "type": "string",
-                      "description": "The last name of the person booking",
-                      "example": "Doe"
-                    },
-                    "age": {
-                      "type": "integer",
-                      "description": "The age of the person booking",
-                      "example": 30
-                    },
-                    "phone_number": {
-                      "type": "string",
-                      "description": "The phone number of the person booking",
-                      "example": "+1234567890"
-                    },
-                    "details": {
-                      "type": "string",
-                      "description": "Additional details about the appointment",
-                      "example": "First-time appointment"
-                    },
-                    "appointment_date": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The date of the appointment",
-                      "example": "2024-12-15T00:00:00.000Z"
-                    },
-                    "appointment_time": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The time of the appointment",
-                      "example": "1970-01-01T10:30:00.000Z"
-                    },
-                    "status": {
-                      "type": "string",
-                      "description": "The current status of the booking",
-                      "example": "ready"
-                    },
-                    "createdAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The creation timestamp of the booking",
-                      "example": "2024-12-09T10:59:35.466Z"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "description": "The last update timestamp of the booking",
-                      "example": "2024-12-09T10:59:35.466Z"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
 
-      "patch": {
-        "summary": "Update a booking by UID",
-        "description": "Updates the booking data for the user identified by the given UID. The body should include the `UID` of the booking to update and any other fields to modify.",
-        "tags": ["Booking"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "UID": {
-                    "type": "string",
-                    "description": "Unique identifier of the booking to update",
-                    "example": "d29701c8-ec7a-4da5-9b9b-06df448ea3f0"
-                  },
-                  "firstname": {
-                    "type": "string",
-                    "description": "Updated first name of the booking",
-                    "example": "John"
-                  },
-                  "lastname": {
-                    "type": "string",
-                    "description": "Updated last name of the booking",
-                    "example": "Doe"
-                  },
-                  "age": {
-                    "type": "integer",
-                    "description": "Updated age of the booking",
-                    "example": 35
-                  },
-                  "phone_number": {
-                    "type": "string",
-                    "description": "Updated phone number of the booking",
-                    "example": "+1234567891"
-                  },
-                  "details": {
-                    "type": "string",
-                    "description": "Updated details about the appointment",
-                    "example": "Updated appointment details"
-                  },
-                  "appointment_date": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Updated date of the appointment",
-                    "example": "2024-12-20T10:00:00.000Z"
-                  },
-                  "appointment_time": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Updated time of the appointment",
-                    "example": "1970-01-01T12:30:00.000Z"
-                  },
-                  "status": {
-                    "type": "string",
-                    "description": "Updated status of the booking",
-                    "example": "confirmed"
-                  }
-                },
-                "required": ["UID"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Booking updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "UID": {
-                        "type": "string",
-                        "description": "Unique identifier for the booking",
-                        "example": "d29701c8-ec7a-4da5-9b9b-06df448ea3f0"
-                      },
-                      "firstname": {
-                        "type": "string",
-                        "description": "The first name of the person booking",
-                        "example": "John"
-                      },
-                      "lastname": {
-                        "type": "string",
-                        "description": "The last name of the person booking",
-                        "example": "Doe"
-                      },
-                      "age": {
-                        "type": "integer",
-                        "description": "The age of the person booking",
-                        "example": 30
-                      },
-                      "phone_number": {
-                        "type": "string",
-                        "description": "The phone number of the person booking",
-                        "example": "+1234567890"
-                      },
-                      "details": {
-                        "type": "string",
-                        "description": "Additional details about the appointment",
-                        "example": "First-time appointment"
-                      },
-                      "appointment_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The date of the appointment",
-                        "example": "2024-12-15T00:00:00.000Z"
-                      },
-                      "appointment_time": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The time of the appointment",
-                        "example": "1970-01-01T10:30:00.000Z"
-                      },
-                      "status": {
-                        "type": "string",
-                        "description": "The current status of the booking",
-                        "example": "ready"
-                      },
-                      "createdAt": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The creation timestamp of the booking",
-                        "example": "2024-12-09T10:59:35.466Z"
-                      },
-                      "updatedAt": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "The last update timestamp of the booking",
-                        "example": "2024-12-09T10:59:35.466Z"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request (e.g., missing or invalid UID)"
-          },
-          "404": {
-            "description": "Booking not found"
+          "201": {
+            "description": "Appointment created successfully"
           }
         }
-      },
-
+      }
+    },
+    "/appointment/delete": {
       "delete": {
-        "summary": "Delete a booking by UID",
-        "description": "Deletes the booking for the user identified by the given UID. The body must include the `UID` of the booking to delete.",
-        "tags": ["Booking"],
+        "summary": "Cancel an Appointment",
+        "description": "Delete an existing appointment.",
+        "tags": ["Shared"],
         "requestBody": {
+          "description": "Details of the appointment to cancel",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "UID": {
+
+                  "appointmentId": {
                     "type": "string",
-                    "description": "Unique identifier of the booking to delete",
-                    "example": "d29701c8-ec7a-4da5-9b9b-06df448ea3f0"
+                    "description": "ID of the appointment to cancel"
                   }
-                },
-                "required": ["UID"]
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Booking deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Booking deleted successfully."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request (e.g., missing or invalid UID)"
-          },
-          "404": {
-            "description": "Booking not found"
+
+            "description": "Appointment deleted successfully"
           }
         }
       }
