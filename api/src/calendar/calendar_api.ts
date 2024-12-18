@@ -1,13 +1,14 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import { calendarService } from "./calendar.service";
 
-const app = express();
-const port = 5001;
+// const app = express();
+// const port = 5001;
 
-app.use(express.json());
+// app.use(express.json());
+const router: Router = express.Router();
 
 // GET - List Events
-app.get("/list-events", async (req: Request, res: Response): Promise<any> => {
+router.get("/list-events", async (req: Request, res: Response): Promise<any> => {
   try {
     const events = await calendarService.listEvents();
     if (events.length === 0) {
@@ -52,7 +53,7 @@ app.get("/list-events", async (req: Request, res: Response): Promise<any> => {
 });
 
 // POST - Create Event
-app.post("/create-event", async (req: Request, res: Response): Promise<any> => {
+router.post("/create-event", async (req: Request, res: Response): Promise<any> => {
   try {
     const { year, month, day, hour, minute, description } = req.body;
 
@@ -87,7 +88,7 @@ app.post("/create-event", async (req: Request, res: Response): Promise<any> => {
 });
 
 // DELETE - Delete Event
-app.delete(
+router.delete(
   "/delete-event",
   async (req: Request, res: Response): Promise<any> => {
     try {
@@ -110,6 +111,4 @@ app.delete(
   }
 );
 
-app.listen(port, () => {
-  console.log(`Calendar API running on port ${port}`);
-});
+export default router;
