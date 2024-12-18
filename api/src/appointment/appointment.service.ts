@@ -319,7 +319,7 @@ class AppointmentService {
           firstname: data.firstname,
           lastname: data.lastname,
           phone_number: data.phone_number,
-          appointment_dateTime: data.appointment_dateTime, // Add date when request
+          eventId: data.event, // Use eventId instead
           NOT: {
             status: "Canceled",
           },

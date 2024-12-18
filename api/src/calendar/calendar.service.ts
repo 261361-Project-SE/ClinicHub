@@ -52,7 +52,7 @@ class CalendarService {
     );
 
     const calendarEvent: calendar_v3.Schema$Event = {
-      summary: `Patient - ${hour}:${minute}`,
+      summary: `Patient - ${hour}:${minute.toString().padStart(2, "0")}`,
       location: "Mongkol Clinic",
       description: description || "- No description -",
       colorId: "1",
