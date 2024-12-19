@@ -1,62 +1,68 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
+import { Status } from "@prisma/client";
 import { appointmentService } from "./appointment.service";
-const express = require("express");
-
-enum Status {
-  Completed,
-  Confirmed,
-  Pending,
-  Requesting,
-  Canceled,
-}
 
 class AppointmentController {
-  constructor() {}
+  constructor() { }
 
   // สร้างการจอง ทั้งหมอและ คนไข้
   async createAppointment(req: Request, res: Response) {
     try {
-      const result = await appointmentService.creteBooking(req.body);
-      res.status(200).send(result);
+
+      const { firstname, lastname, phone_number, symptom, appointment_dateTime } = req.body;
+
+      if (!req.body) {
+        res.status(400).send({ error: "Request body is required" });
+      }
+
+      if (!appointment_dateTime || isNaN(Date.parse(appointment_dateTime))) {
+        res.status(400).send({ error: "Appointment date time is invalid" });
+      }
+
+      const result: any = await appointmentService.creteBooking(firstname, lastname, phone_number, symptom, appointment_dateTime);
+      if (result.error) {
+        res.status(result.status).send(result);
+      } else {
+        res.status(200).send(result);
+      }
+
     } catch (err: any) {
-      res.status(400).send({ error: err.message });
+      res.status(500).send({ error: "An unexpected error occurred while creating appointment controller:" + err.message });
     }
   }
 
   // ดู การจองทั้งหมด หมอ
-  async getDoctorAppointment(req: Request, res: Response): Promise<any> {
+  async getDoctorAppointment(req: Request, res: Response) {
     try {
-      const { date, firstname, lastname, status, phone_number } = req.query;
+      const { date, name, status, phone_number } = req.query;
 
-      let result;
-
-      if (!date && !firstname && !lastname && !status && !phone_number) {
-        result = await appointmentService.getDoctorAppointmentAll();
-      } else if (date) {
-        result = await appointmentService.getDoctorAppointmentDate(
-          date as string
-        );
-      } else if (firstname || lastname) {
-        result = await appointmentService.getDoctorAppointmentName(
-          firstname as string,
-          lastname as string
-        );
-      } else if (status) {
-        result = await appointmentService.getDoctorAppointmentStatus(
-          status as string
-        );
-      } else if (phone_number) {
-        result = await appointmentService.getDoctorAppointmentPhoneNumber(
-          phone_number as string
-        );
-      } else {
-        res.status(400).send({ error: "Bad request" });
-        return;
+      if (!date && !name && !status && !phone_number) {
+        const result: any = await appointmentService.getDoctorAppointmentAll();
+        res.status(result.status).send(result);
       }
 
-      res.status(200).send(result);
+      if (date && isNaN(Date.parse(date as string))) {
+        res.status(400).send({ error: "Invalid date format" });
+      }
+
+      if (!date && !name && !status && !phone_number) {
+        res.status(400).send({ error: "Bad request invalid parameter" });
+      }
+
+      const firstname = name ? (name as string).split(" ")[0] : null;
+      const lastname = name ? (name as string).split(" ")[1] : null;
+
+      const result: any = await appointmentService.getDoctorAppointmentByParameter(
+        date as string,
+        firstname as string,
+        lastname as string,
+        status as string,
+        phone_number as string
+      );
+      res.status(result.status).send(result);
+
     } catch (err: any) {
-      res.status(500).send({ error: err.message });
+      res.status(500).send({ error: "An unexpected error occurred while fetching doctor appointment:" + err.message });
     }
   }
 
@@ -64,10 +70,11 @@ class AppointmentController {
   //  รับ UID เพื่อ หา และ อัพเดทข้อมูล
   async updateDoctorAppointment(req: Request, res: Response) {
     try {
-      const result = await appointmentService.updateDoctorAppointment(req.body);
-      res.status(200).send(result);
+      const result: any = await appointmentService.updateDoctorAppointment(req.body);
+
+      res.status(result.status).send(result);
     } catch (err: any) {
-      res.status(500).send({ error: err.message });
+      res.status(500).send({ error: "An unexpected error occurred while updating doctor appointment controller:" + err.message });
     }
   }
 
@@ -120,12 +127,12 @@ class AppointmentController {
 
   //  delete (ยกเลิกการจอง) การจอง ของคนไข้
   //  รับ firstname และ lastname
-  async cancelAppoitnment(req: Request, res: Response) {
+  async cancelAppointment(req: Request, res: Response) {
     try {
-      const result = await appointmentService.cancelAppointment(req.body);
-      res.status(200).send(result);
+      const result: any = await appointmentService.cancelAppointment(req.body);
+      res.status(result.status).send(result);
     } catch (err: any) {
-      res.status(400).send({ error: err.message });
+      res.status(500).send({ error: "An unexpected error occurred while canceling appointment controller:" + err.message });
     }
   }
 }

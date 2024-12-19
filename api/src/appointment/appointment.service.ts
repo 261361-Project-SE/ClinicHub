@@ -1,6 +1,7 @@
 import { PrismaClient, Status } from "@prisma/client";
 import { calendarService } from "../calendar/calendar.service";
 
+
 class AppointmentService {
   private prisma: PrismaClient;
 
@@ -9,22 +10,14 @@ class AppointmentService {
   }
 
   // ME
-  async creteBooking(data: any) {
+  async creteBooking(firstname: string, lastname: string, phone_number: string, symptom: string, appointment_dateTime: string) {
     try {
-      const {
-        firstname,
-        lastname,
-        phone_number,
-        symptom,
-        appointment_dateTime,
-        status,
-      } = data;
 
       const checkBooking = await this.prisma.appointments.findMany({
         where: {
-          appointment_dateTime: data.appointment_dateTime,
+          appointment_dateTime: appointment_dateTime,
           NOT: {
-            status: "Canceled",
+            status: Status.CANCELED,
           },
         },
         orderBy: {
@@ -33,9 +26,9 @@ class AppointmentService {
       });
 
       if (checkBooking.length > 0) {
-        throw new Error("Time slot already taken");
+        return { error: "Time slot already taken", status: 400 };
       }
-      // Create Google Calendar Event
+
       const dateTime = new Date(appointment_dateTime);
       const eventId = await calendarService.createEvent({
         year: dateTime.getFullYear(),
@@ -48,23 +41,21 @@ class AppointmentService {
 
       const booking = await this.prisma.appointments.create({
         data: {
-          eventId,
-          firstname,
-          lastname,
-          phone_number,
-          symptom,
-          appointment_dateTime,
-          status,
+          eventId: eventId,
+          firstname: firstname,
+          lastname: lastname,
+          phone_number: phone_number,
+          symptom: symptom,
+          appointment_dateTime: appointment_dateTime,
+          status: Status.PENDING,
         },
       });
-
-      return booking;
+      return {
+        ...booking,
+        status: Status[booking.status] as string
+      };
     } catch (error) {
-      console.error(
-        "Error creating appointment and Google Calendar event:",
-        error
-      );
-      throw new Error("Error while creating appointment.");
+      return { error: "Error while creating appointment service: " + error, status: 500 };
     }
   }
 
@@ -77,99 +68,122 @@ class AppointmentService {
       });
 
       if (appointments.length === 0) {
-        return "No appointment found";
+        return { error: "No appointment found.", status: 404 };
       }
 
       return appointments;
     } catch (error) {
-      throw new Error("Error while fetching all doctor appointment");
+      return { error: "Error while fetching all doctor appointment service: " + error, status: 500 };
     }
   }
 
-  async getDoctorAppointmentDate(date: string) {
+  async getDoctorAppointmentByParameter(date: string, firstname: string, lastname: string, status: string, phone_number: string) {
     try {
+      const status_prisma = Status[status.toUpperCase() as keyof typeof Status];
       const appointments = await this.prisma.appointments.findMany({
         where: {
-          appointment_dateTime: date,
-        },
-        orderBy: {
-          appointment_dateTime: "asc",
-        },
-      });
-      if (appointments.length === 0) {
-        return "No appointment found";
-      }
-      return appointments;
-    } catch (error) {
-      throw new Error("Error while fetching doctor appointment by date");
-    }
-  }
-
-  async getDoctorAppointmentName(firstname: string, lastname: string) {
-    try {
-      const appointments = await this.prisma.appointments.findMany({
-        where: {
-          firstname: firstname,
-          lastname: lastname,
-        },
-        orderBy: {
-          appointment_dateTime: "asc",
-        },
-      });
-      if (appointments.length === 0) {
-        return "No appointment found";
-      }
-      return appointments;
-    } catch (error) {
-      throw new Error(
-        "Error while fetching doctor appointment by patient name"
-      );
-    }
-  }
-
-  async getDoctorAppointmentStatus(status: string) {
-    try {
-      const status_prisma = Status[status as keyof typeof Status];
-      const appointments = await this.prisma.appointments.findMany({
-        where: {
+          appointment_dateTime: {
+            contains: date,
+          },
+          firstname: {
+            contains: firstname,
+          },
+          lastname: {
+            contains: lastname,
+          },
           status: status_prisma,
+          phone_number: {
+            contains: phone_number,
+          }
         },
         orderBy: {
           appointment_dateTime: "asc",
         },
       });
+
       if (appointments.length === 0) {
-        return "No appointment found";
+        return { error: "No appointment found.", status: 404 };
       }
+
       return appointments;
+
     } catch (error) {
-      throw new Error("Error while fetching doctor appointment by status");
+      return { error: "Error while fetching doctor appointment by parameters service: " + error, status: 500 };
     }
   }
 
-  async getDoctorAppointmentPhoneNumber(phone: string) {
-    try {
-      const appointments = await this.prisma.appointments.findMany({
-        where: {
-          phone_number: phone,
-        },
-      });
-      if (appointments.length === 0) {
-        return "No appointment found";
-      }
-      return appointments;
-    } catch (error) {
-      throw new Error(
-        "Error while fetching doctor appointment by phone number"
-      );
-    }
-  }
+  // Not used. Now change to getDoctorAppointmentByParameter
+  // async getDoctorAppointmentName(firstname: string, lastname: string) {
+  //   try {
+  //     const appointments = await this.prisma.appointments.findMany({
+  //       where: {
+  //         firstname: firstname,
+  //         lastname: lastname,
+  //       },
+  //       orderBy: {
+  //         appointment_dateTime: "asc",
+  //       },
+  //     });
+  //     if (appointments.length === 0) {
+  //       return "No appointment found";
+  //     }
+  //     return appointments;
+  //   } catch (error) {
+  //     throw new Error(
+  //       "Error while fetching doctor appointment by patient name"
+  //     );
+  //   }
+  // }
+
+  // async getDoctorAppointmentStatus(status: string) {
+  //   try {
+  //     const status_prisma = Status[status as keyof typeof Status];
+  //     const appointments = await this.prisma.appointments.findMany({
+  //       where: {
+  //         status: status_prisma,
+  //       },
+  //       orderBy: {
+  //         appointment_dateTime: "asc",
+  //       },
+  //     });
+  //     if (appointments.length === 0) {
+  //       return "No appointment found";
+  //     }
+  //     return appointments;
+  //   } catch (error) {
+  //     throw new Error("Error while fetching doctor appointment by status");
+  //   }
+  // }
+
+  // async getDoctorAppointmentPhoneNumber(phone: string) {
+  //   try {
+  //     const appointments = await this.prisma.appointments.findMany({
+  //       where: {
+  //         phone_number: phone,
+  //       },
+  //     });
+  //     if (appointments.length === 0) {
+  //       return "No appointment found";
+  //     }
+  //     return appointments;
+  //   } catch (error) {
+  //     throw new Error(
+  //       "Error while fetching doctor appointment by phone number"
+  //     );
+  //   }
+  // }
+
 
   //fix
   //ME
   async updateDoctorAppointment(data: any) {
     try {
       // ตรวจสอบว่ามีการจองอยู่หรือไม่
+
+      if (data.appointment_dateTime && isNaN(Date.parse(data.appointment_dateTime))) {
+        return { error: "Invalid date format", status: 400 };
+      }
+
       const checkBooking = await this.prisma.appointments.findUnique({
         where: {
           id: data.id,
@@ -177,10 +191,12 @@ class AppointmentService {
       });
 
       if (!checkBooking) {
-        throw new Error("Appointment not found");
+        return { error: "Appointment not found", status: 404 };
       }
 
-      if (checkBooking.appointment_dateTime !== data.appointment_dateTime) {
+      let updateEventId: string = checkBooking.eventId;
+
+      if (data.appointment_dateTime && checkBooking.appointment_dateTime !== data.appointment_dateTime) {
         if (checkBooking.eventId) {
           //delete
           await calendarService.deleteEvent(checkBooking.eventId);
@@ -196,9 +212,11 @@ class AppointmentService {
           description: data.symptom || "No description",
         });
 
-        data.eventId = newEventId;
-      } else {
-        data.eventId = checkBooking.eventId;
+        updateEventId = newEventId;
+      }
+
+      if (data.status == checkBooking.status) {
+        return { message: "No changes", status: 304 };
       }
 
       const booking = await this.prisma.appointments.update({
@@ -206,19 +224,15 @@ class AppointmentService {
           id: data.id,
         },
         data: {
-          firstname: data.firstname,
-          lastname: data.lastname,
-          phone_number: data.phone_number,
-          symptom: data.symptom,
-          appointment_dateTime: data.appointment_dateTime,
-          status: data.status,
-          eventId: data.eventId,
+          ...(data.appointment_dateTime && { appointment_dateTime: data.appointment_dateTime }),
+          ...(data.status && { status: data.status }),
+          ...(updateEventId && { eventId: updateEventId }),
         },
       });
 
       return booking;
     } catch (error) {
-      throw error;
+      return { error: "Error while updating doctor appointment service: " + error, status: 500 };
     }
   }
 
@@ -255,7 +269,6 @@ class AppointmentService {
   }
 
   //Me
-
   async updatePatientAppointment(data: any) {
     try {
       // ตรวจสอบว่ามีการจองอยู่หรือไม่
@@ -311,7 +324,7 @@ class AppointmentService {
 
   // Consider bettween date and id for cancellaiton
   // ลบการจอง ของคนไข้
-  // ต้องแก้ ถ้า  user จองซ้ำเยอะๆจะมีปัญหา และ ต้อง  check status ก่อนลบ
+  // ต้องแก้ ถ้า  user จองซ้ำเยอะๆจะมีปัญหา และ ต้อง  check status ก่อนลบ
   async cancelAppointment(data: any) {
     try {
       const booking = await this.prisma.appointments.findFirst({
@@ -319,16 +332,15 @@ class AppointmentService {
           firstname: data.firstname,
           lastname: data.lastname,
           phone_number: data.phone_number,
-          eventId: data.event, // Use eventId instead
+          eventId: data.eventId,
           NOT: {
-            status: "Canceled",
+            status: Status.CANCELED,
           },
         },
       });
 
       if (!booking) {
-        console.error("Booking not found with data:", data);
-        throw new Error("Booking not found");
+        return { error: "Booking not found", status: 404 };
       }
 
       //Delete the google calendar event
@@ -336,29 +348,26 @@ class AppointmentService {
         try {
           await calendarService.deleteEvent(booking.eventId);
         } catch (error) {
-          if (error instanceof Error) {
-            console.error(
-              "Error deleting Google Calendar event:",
-              error.message
-            );
-            throw new Error("Failed to delete the Google Calendar event.");
-          }
+          return { error: "Error while deleting the Google Calendar event.", status: 500 };
         }
       }
 
       //Update status to canceled in database
-      const status_prisma = "Canceled";
-      return await this.prisma.appointments.update({
+      const updateBooking = await this.prisma.appointments.update({
         where: {
           id: booking.id,
         },
         data: {
-          status: status_prisma,
+          status: Status.CANCELED,
         },
       });
+
+      return {
+        ...updateBooking,
+        status: Status[updateBooking.status] as string
+      };
     } catch (error) {
-      console.error("Error deleting booking:", error);
-      throw error;
+      return { error: "Error while deleting booking service:" + error, status: 500 };
     }
   }
 }
