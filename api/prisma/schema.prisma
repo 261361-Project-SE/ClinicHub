@@ -28,7 +28,7 @@ model Appointments {
   phone_number         String
   symptom              String
   appointment_dateTime String
-  status               Status
+  appointment_status   Status
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
