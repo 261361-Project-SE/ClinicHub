@@ -8,12 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import {
-  Bell as BellIcon,
-  AlignLeft,
-  MessagesSquare,
-  XIcon,
-} from "lucide-react";
+import { Bell as BellIcon, MessagesSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, memo, useEffect } from "react";
@@ -32,67 +27,16 @@ interface ButtonProps {
   icon: React.ReactNode;
 }
 
-const IconButton = memo(({ onClick, ariaLabel, icon }: ButtonProps) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (React.isValidElement(icon) && icon.type === AlignLeft) {
-      setIsSidebarOpen((prev) => !prev);
-    }
-    event.preventDefault();
-    onClick?.(event);
-  };
-
-  const renderSidebar = () => {
-    if (
-      !isSidebarOpen ||
-      !React.isValidElement(icon) ||
-      icon.type !== AlignLeft
-    ) {
-      return null;
-    }
-
-    return (
-      <aside
-        className="fixed inset-y-0 left-0 w-64 bg-whitegray-100 shadow-lg 
-                transform transition-transform duration-300 ease-in-out z-50 
-                rounded-r-2xl rounded-br-2xl"
-        role="complementary"
-        aria-label="Sidebar Menu"
-      >
-        <div className="p-4">
-          <header className="flex justify-between items-center mt-8">
-            <h2 className="text-xl font-bold">Menu</h2>
-            <button
-              onClick={() => setIsSidebarOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-full"
-              aria-label="Close menu"
-            >
-              <XIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
-            </button>
-          </header>
-          <nav aria-label="Sidebar navigation">
-            {/* Add your sidebar content here */}
-          </nav>
-        </div>
-      </aside>
-    );
-  };
-
-  return (
-    <>
-      <button
-        type="button"
-        className="p-2 hover:bg-white/10 rounded-full transition-colors relative"
-        aria-label={ariaLabel}
-        onClick={handleClick}
-      >
-        {icon}
-      </button>
-      {renderSidebar()}
-    </>
-  );
-});
+const IconButton = memo(({ onClick, ariaLabel, icon }: ButtonProps) => (
+  <button
+    type="button"
+    className="p-2 hover:bg-white/10 rounded-full transition-colors relative"
+    aria-label={ariaLabel}
+    onClick={onClick}
+  >
+    {icon}
+  </button>
+));
 
 IconButton.displayName = "IconButton";
 
@@ -100,12 +44,12 @@ const NotificationButton = memo(
   ({ onNotificationClick }: Pick<NavbarProps, "onNotificationClick">) => (
     <Dialog>
       <DialogTrigger asChild>
-        <button
-          className="flex items-center justify-center p-2 hover:bg-white/10 rounded-full transition-colors relative"
-          aria-label="Notifications"
-        >
-          <BellIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
-        </button>
+        <IconButton
+          ariaLabel="Notifications"
+          icon={
+            <BellIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
+          }
+        />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -156,7 +100,7 @@ const ActionButtons = memo(
     onMessageClick,
     onNotificationClick,
   }: Pick<NavbarProps, "onMessageClick" | "onNotificationClick">) => (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       <MessageButton onMessageClick={onMessageClick} />
       <NotificationButton onNotificationClick={onNotificationClick} />
     </div>
@@ -178,23 +122,19 @@ const MobileNav = memo(
       <div className="flex justify-between items-center p-4 bg-gradient-pink shadow-bg h-[220px] rounded-b-[12px]">
         <div className="flex flex-col w-full">
           <div className="flex justify-between w-full">
-            <IconButton
-              ariaLabel="Menu"
-              onClick={onMenuClick}
-              icon={
-                <AlignLeft className="h-6 w-6 text-black transition-transform" />
-              }
-            />
+            <p className="text-white text-base font-bold font-noto md:text-lg lg:text-xl">
+              จองการนัด และ ตรวจสอบนัดหมาย
+            </p>
             <ActionButtons
               onMessageClick={onMessageClick}
               onNotificationClick={onNotificationClick}
             />
           </div>
-          <div className="mt-8 flex items-center justify-start px-12 space-x-8">
+          <div className="mt-6 flex items-center justify-start px-12 space-x-8">
             <Logo src={logoSrc} alt={logoAlt} />
             <div className="text-black">
-              <div className="text-lg font-noto font-medium">สวัสดี,</div>
-              <div className="text-2xl font-semibold font-noto">{greeting}</div>
+              <div className="text-lg font-noto font-semibold">สวัสดี,</div>
+              <div className="text-2xl font-bold font-noto">{greeting}</div>
             </div>
           </div>
         </div>
@@ -219,7 +159,12 @@ const DesktopNav = memo(
       <div className="flex w-full shadow-bg min-h-20">
         <div className="flex max-w-7xl mx-auto px-4 w-full">
           <div className="flex justify-between items-center min-h-max w-full">
-            <Logo src={logoSrc} alt={logoAlt} />
+            <div className="flex items-center space-x-4">
+              <Logo src={logoSrc} alt={logoAlt} />
+              <h1 className="block text-white text-xl font-medium text-start font-noto rounded-lg">
+                จองการนัด และ ตรวจสอบนัดหมาย
+              </h1>
+            </div>
             <ActionButtons
               onMessageClick={onMessageClick}
               onNotificationClick={onNotificationClick}
@@ -235,13 +180,14 @@ DesktopNav.displayName = "DesktopNav";
 
 const Navbar = memo(
   ({
-    onMenuClick,
     onNotificationClick,
     onMessageClick,
     logoSrc = "/logo.png",
     logoAlt = "Mongkhonsi",
   }: NavbarProps) => {
     const [greeting, setGreeting] = useState("");
+    const [isVisible, setIsVisible] = useState(true);
+    let lastScrollY = 0;
 
     useEffect(() => {
       const hour = new Date().getHours();
@@ -253,10 +199,28 @@ const Navbar = memo(
       setGreeting(getGreeting());
     }, []);
 
+    useEffect(() => {
+      const handleScroll = () => {
+        if (typeof window !== "undefined") {
+          const currentScrollY = window.scrollY;
+          setIsVisible(currentScrollY < lastScrollY || currentScrollY < 10);
+          lastScrollY = currentScrollY;
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
+
     return (
-      <nav className="fixed top-0 left-0 right-0 z-50">
+      <nav
+        className={`top-0 left-0 right-0 z-50 transition-transform duration-300 ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <MobileNav
-          onMenuClick={onMenuClick}
           onNotificationClick={onNotificationClick}
           onMessageClick={onMessageClick}
           logoSrc={logoSrc}
