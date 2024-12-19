@@ -14,10 +14,10 @@ datasource db {
 }
 
 enum Status {
-  Pending
-  Confirmed
-  Canceled
-  Completed
+  PENDING
+  CONFIRMED
+  CANCELED
+  COMPLETED
 }
 
 model Appointments {
@@ -28,7 +28,7 @@ model Appointments {
   phone_number         String
   symptom              String
   appointment_dateTime String
-  status               String
+  status               Status
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
