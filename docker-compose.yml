@@ -31,9 +31,10 @@ services:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "4444:5000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - NODE_ENV=development
     networks:
