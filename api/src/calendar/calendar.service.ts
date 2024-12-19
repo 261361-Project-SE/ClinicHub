@@ -36,7 +36,7 @@ class CalendarService {
     hour: number;
     minute: number;
     description?: string;
-  }): Promise<string> {
+  }): Promise<{ eventID?: string; error?: string; status?: number }> {
     const { year, month, day, hour, minute, description } = eventDetails;
 
     // const eventStartTime = new Date(year, month - 1, day, hour, minute);
@@ -44,7 +44,7 @@ class CalendarService {
       Date.UTC(year, month - 1, day, hour - 7, minute)
     ); // Use UTC directly
     if (eventStartTime.getMinutes() % 15 !== 0) {
-      throw new Error("Please select a time that is a multiple of 15 minutes.");
+      return { error: "Please select a time that is a multiple of 15 minutes.", status: 400 };
     }
     // const eventEndTime = new Date(eventStartTime.getTime() + 15 * 60000);
     const eventEndTime = new Date(
@@ -78,7 +78,7 @@ class CalendarService {
 
     const busyTimes = freeBusy?.data?.calendars?.primary?.busy || [];
     if (busyTimes.length > 0) {
-      throw new Error("Time slot is busy.");
+      return { error: "Time slot is busy.", status: 400 };
     }
 
     // Create the event
@@ -87,17 +87,26 @@ class CalendarService {
       requestBody: calendarEvent,
     });
 
-    return response.data.id || "Event created, but no event ID returned.";
+    if (!response.data.id) {
+      return { error: "Event created, but no event ID returned.", status: 400 };
+    }
+
+    return { eventID: response.data.id, status: 200 };
   }
 
-  async deleteEvent(eventId: string): Promise<void> {
+  async deleteEvent(eventId: string): Promise<void | { error?: string; message?: string; status?: number }> {
     if (!eventId) {
-      throw new Error("Event ID is required.");
+      return { error: "Event ID is required", status: 400 };
     }
-    await calendar.events.delete({
-      calendarId: "primary",
-      eventId,
-    });
+    try {
+      await calendar.events.delete({
+        calendarId: "primary",
+        eventId,
+      });
+      return { message: "Event deleted successfully", status: 200 };
+    } catch (error) {
+      return { error: "Failed to delete event", status: 500 };
+    }
   }
 }
 
