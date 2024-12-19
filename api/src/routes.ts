@@ -8,7 +8,6 @@ const registerRoutes = (app: express.Application) => {
   app.use("/", appointmentRouter);
   app.use('/docs', swaggerRouter);
   app.use('/calendar', calendarRouter);
-
 };
 
 export default registerRoutes;

@@ -7,7 +7,6 @@
   },
   "tags": [
     {
-
       "name": "Doctor",
       "description": "Operations related to doctors"
     },
@@ -18,10 +17,8 @@
     {
       "name": "Shared",
       "description": "Operations shared between doctors and patients"
-
     }
   ],
-
   "paths": {
     "/doctor/appointment": {
       "get": {
@@ -95,7 +92,6 @@
             "content": {
               "application/json": {
                 "schema": {
-
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -141,7 +137,6 @@
         },
         "responses": {
           "200": {
-
             "description": "Appointment updated successfully"
           }
         }
@@ -183,7 +178,6 @@
           }
         },
         "responses": {
-
           "201": {
             "description": "Appointment created successfully"
           }
@@ -203,7 +197,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-
                   "appointmentId": {
                     "type": "string",
                     "description": "ID of the appointment to cancel"
@@ -215,7 +208,6 @@
         },
         "responses": {
           "200": {
-
             "description": "Appointment deleted successfully"
           }
         }
