@@ -5,6 +5,7 @@ const router: Router = express.Router();
 // Doctor routes
 router.get("/doctor/appointment", appointmentController.getDoctorAppointment);
 router.patch("/doctor/appointment/update", appointmentController.updateDoctorAppointment);
+// router.patch("/doctor/appointment/status/update", appointmentController.updateDoctorAppointmentStatus);
 
 // Patient routes
 router.get("/patient/appointment", appointmentController.getPatientAppointment);

@@ -159,12 +159,34 @@ class AppointmentController {
   // อัพเดทข้อมูลการจอง ของคนไข้ update ได้หมด
   async updatePatientAppointment(req: Request, res: Response) {
     try {
-      const result = await appointmentService.updatePatientAppointment(
-        req.body
+      console.log(req.body);
+      const { id, appointment_dateTime, symptom, firstname, lastname, phone_number } = req.body;
+
+      if (!id || !(appointment_dateTime || symptom || firstname || lastname || phone_number)) {
+        res.status(400).send({ error: "Missing required fields", status: 400 });
+        return;
+      }
+
+      if (appointment_dateTime && !validateDateTimeFormat(appointment_dateTime)) {
+        res.status(400).send({ error: "Appointment date time is invalid", status: 400 });
+        return;
+      }
+
+      const result: any = await appointmentService.updatePatientAppointment(
+        id,
+        firstname,
+        lastname,
+        phone_number,
+        appointment_dateTime,
+        symptom
       );
-      res.status(200).send(result);
+      if (result.error) {
+        res.status(result.status).send(result);
+      } else {
+        res.status(200).send(result);
+      }
     } catch (err: any) {
-      res.status(400).send({ error: err.message });
+      res.status(500).send({ error: "An unexpected error occurred while updating patient appointment controller:" + err.message });
     }
   }
 
@@ -182,11 +204,7 @@ class AppointmentController {
         res.status(200).send(result);
       }
     } catch (err: any) {
-      if (err.message.includes("Time slot is busy.")) {
-        res.status(400).send({ error: "Time slot is busy." });
-      } else {
-        res.status(500).send({ error: "An unexpected error occurred while canceling appointment controller:" + err.message });
-      }
+      res.status(500).send({ error: "An unexpected error occurred while canceling appointment controller:" + err.message });
     }
   }
 }
