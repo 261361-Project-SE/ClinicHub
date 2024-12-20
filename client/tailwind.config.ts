@@ -10,7 +10,8 @@ const config: Config = {
   theme: {
   	extend: {
   		boxShadow: {
-  			'shadow-bg': '0 4px 20px 0 rgba(0,0,0,0.05)'
+  			'shadow-bg': '0 4px 20px 0 rgba(0,0,0,0.05)',
+  			'shadow-bg-2': '0 10px 4px 0 rgba(0,0,0,0.05)'
   		},
   		backgroundImage: {
   			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -56,6 +57,11 @@ const config: Config = {
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
   			chart: {
+  				'1': 'hsl(var(--chart-1))',
+  				'2': 'hsl(var(--chart-2))',
+  				'3': 'hsl(var(--chart-3))',
+  				'4': 'hsl(var(--chart-4))',
+  				'5': 'hsl(var(--chart-5))',
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',
   				'3': 'hsl(var(--chart-3))',

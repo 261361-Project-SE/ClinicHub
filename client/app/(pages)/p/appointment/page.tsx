@@ -4,6 +4,7 @@ import { validateName, validatePhone } from "../(utils)/validation";
 import AppointmentDialog from "../components/AppointmentDialog";
 import AppointmentDialogmobile from "../components/AppointmentDialogmobile";
 import { CalendarDays, MessagesSquare } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const MobileBookingPage: React.FC<{
@@ -25,9 +26,13 @@ const MobileBookingPage: React.FC<{
 }) => (
   <div className="mx-auto w-full max-w-6xl mb-24 font-noto font-medium text-lg text-center">
     <div className="flex items-center justify-center gap-10">
-      <button className="w-[150px] h-[50px] bg-pink-400 text-white rounded-lg hover:scale-105 transition-transform">
+      <Link
+        href="/p/booking"
+        className="w-[150px] h-[50px] bg-pink-400 text-white rounded-lg hover:scale-105 transition-transform flex items-center justify-center"
+      >
         จองการนัด
-      </button>
+      </Link>
+
       <AppointmentDialogmobile
         name={name}
         setName={setName}
