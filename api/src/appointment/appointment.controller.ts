@@ -89,17 +89,33 @@ class AppointmentController {
   //  รับ UID เพื่อ หา และ อัพเดทข้อมูล
   async updateDoctorAppointment(req: Request, res: Response) {
     try {
+
       const { id, appointment_dateTime, status } = req.body;
+
       if (!id || !(appointment_dateTime || status)) {
         res.status(400).send({ error: "Missing required fields", status: 400 });
         return;
       }
 
+      if (appointment_dateTime && !validateDateTimeFormat(appointment_dateTime)) {
+        res.status(400).send({ error: "Appointment date time is invalid", status: 400 });
+        return;
+      }
+
+      if (status && !Object.values(Status).includes(status as Status)) {
+        res.status(400).send({ error: "Invalid status", status: 400 });
+        return;
+      }
+
       const result: any = await appointmentService.updateDoctorAppointment(id, appointment_dateTime, status);
 
-      res.status(result.status).send(result);
+      if (result.error) {
+        res.status(result.status).send(result);
+      } else {
+        res.status(200).send(result);
+      }
     } catch (err: any) {
-      res.status(500).send({ error: "An unexpected error occurred while updating doctor appointment controller:" + err.message });
+      res.status(500).send({ error: "An unexpected error occurred while updating doctor appointment controller:" + err });
     }
   }
 

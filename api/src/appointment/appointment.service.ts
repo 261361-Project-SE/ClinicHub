@@ -189,11 +189,6 @@ class AppointmentService {
   async updateDoctorAppointment(id: number, appointment_dateTime: string, status: string) {
     try {
       // ตรวจสอบว่ามีการจองอยู่หรือไม่
-
-      if (appointment_dateTime && isNaN(Date.parse(appointment_dateTime))) {
-        return { error: "Invalid date format", status: 400 };
-      }
-
       const checkBooking = await this.prisma.appointments.findUnique({
         where: {
           id: id,
