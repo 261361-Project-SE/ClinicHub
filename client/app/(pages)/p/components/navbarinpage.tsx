@@ -15,9 +15,7 @@ interface ButtonProps {
   icon: React.ReactNode;
 }
 
-interface NotificationButtonProps {
-  ariaLabel: string;
-  icon: React.ReactNode;
+interface NotificationButtonProps extends ButtonProps {
   onNotificationClick: () => void;
 }
 
@@ -91,15 +89,17 @@ const NavbarInPage = () => {
   };
 
   return (
-    <div className="flex  justify-end p-4   ">
+    <div className="flex justify-end p-4">
       <div className="flex flex-col w-full">
         <div className="flex justify-between w-full">
           <p className="text-white text-base font-bold font-noto md:text-lg lg:text-xl"></p>
         </div>
-        <ActionButtons
-          onMessageClick={onMessageClick}
-          onNotificationClick={onNotificationClick}
-        />
+        <div className="flex justify-end">
+          <ActionButtons
+            onMessageClick={onMessageClick}
+            onNotificationClick={onNotificationClick}
+          />
+        </div>
       </div>
     </div>
   );
