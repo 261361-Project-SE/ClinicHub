@@ -96,10 +96,10 @@ const BookingPage: React.FC = () => {
         </div>
         <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-6">
           <button
-            className={`${buttonClasses} w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-pink-400 text-white ${commonButtonStyles}`}
+            className={`${buttonClasses} w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-pink-400 text-white ${commonButtonStyles}  `}
           >
             <CalendarDays
-              className="icon-size w-20 h-20 sm:w-24 sm:h-24 md:w-24 md:h-24"
+              className="icon-size w-20 h-20 sm:w-24 sm:h-24 md:w-24 md:h-24 rounded-2xl shadow-md"
               strokeWidth={2}
             />
             <span className="text-3xl sm:text-3xl md:text-4xl font-noto">
@@ -118,7 +118,7 @@ const BookingPage: React.FC = () => {
           />
 
           <button
-            className={`${buttonClasses} flex flex-col items-center justify-center w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-green-1000 text-white rounded-lg transition-transform duration-200`}
+            className={`${buttonClasses} flex flex-col items-center justify-center w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-green-300 text-white rounded-2xl transition-transform duration-200`}
           >
             <MessagesSquare className="icon-size w-24 h-24" strokeWidth={2} />
             <span className="text-xl font-noto pt-4">ประเมินความพึงพอใจ</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import BookingLayout from "./BookingLayout";
+import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import React, { useState } from "react";
 
 const BookingPage: React.FC = () => {
@@ -22,6 +23,7 @@ const BookingPage: React.FC = () => {
         จองการนัดหมาย
       </h1>
       <p className="mt-2 text-gray-600">เวลาทำการ:</p>
+      <Calendar onDayClick={onDateSelect} />
       <div className="flex flex-col items-center justify-center font-noto h-fit">
         <div className="flex gap-6 mt-6 ">
           <button className="bg-gray-300 text-black hover:bg-gray-400 shadow-md w-[173px] h-[50px] rounded-lg">

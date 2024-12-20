@@ -119,7 +119,7 @@ const MobileNav = memo(
     greeting,
   }: NavbarProps & { greeting: string }) => (
     <div className="md:hidden">
-      <div className="flex justify-between items-center p-4 bg-gradient-pink shadow-bg h-[220px] rounded-b-[12px]">
+      <div className="flex justify-between items-center p-4 bg-gradient-to-r from-pink-500 to-pink-300 shadow-bg h-[220px] rounded-b-[12px]">
         <div className="flex flex-col w-full">
           <div className="flex justify-between w-full">
             <p className="text-white text-base font-bold font-noto md:text-lg lg:text-xl">
@@ -155,7 +155,7 @@ const DesktopNav = memo(
     NavbarProps,
     "onMessageClick" | "onNotificationClick" | "logoSrc" | "logoAlt"
   >) => (
-    <div className="hidden md:flex">
+    <div className="hidden md:block">
       <div className="flex w-full shadow-bg min-h-20">
         <div className="flex max-w-7xl mx-auto px-4 w-full">
           <div className="flex justify-between items-center min-h-max w-full">
