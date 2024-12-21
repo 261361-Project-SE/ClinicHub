@@ -29,12 +29,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
           <section className="flex-1 h-full p-5">
             <header className="flex items-center justify-between h-[86px] px-6 bg-white shadow-shadow-bg rounded-xl">
-              <h1 className="text-2xl text-darkgray font-medium md:text-3xl xl:text-4xl">
+              <h1 className="text-2xl font-medium text-darkgray md:text-3xl xl:text-4xl">
                 {pageTitle}
               </h1>
 
               <div className="flex items-center gap-x-2">
-                <div className="text-primary bg-lightgray-100 text-lightgray text-left rounded-xl px-8 py-2">
+                <div className="px-8 py-2 text-left text-primary bg-lightgray-100 text-lightgray rounded-xl">
                   ค้นหาการนัดหมาย, ชื่อคนไข้, หมายเลขโทรศัพท์
                 </div>
                 <div className="p-2 bg-lightgray-100 text-lightgray rounded-xl">
