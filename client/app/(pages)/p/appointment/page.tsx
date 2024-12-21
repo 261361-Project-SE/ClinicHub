@@ -32,7 +32,6 @@ const MobileBookingPage: React.FC<{
       >
         จองการนัด
       </Link>
-
       <AppointmentDialogmobile
         name={name}
         setName={setName}
@@ -97,10 +96,10 @@ const BookingPage: React.FC = () => {
         <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-6">
           <Link href="/p/booking">
             <button
-              className={`${buttonClasses} w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-pink-400 text-white ${commonButtonStyles}  `}
+              className={`${buttonClasses} w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-pink-400 text-white ${commonButtonStyles}`}
             >
               <CalendarDays
-                className="icon-size w-20 h-20 sm:w-24 sm:h-24 md:w-24 md:h-24 "
+                className="icon-size w-20 h-20 sm:w-24 sm:h-24 md:w-24 md:h-24"
                 strokeWidth={2}
               />
               <span className="text-3xl sm:text-3xl md:text-4xl font-noto">

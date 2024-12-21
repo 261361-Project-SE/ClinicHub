@@ -1,4 +1,4 @@
-import { buttonVariants } from "@/app/(pages)/p/components/ui/button";
+import { buttonVariants } from "@/app/(pages)/p/components/ui/Button";
 import { cn } from "@/app/(pages)/p/lib/utils";
 import { th } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";

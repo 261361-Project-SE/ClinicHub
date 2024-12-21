@@ -1,3 +1,4 @@
+import { validateName, validatePhone } from "../(utils)/validation";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/app/(pages)/p/components/ui/dialog";
 import { ClipboardCheck } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 interface AppointmentDialogProps {
   name: string;
@@ -18,7 +19,25 @@ interface AppointmentDialogProps {
   invalidPhone: boolean;
   handleValidation: () => void;
 }
-
+const InputField: React.FC<{
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  invalid: boolean;
+  errorMessage: string;
+}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
+  <>
+    <input
+      type={type}
+      placeholder={placeholder}
+      className={`border rounded-md p-2 ${invalid ? "border-red-500" : ""}`}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+    {invalid && <span className="text-red-500 text-sm">{errorMessage}</span>}
+  </>
+);
 const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
   name,
   setName,
@@ -28,6 +47,21 @@ const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
   invalidPhone,
   handleValidation,
 }) => {
+  const [isInvalidName, setIsInvalidName] = useState(false);
+  const [isInvalidPhone, setIsInvalidPhone] = useState(false);
+  const errorMessageName = "กรุณากรอกเป็นภาษาไทย";
+  const errorMessagePhone = "กรุณากรอกเป็นตัวเลขเท่านั้น";
+
+  const handleNameChange = (value: string) => {
+    setName(value);
+    setIsInvalidName(!validateName(value));
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhone(value);
+    setIsInvalidPhone(!validatePhone(value));
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -50,17 +84,17 @@ const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
             type="text"
             placeholder="ชื่อ - นามสกุล"
             value={name}
-            onChange={setName}
-            invalid={invalidName}
-            errorMessage="กรุณากรอกเป็นภาษาไทย"
+            onChange={handleNameChange}
+            invalid={isInvalidName}
+            errorMessage={errorMessageName}
           />
           <InputField
             type="tel"
             placeholder="เบอร์โทรศัพท์"
             value={phone}
-            onChange={setPhone}
-            invalid={invalidPhone}
-            errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
+            onChange={handlePhoneChange}
+            invalid={isInvalidPhone}
+            errorMessage={errorMessagePhone}
           />
           <button
             className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-[100px] ml-auto font-noto text-center font-normal"
@@ -73,25 +107,5 @@ const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
     </Dialog>
   );
 };
-
-const InputField: React.FC<{
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
-  <>
-    <input
-      type={type}
-      placeholder={placeholder}
-      className={`border rounded-md p-2 ${invalid ? "border-red-500" : ""}`}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-    {invalid && <span className="text-red-500 text-sm">{errorMessage}</span>}
-  </>
-);
 
 export default AppointmentDialog;

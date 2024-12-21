@@ -45,17 +45,23 @@ const AppointmentDialogmobile: React.FC<AppointmentDialogMobileProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex flex-col space-y-4">
-            <InputField
+            <FirstNameField
               type="text"
-              placeholder="ชื่อ - นามสกุล"
+              placeholder="ชื่อ"
               value={name}
               onChange={setName}
               invalid={invalidName}
               errorMessage="กรุณากรอกเป็นภาษาไทย"
             />
-            <InputField
-              type="tel"
-              placeholder="เบอร์โทรศัพท์"
+            <LastNameField
+              type="text"
+              placeholder="นามสกุล"
+              value={name}
+              onChange={setName}
+              invalid={invalidName}
+              errorMessage="กรุณากรอกเป็นภาษาไทย"
+            />
+            <PhoneNumberField
               value={phone}
               onChange={setPhone}
               invalid={invalidPhone}
@@ -92,6 +98,58 @@ const InputField: React.FC<{
     />
     {invalid && <span className="text-red-500 text-sm">{errorMessage}</span>}
   </>
+);
+
+const FirstNameField: React.FC<{
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  invalid: boolean;
+  errorMessage: string;
+}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
+  <InputField
+    type={type}
+    placeholder={placeholder}
+    value={value}
+    onChange={onChange}
+    invalid={invalid}
+    errorMessage={errorMessage}
+  />
+);
+
+const LastNameField: React.FC<{
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  invalid: boolean;
+  errorMessage: string;
+}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
+  <InputField
+    type={type}
+    placeholder={placeholder}
+    value={value}
+    onChange={onChange}
+    invalid={invalid}
+    errorMessage={errorMessage}
+  />
+);
+
+const PhoneNumberField: React.FC<{
+  value: string;
+  onChange: (value: string) => void;
+  invalid: boolean;
+  errorMessage: string;
+}> = ({ value, onChange, invalid, errorMessage }) => (
+  <InputField
+    type="tel"
+    placeholder="เบอร์โทรศัพท์"
+    value={value}
+    onChange={onChange}
+    invalid={invalid}
+    errorMessage={errorMessage}
+  />
 );
 
 export default AppointmentDialogmobile;

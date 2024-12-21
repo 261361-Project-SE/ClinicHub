@@ -56,7 +56,6 @@ const NotificationButton = memo(
           <DialogTitle>Notifications</DialogTitle>
           <DialogDescription>Here are your notifications.</DialogDescription>
         </DialogHeader>
-        {/* Add notification content here */}
       </DialogContent>
     </Dialog>
   )
