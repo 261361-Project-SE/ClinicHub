@@ -42,9 +42,9 @@ class AppointmentController {
   // ดู การจองทั้งหมด หมอ
   async getDoctorAppointment(req: Request, res: Response) {
     try {
-      const { date, name, status, phone_number } = req.query;
+      const { date, firstname, lastname, status, phone_number } = req.query;
 
-      if (!date && !name && !status && !phone_number) {
+      if (!date && !firstname && !lastname && !status && !phone_number) {
         const result: any = await appointmentService.getDoctorAppointmentAll();
         if (result.error) {
           res.status(result.status).send(result);
@@ -59,13 +59,10 @@ class AppointmentController {
         return;
       }
 
-      if (!date && !name && !status && !phone_number) {
+      if (!date && !firstname && !lastname && !status && !phone_number) {
         res.status(400).send({ error: "Bad request invalid parameter" });
         return;
       }
-
-      const firstname = name ? (name as string).split(" ")[0] : null;
-      const lastname = name ? (name as string).split(" ")[1] : null;
 
       const result: any = await appointmentService.getDoctorAppointmentByParameter(
         date as string,
