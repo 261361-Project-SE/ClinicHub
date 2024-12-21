@@ -37,7 +37,6 @@ class AppointmentService {
       if (checkBooking.length > 0) {
         return { error: "Time slot already taken", status: 400 };
       }
-      let eventID = "";
       const dateTime = new Date(appointment_dateTime);
       const response = await calendarService.createEvent({
         year: dateTime.getFullYear(),
@@ -47,10 +46,11 @@ class AppointmentService {
         minute: dateTime.getMinutes(),
         description: symptom || "No description",
       });
+      let eventID = response.eventID || ""
 
       const booking = await this.prisma.appointments.create({
         data: {
-          eventId: eventID || "",
+          eventId: eventID,
           firstname: firstname,
           lastname: lastname,
           phone_number: phone_number,
