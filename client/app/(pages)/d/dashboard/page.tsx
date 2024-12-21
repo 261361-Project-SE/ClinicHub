@@ -1,34 +1,27 @@
 "use client";
 
-import {
-  CalendarClockIcon,
-  FrownIcon,
-  MehIcon,
-  SmileIcon,
-  UserIcon,
-} from "lucide-react";
+import AppointmentCard from "@/components/dashboard/AppointmentCard";
+import AppointmentTable from "@/components/dashboard/AppointmentTable";
+import PatientGraph from "@/components/dashboard/PatientGraph";
+// mock data
+import { appointmentsData } from "@/helper/SampleData";
+import { FrownIcon, MehIcon, SmileIcon, UserIcon } from "lucide-react";
 
 const DashboardPage = () => {
   return (
     <div className="flex flex-col gap-y-6">
       {/* Top section */}
       <div className="flex gap-x-9 w-full h-[195px]">
-        <div className="flex items-center justify-center w-1/3 p-4 bg-white rounded-xl shadow-shadow-bg gap-8">
-          <CalendarClockIcon color="#FB6F92" size={84} />
-          <div className="flex flex-col gap-y-2">
-            <div className="text-3xl text-darkgray">การนัดหมายวันนี้</div>
-            <div className="text-4xl">5</div>
-            <div className="text-lightgray">4 ธันวาคม 2567</div>
-          </div>
-        </div>
-        <div className="flex items-center justify-center w-1/3 p-4 bg-white rounded-xl shadow-shadow-bg gap-8">
-          <CalendarClockIcon color="#FB6F92" size={84} />
-          <div className="flex flex-col gap-y-2">
-            <div className="text-3xl text-darkgray">การนัดหมายที่รอยืนยัน</div>
-            <div className="text-4xl">5</div>
-            <div className="text-lightgray">4 ธันวาคม 2567</div>
-          </div>
-        </div>
+        <AppointmentCard
+          title="การนัดหมายวันนี้"
+          count="5"
+          date="4 ธันวาคม 2567"
+        />
+        <AppointmentCard
+          title="การนัดหมายที่รอยืนยัน"
+          count="5"
+          date="4 ธันวาคม 2567"
+        />
         <div className="w-1/3 p-4 bg-white rounded-xl shadow-shadow-bg">
           <div className="flex flex-col gap-y-2">
             <div className="flex flex-col gap-y-2">
@@ -54,13 +47,17 @@ const DashboardPage = () => {
           <div className="font-medium text-darkgray">
             สรุปจำนวนคนไข้ ธันวาคม 2567
           </div>
-          <div>กราฟ</div>
+          <div>
+            <PatientGraph />
+          </div>
           <div>label</div>
         </div>
         <div className="flex flex-col justify-between w-1/3 p-2 bg-pink-300/20 rounded-xl">
           <div className="flex flex-col gap-y-2">
             <div className="font-medium text-pink-200">การนัดหมายวันนี้</div>
-            <div>ตาราง</div>
+            <div>
+              <AppointmentTable appointments={appointmentsData} />
+            </div>
           </div>
           <div className="font-bold text-pink-200 cursor-pointer">
             ดูทั้งหมด
@@ -90,9 +87,11 @@ const DashboardPage = () => {
           <MehIcon size={36} fill="#FFBC41" />
           <FrownIcon size={36} fill="#E57373" />
         </div>
+        {/* Pending Appointment */}
         <div className="w-1/3 p-4 bg-white font-medium rounded-xl shadow-shadow-bg text-darkgray">
           การนัดหมายที่รอยืนยัน
         </div>
+        {/* Calendar */}
         <div className="w-1/3 p-4 bg-white rounded-xl shadow-shadow-bg">
           <div className="flex justify-between">
             <div className="font-medium text-pink-200">ปฏิทิน</div>
