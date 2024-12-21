@@ -81,14 +81,14 @@ const DashboardPage = () => {
       </div>
       {/* Bottom section */}
       <div className="flex gap-x-9 w-full h-[201px]">
-        <div className="w-1/3 p-4 bg-white rounded-xl gap-y-2 flex flex-col shadow-shadow-bg">
-          <div className="text-darkgray font-medium">ความพึงพอใจการใช้งาน</div>
+        <div className="flex flex-col w-1/3 p-4 bg-white rounded-xl gap-y-2 shadow-shadow-bg">
+          <div className="font-medium text-darkgray">ความพึงพอใจการใช้งาน</div>
           <SmileIcon size={36} fill="#98C99F" />
           <MehIcon size={36} fill="#FFBC41" />
           <FrownIcon size={36} fill="#E57373" />
         </div>
         {/* Pending Appointment */}
-        <div className="w-1/3 p-4 bg-white font-medium rounded-xl shadow-shadow-bg text-darkgray">
+        <div className="w-1/3 p-4 font-medium bg-white rounded-xl shadow-shadow-bg text-darkgray">
           การนัดหมายที่รอยืนยัน
         </div>
         {/* Calendar */}
