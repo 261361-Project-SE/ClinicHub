@@ -14,10 +14,10 @@ datasource db {
 }
 
 enum Status {
-  Pending
-  Confirmed
-  Canceled
-  Completed
+  PENDING
+  CONFIRMED
+  CANCELED
+  COMPLETED
 }
 
 model Appointments {
@@ -28,21 +28,7 @@ model Appointments {
   phone_number         String
   symptom              String
   appointment_dateTime String
-  status               String
+  appointment_status   Status
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
-}
-
-model Booking {
-  UID           String   @id @default(uuid())
-  firstname    String
-  lastname     String
-  age          Int
-  phone_number String
-  details      String
-  appointment_date  String 
-  appointment_time  String 
-  status       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }

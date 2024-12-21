@@ -5,14 +5,15 @@ const router: Router = express.Router();
 // Doctor routes
 router.get("/doctor/appointment", appointmentController.getDoctorAppointment);
 router.patch("/doctor/appointment/update", appointmentController.updateDoctorAppointment);
+// router.patch("/doctor/appointment/status/update", appointmentController.updateDoctorAppointmentStatus);
 
 // Patient routes
-router.get("patient/appointment", appointmentController.getPatientAppointment);
+router.get("/patient/appointment", appointmentController.getPatientAppointment);
 router.patch("/patient/appointment/update", appointmentController.updatePatientAppointment);
 
 // Shared route
 router.post("/appointment/create", appointmentController.createAppointment);
-router.delete("/appointment/cancel", appointmentController.cancelAppoitnment);
+router.delete("/appointment/cancel", appointmentController.cancelAppointment);
 
 export default router;
 
