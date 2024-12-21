@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
+} from "@/app/(pages)/p/components/ui/dialog";
 import { ClipboardCheck } from "lucide-react";
 import React from "react";
 

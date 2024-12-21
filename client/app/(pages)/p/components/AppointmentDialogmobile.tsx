@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
+} from "@/app/(pages)/p/components/ui/dialog";
 import React from "react";
 
 interface AppointmentDialogMobileProps {
