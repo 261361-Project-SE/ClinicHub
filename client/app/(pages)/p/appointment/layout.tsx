@@ -16,11 +16,11 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       <body
         className={`${inter.className} min-h-screen antialiased overflow-x-hidden w-full`}
       >
-        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-pink -z-10 hidden lg:block" />
+        <div className="absolute top-0 left-0 hidden w-full h-1/2 bg-gradient-pink -z-10 lg:block" />
         <Navbar />
-        <main className="relative mt-16 w-full">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">{children}</div>
+        <main className="relative w-full mt-16">
+          <div className="container px-4 mx-auto sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">{children}</div>
           </div>
         </main>
       </body>
