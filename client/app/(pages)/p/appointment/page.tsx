@@ -28,7 +28,7 @@ const MobileBookingPage: React.FC<{
     <div className="flex items-center justify-center gap-10">
       <Link
         href="/p/booking"
-        className="w-[150px] h-[50px] bg-pink-400 text-white rounded-lg hover:scale-105 transition-transform flex items-center justify-center"
+        className="w-[150px] h-[50px] bg-pink-200 text-white rounded-full hover:scale-105 transition-transform flex items-center justify-center"
       >
         จองการนัด
       </Link>
@@ -43,7 +43,7 @@ const MobileBookingPage: React.FC<{
         handleValidation={handleValidation}
       />
     </div>
-    <div className="bg-white rounded-lg shadow-md p-6 mb-4 h-[600px]">
+    <div className="bg-white rounded-full shadow-md p-6 mb-4 h-[600px]">
       <h2 className="text-gray-700 text-2xl font-medium mb-2">
         คู่มือ รายละเอียดการจอง
       </h2>

@@ -157,7 +157,7 @@ const DesktopNav = memo(
   >) => (
     <div className="hidden md:block">
       <div className="flex w-full shadow-bg min-h-20">
-        <div className="flex max-w-7xl mx-auto px-4 w-full">
+        <div className="flex max-w-auto mx-auto px-4 w-full">
           <div className="flex justify-between items-center min-h-max w-full">
             <div className="flex items-center space-x-4">
               <Logo src={logoSrc} alt={logoAlt} />

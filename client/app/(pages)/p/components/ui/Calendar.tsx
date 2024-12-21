@@ -32,57 +32,57 @@ const Calendar: React.FC<CalendarProps> = ({
       showOutsideDays={showOutsideDays}
       locale={th}
       className={cn(
-        "p-3 bg-white",
+        "p-4 bg-white",
         {
-          "md:w-[922px] md:h-[562px] md:p-4": isDesktop,
+          "md:max-w-7xl md:h-[600px] md:p-4": isDesktop,
         },
         className
       )}
       classNames={{
         months: cn(
-          "flex flex-col sm:flex-row space-y-6 sm:space-x-6 sm:space-y-0",
+          "flex flex-col sm:flex-row space-y-8 sm:space-x-6 sm:space-y-0",
           {
-            "md:w-full md:justify-center": isDesktop,
+            "md:w-full md:justify-center md:max-w-7xl": isDesktop,
           }
         ),
-        month: cn("space-y-4", {
-          "md:w-full md:max-w-[800px]": isDesktop,
+        month: cn("space-y-6", {
+          "md:w-full md:max-w-7xl": isDesktop,
         }),
-        caption: cn("flex justify-center pt-1 relative items-center", {
+        caption: cn("flex justify-center pt-2 relative items-center", {
           "md:py-4": isDesktop,
         }),
-        caption_label: cn("text-sm font-medium", {
+        caption_label: cn("text-base font-medium", {
           "md:text-2xl": isDesktop,
         }),
-        nav: "space-x-1 flex items-center",
+        nav: "space-x-2 flex items-center",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100",
           {
             "md:h-12 md:w-12": isDesktop,
           }
         ),
-        nav_button_previous: cn("absolute left-1", {
+        nav_button_previous: cn("absolute left-2", {
           "md:left-4": isDesktop,
         }),
-        nav_button_next: cn("absolute right-1", {
+        nav_button_next: cn("absolute right-2", {
           "md:right-4": isDesktop,
         }),
-        table: cn("w-full border-collapse space-y-1", {
+        table: cn("w-full border-collapse space-y-2", {
           "md:mt-4": isDesktop,
         }),
         head_row: "flex justify-center",
         head_cell: cn(
-          "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+          "text-muted-foreground rounded-md w-12 font-normal text-[0.9rem]",
           {
             "md:w-[88px] md:text-sm md:font-medium": isDesktop,
           }
         ),
-        row: cn("flex w-full mt-2 justify-center", {
+        row: cn("flex w-full mt-3 justify-center", {
           "md:mt-4": isDesktop,
         }),
         cell: cn(
-          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20",
+          "relative p-1 text-center text-sm focus-within:relative focus-within:z-20",
           props.mode === "range"
             ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md"
             : "[&:has([aria-selected])]:rounded-md",
@@ -92,7 +92,7 @@ const Calendar: React.FC<CalendarProps> = ({
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
+          "h-10 w-10 p-0 font-normal aria-selected:opacity-100",
           {
             "md:h-[50px] md:w-[80px] md:text-lg": isDesktop,
           }
@@ -111,7 +111,7 @@ const Calendar: React.FC<CalendarProps> = ({
         IconLeft: ({ className, ...props }) => (
           <ChevronLeft
             className={cn(
-              "h-4 w-4",
+              "h-5 w-5",
               {
                 "md:h-8 md:w-8": isDesktop,
               },
@@ -123,7 +123,7 @@ const Calendar: React.FC<CalendarProps> = ({
         IconRight: ({ className, ...props }) => (
           <ChevronRight
             className={cn(
-              "h-4 w-4",
+              "h-5 w-5",
               {
                 "md:h-8 md:w-8": isDesktop,
               },
