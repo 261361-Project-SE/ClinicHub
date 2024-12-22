@@ -7,7 +7,7 @@ export type AppointmentTableProps = {
     phone_number: string;
     symptom: string;
     appointment_dateTime: string;
-    status: string;
+    appointment_status: string;
     createdAt: string;
     updatedAt: string;
   }[];
@@ -19,7 +19,7 @@ export type PatientTableProps = {
     FirstName: string;
     LastName: string;
     Age: number;
-    Gender: "Male" | "Female" | "Other"; // ENUM
+    Gender: string; // ENUM
     CitizenID: string; // National ID
     BirthDate: string; // Date of birth
     Address: string; // Address
