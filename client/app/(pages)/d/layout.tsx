@@ -1,12 +1,12 @@
 "use client";
 
+import Searchbar from "@/components/dashboard/Searchbar";
 import Sidebar from "@/components/ui/SIdebar";
-import { CalendarDaysIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const PAGE_TITLES: Record<string, string> = {
   "/d/dashboard": "แดชบอร์ด",
-  "/d/appointments": "การนัดหมาย",
+  "/d/appointment": "การนัดหมาย",
   "/d/calendar": "ปฏิทิน",
   "/d/settings": "การตั้งค่า",
 };
@@ -18,7 +18,6 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const pageTitle = PAGE_TITLES[pathname] || "";
-
   return (
     <html lang="en">
       <body>
@@ -33,14 +32,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 {pageTitle}
               </h1>
 
-              <div className="flex items-center gap-x-2">
-                <div className="px-8 py-2 text-left text-primary bg-lightgray-100 text-lightgray rounded-xl">
-                  ค้นหาการนัดหมาย, ชื่อคนไข้, หมายเลขโทรศัพท์
-                </div>
-                <div className="p-2 bg-lightgray-100 text-lightgray rounded-xl">
-                  <CalendarDaysIcon size={24} />
-                </div>
-              </div>
+              <Searchbar />
             </header>
 
             <div className="h-[calc(100vh-130px)] mt-5 overflow-auto">
