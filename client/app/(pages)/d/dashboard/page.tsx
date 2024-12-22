@@ -1,23 +1,26 @@
 "use client";
 
-import AppointmentCard from "@/components/dashboard/AppointmentCard";
 import AppointmentTable from "@/components/dashboard/AppointmentTable";
-import PatientGraph from "@/components/dashboard/PatientGraph";
+import DashboardCard from "@/components/dashboard/DashboardCard";
+import { FeedbackChart } from "@/components/dashboard/FeedbackChart";
+import { PatientChart } from "@/components/dashboard/PatientChart";
+import PatientInformation from "@/components/dashboard/PatientInformation";
 // mock data
-import { appointmentsData } from "@/helper/SampleData";
-import { FrownIcon, MehIcon, SmileIcon, UserIcon } from "lucide-react";
+import { appointmentsData, patientsData } from "@/helper/SampleData";
+import { UserIcon } from "lucide-react";
+import Link from "next/link";
 
 const DashboardPage = () => {
   return (
     <div className="flex flex-col gap-y-6">
       {/* Top section */}
       <div className="flex gap-x-9 w-full h-[195px]">
-        <AppointmentCard
+        <DashboardCard
           title="การนัดหมายวันนี้"
           count="5"
           date="4 ธันวาคม 2567"
         />
-        <AppointmentCard
+        <DashboardCard
           title="การนัดหมายที่รอยืนยัน"
           count="5"
           date="4 ธันวาคม 2567"
@@ -44,13 +47,7 @@ const DashboardPage = () => {
       {/* Middle section */}
       <div className="bg-white p-4 flex gap-x-9 h-[400px] w-full rounded-xl">
         <div className="flex flex-col items-center justify-between w-1/3">
-          <div className="font-medium text-darkgray">
-            สรุปจำนวนคนไข้ ธันวาคม 2567
-          </div>
-          <div>
-            <PatientGraph />
-          </div>
-          <div>label</div>
+          <PatientChart />
         </div>
         <div className="flex flex-col justify-between w-1/3 p-2 bg-pink-300/20 rounded-xl">
           <div className="flex flex-col gap-y-2">
@@ -60,43 +57,38 @@ const DashboardPage = () => {
             </div>
           </div>
           <div className="font-bold text-pink-200 cursor-pointer">
-            ดูทั้งหมด
+            <Link href={"/d/appointment"}>ดูทั้งหมด</Link>
           </div>
         </div>
         <div className="flex flex-col justify-between w-1/3 p-2 bg-pink-300/20 rounded-xl">
-          <div className="flex flex-col gap-y-2">
-            <div className="font-medium text-pink-200">
-              รายละเอียดคนไข้คนถัดไป
-            </div>
-            <div>name</div>
-            <div>dob</div>
-            <div>appointment</div>
-            <div>history</div>
-            <div>tel</div>
+          <div className="font-medium text-pink-200">
+            รายละเอียดคนไข้คนถัดไป
           </div>
-          <div className="font-bold text-pink-200 cursor-pointer">
-            ประวัติการจ่ายยา
-          </div>
+          <PatientInformation patients={patientsData} />
         </div>
       </div>
       {/* Bottom section */}
       <div className="flex gap-x-9 w-full h-[201px]">
         <div className="flex flex-col w-1/3 p-4 bg-white rounded-xl gap-y-2 shadow-shadow-bg">
-          <div className="font-medium text-darkgray">ความพึงพอใจการใช้งาน</div>
-          <SmileIcon size={36} fill="#98C99F" />
-          <MehIcon size={36} fill="#FFBC41" />
-          <FrownIcon size={36} fill="#E57373" />
+          <div className="font-medium text-darkgray">
+            ความพึงพอใจการใช้งานระบบ
+          </div>
+          <FeedbackChart />
         </div>
         {/* Pending Appointment */}
         <div className="w-1/3 p-4 font-medium bg-white rounded-xl shadow-shadow-bg text-darkgray">
           การนัดหมายที่รอยืนยัน
         </div>
         {/* Calendar */}
-        <div className="w-1/3 p-4 bg-white rounded-xl shadow-shadow-bg">
-          <div className="flex justify-between">
-            <div className="font-medium text-pink-200">ปฏิทิน</div>
-            <div className="font-medium text-pink-200">ธันวาคม 2567</div>
-          </div>
+        <div className="items-center w-1/3 p-4 overflow-hidden bg-white rounded-xl shadow-shadow-bg">
+          <Link href="/d/calendar">
+            <div className="flex flex-col gap-y-2">
+              <div className="flex justify-between">
+                <div className="font-medium text-pink-200">ปฏิทิน</div>
+                <div className="font-medium text-pink-200">ธันวาคม 2567</div>
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
