@@ -2,12 +2,10 @@ import React from "react";
 
 const CanlendarPage = () => {
   return (
-    <div className="bh-white">
+    <div className="flex items-center justify-center h-full bg-white shadow-shadow-bg">
       <iframe
-        src="https://calendar.google.com/calendar/u/0/embed?src=mongkolclinic.calendar@gmail.com&ctz=Asia/Bangkok"
-        width="100%"
-        height="600"
-        className="bg-white rounded-xl shadow-shadow-bg"
+        src="https://calendar.google.com/calendar/embed?src=mongkolclinic.calendar%40gmail.com&ctz=Asia%2FBangkok"
+        className="w-full h-full border-0 rounded-xl"
       ></iframe>
     </div>
   );
