@@ -43,8 +43,8 @@ const PatientInformation: React.FC<PatientTableProps> = ({ patients }) => {
             </tbody>
           </table>
           <div className="text-pink-200">ประวัติคนไข้</div>
-          <div className="flex px-4 py-2 text-white bg-pink-200 cursor-pointer rounded-xl gap-x-2 w-fit hover:bg-pink-200/95">
-            <PhoneIcon fill="#fff" stroke="1" size={24} />
+          <div className="flex items-center px-4 py-2 text-sm text-white bg-pink-200 cursor-pointer rounded-xl gap-x-2 w-fit hover:bg-pink-200/95">
+            <PhoneIcon fill="#fff" stroke="1" size={18} />
             <a href={`tel:${patient.Phone}`}>{patient.Phone}</a>
           </div>
         </div>
