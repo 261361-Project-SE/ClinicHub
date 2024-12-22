@@ -1,14 +1,17 @@
 "use client";
 
-import { validateName, validatePhone } from "../(utils)/validation";
+import {
+  validateName,
+  validatePhone,
+  validateSymptom,
+} from "../(utils)/validation";
 import BookingDialog from "../components/BookingDialog";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const BookingPage: React.FC = () => {
-  const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
@@ -16,10 +19,9 @@ const BookingPage: React.FC = () => {
   const [invalidName, setInvalidName] = useState(false);
   const [invalidLastname, setInvalidLastname] = useState(false);
   const [invalidPhone, setInvalidPhone] = useState(false);
-
-  useEffect(() => {
-    setDate(new Date());
-  }, []);
+  const [symptom, setSymptom] = useState("");
+  const [invalidSymptom, setInvalidSymptom] = useState(false);
+  const [appointment_dateTime, setAppointment_dateTime] = useState("");
 
   const generateTimes = (start: number, end: number, interval: number) => {
     return Array.from({ length: (end - start) / interval + 1 }, (_, i) => {
@@ -36,6 +38,7 @@ const BookingPage: React.FC = () => {
     setInvalidName(!validateName(name));
     setInvalidLastname(!validateName(lastname));
     setInvalidPhone(!validatePhone(phone));
+    setInvalidSymptom(!validateSymptom(symptom));
   };
 
   if (typeof window !== "undefined") {
@@ -89,8 +92,8 @@ const BookingPage: React.FC = () => {
       </div>
       <Calendar
         mode="single"
-        selected={date}
-        onSelect={setDate}
+        appointment_dateTime={appointment_dateTime}
+        setAppointment_dateTime={setAppointment_dateTime}
         className="rounded-md border shadow-lg"
       />
       <div className="flex flex-col md:items-end md:justify-end items-center justify-center font-noto h-fit mt-2">
@@ -101,6 +104,11 @@ const BookingPage: React.FC = () => {
             </button>
           </Link>
           <BookingDialog
+            invalidSymptom={invalidSymptom}
+            appointment_dateTime={appointment_dateTime}
+            setAppointment_dateTime={setAppointment_dateTime}
+            symptom={symptom}
+            setSymptom={setSymptom}
             name={name}
             lastname={lastname}
             setName={setName}

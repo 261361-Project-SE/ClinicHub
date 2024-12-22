@@ -1,4 +1,4 @@
-import { sendContactInfo } from "../services/api-p";
+import { postRequest } from "../services/api-p";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/(pages)/p/components/ui/dialog";
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 
 interface InputFieldProps {
   type: string;
@@ -38,34 +39,32 @@ const InputField: React.FC<InputFieldProps> = ({
   </>
 );
 
+const validateField = (value: string) => value.trim() !== "";
+
 const FirstNameField: React.FC<
   Omit<InputFieldProps, "type" | "placeholder">
-> = ({ value, onChange, invalid, errorMessage }) => {
-  const isValid = value.trim() !== "";
+> = (props) => {
   return (
     <InputField
       type="text"
       placeholder="ชื่อ"
-      value={value}
-      onChange={onChange}
-      invalid={!isValid || invalid}
-      errorMessage={!isValid ? "กรุณากรอกชื่อเป็นภาษาไทย" : errorMessage}
+      {...props}
+      invalid={props.invalid}
+      errorMessage={props.errorMessage}
     />
   );
 };
 
-const LastNameField: React.FC<
-  Omit<InputFieldProps, "type" | "placeholder">
-> = ({ value, onChange, invalid, errorMessage }) => {
-  const isValid = value.trim() !== "";
+const LastNameField: React.FC<Omit<InputFieldProps, "type" | "placeholder">> = (
+  props
+) => {
   return (
     <InputField
       type="text"
       placeholder="นามสกุล"
-      value={value}
-      onChange={onChange}
-      invalid={!isValid || invalid}
-      errorMessage={!isValid ? "กรุณากรอกนามสกุลเป็นภาษาไทย" : errorMessage}
+      {...props}
+      invalid={props.invalid}
+      errorMessage={props.errorMessage}
     />
   );
 };
@@ -80,12 +79,22 @@ const PhoneNumberField: React.FC<
       placeholder="เบอร์โทรศัพท์"
       value={value}
       onChange={onChange}
-      invalid={!isValid || invalid}
-      errorMessage={
-        !isValid
-          ? "กรุณากรอกเบอร์โทรศัพท์เป็นตัวเลข10หลักเท่านั้น"
-          : errorMessage
-      }
+      invalid={invalid}
+      errorMessage={errorMessage}
+    />
+  );
+};
+
+const SymptomField: React.FC<Omit<InputFieldProps, "type" | "placeholder">> = (
+  props
+) => {
+  return (
+    <InputField
+      type="text"
+      placeholder="อาการ"
+      {...props}
+      invalid={props.invalid}
+      errorMessage={props.errorMessage}
     />
   );
 };
@@ -100,6 +109,11 @@ interface BookingDialogProps {
   invalidName: boolean;
   invalidLastname: boolean;
   invalidPhone: boolean;
+  symptom: string;
+  setSymptom: React.Dispatch<React.SetStateAction<string>>;
+  invalidSymptom: boolean;
+  appointment_dateTime: string;
+  setAppointment_dateTime: React.Dispatch<React.SetStateAction<string>>;
   handleValidation: () => void;
 }
 
@@ -111,19 +125,86 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
   phone,
   setPhone,
   invalidName,
+  invalidLastname,
   invalidPhone,
-  handleValidation,
+  symptom,
+  setSymptom,
+  appointment_dateTime,
+  invalidSymptom,
 }) => {
+  const [showErrors, setShowErrors] = useState(false);
+
+  const validateAllFields = () => {
+    const isNameValid = validateField(name);
+    const isLastnameValid = validateField(lastname);
+    const isPhoneValid = /^[0-9]{10}$/.test(phone); // Validates Thai phone numbers (10 digits)
+    const isSymptomValid = validateField(symptom);
+
+    return {
+      isNameValid,
+      isLastnameValid,
+      isPhoneValid,
+      isSymptomValid,
+      hasErrors: !(
+        isNameValid &&
+        isLastnameValid &&
+        isPhoneValid &&
+        isSymptomValid
+      ),
+    };
+  };
+
   const handleSubmit = async () => {
-    const firstName = name;
-    const lastName = lastname;
+    const {
+      isNameValid,
+      isLastnameValid,
+      isPhoneValid,
+      isSymptomValid,
+      hasErrors,
+    } = validateAllFields();
+
+    setShowErrors(true); // Show errors if any
+
+    if (hasErrors) {
+      console.error("Validation errors present. Please correct the fields.");
+      return; // Prevent submission
+    }
+
+    const data = {
+      firstname: name,
+      lastname: lastname,
+      phone_number: phone,
+      symptom: symptom,
+      appointment_dateTime: appointment_dateTime.replace("Z", ""),
+    };
+
     try {
-      await sendContactInfo(firstName, lastName, phone);
-    } catch (error) {
-      console.error(
-        "Error creating appointment:",
-        error instanceof Error ? error.message : error
+      await postRequest(
+        data.firstname,
+        data.lastname,
+        data.phone_number,
+        data.symptom,
+        data.appointment_dateTime
       );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "Error creating appointment:",
+          error.message,
+          error.response ? error.response.data : "No response data"
+        );
+        console.error("Request data:", data);
+        console.error("Error status:", error.response?.status);
+        console.error("Error headers:", error.response?.headers);
+        console.error("Full error object:", error);
+        if (error.response?.status === 500) {
+          console.error("Server error: Please check the server logs.");
+        } else if (error.response?.status === 401) {
+          console.error("Unauthorized: Please check your credentials.");
+        }
+      } else {
+        console.error("Error creating appointment:", error);
+      }
     }
   };
 
@@ -144,34 +225,34 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
           </DialogHeader>
           <div className="mt-4 flex flex-col space-y-4">
             <FirstNameField
-              value={name.split(" ")[0] || ""}
-              onChange={(value) =>
-                setName(
-                  value + (name.split(" ")[1] ? " " + name.split(" ")[1] : "")
-                )
-              }
-              invalid={invalidName}
+              value={name}
+              onChange={(value) => setName(value)}
+              invalid={showErrors && !validateField(name)}
               errorMessage="กรุณากรอกเป็นภาษาไทย"
             />
             <LastNameField
-              value={name.split(" ")[1] || ""}
-              onChange={(value) =>
-                setName((name.split(" ")[0] || "") + " " + value)
-              }
-              invalid={invalidName}
+              value={lastname}
+              onChange={(value) => setLastname(value)}
+              invalid={showErrors && !validateField(lastname)}
               errorMessage="กรุณากรอกเป็นภาษาไทย"
             />
             <PhoneNumberField
               value={phone}
-              onChange={setPhone}
-              invalid={invalidPhone}
+              onChange={(value) => setPhone(value)}
+              invalid={showErrors && !/^[0-9]{10}$/.test(phone)}
               errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
+            />
+            <SymptomField
+              value={symptom}
+              onChange={(value) => setSymptom(value)}
+              invalid={showErrors && !validateField(symptom)}
+              errorMessage="กรุณากรอกเป็นภาษาไทย"
             />
             <button
               className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
               onClick={handleSubmit}
             >
-              ตรวจสอบ
+              จองการนัด
             </button>
           </div>
         </DialogContent>

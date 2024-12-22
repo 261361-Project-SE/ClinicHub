@@ -1,20 +1,37 @@
-import { postRequest } from "@/service/api";
+import axios from "axios";
 
-export const sendContactInfo = async (
+// const API_END_POINT = process.env.API_END_POINT || "http://localhost:5000";
+
+export const postRequest = async (
   firstName: string,
   lastName: string,
-  phone: string
+  phone: string,
+  symptom: string,
+  appointment_dateTime: string
 ) => {
-  const data = {
-    firstname: firstName,
-    lastname: lastName,
-    phone_number: phone,
-  };
   try {
-    const response = await postRequest("/appointment/create", data);
+    const response = await axios.post(
+      `http://localhost:4444/appointment/create`,
+      {
+        firstname: firstName,
+        lastname: lastName,
+        phone_number: phone,
+        symptom: symptom,
+        appointment_dateTime: appointment_dateTime,
+      }
+    );
     return response;
-  } catch (error) {
-    console.error("Error sending contact info:", error);
-    throw new Error("Failed to send contact info. Please try again later.");
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Error while creating appointment service: ${
+          error.response?.data || error.message
+        }`
+      );
+    } else {
+      throw new Error(
+        `Error while creating appointment service: ${String(error)}`
+      );
+    }
   }
 };

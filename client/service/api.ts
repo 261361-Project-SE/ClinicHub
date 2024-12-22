@@ -1,15 +1,22 @@
 const API_END_POINT = process.env.API_END_POINT || "http://localhost:5000";
 
-// console.log(API_END_POINT);
+const handleResponse = async (response: Response) => {
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`Error: ${errorData.message || response.statusText}`);
+  }
+  return response.json();
+};
+
 export const getRequest = async (url: string) => {
   const response = await fetch(`${API_END_POINT}${url}`, {
     cache: "no-store",
+    credentials: "include", // Include credentials for secure requests
   });
-  const data = await response.json();
-  return data;
+  return handleResponse(response);
 };
 
-export const postRequest = async (url: string, data: any) => {
+export const postRequest = async (url: string, data: Record<string, unknown>) => {
   const response = await fetch(`${API_END_POINT}${url}`, {
     method: "POST",
     cache: "no-cache",
@@ -17,7 +24,7 @@ export const postRequest = async (url: string, data: any) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    credentials: "include", // Include credentials for secure requests
   });
-  const result = await response.json();
-  return result;
+  return handleResponse(response);
 };
