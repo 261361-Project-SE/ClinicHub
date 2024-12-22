@@ -4,7 +4,6 @@ import logo from "@/public/HDlogo.png";
 import {
   CalendarClockIcon,
   CalendarDaysIcon,
-  CogIcon,
   LayoutDashboardIcon,
   LogOutIcon,
 } from "lucide-react";
@@ -24,17 +23,12 @@ const SideBar = () => {
     {
       name: "การนัดหมาย",
       icon: CalendarClockIcon,
-      href: "/d/appointments",
+      href: "/d/appointment",
     },
     {
       name: "ปฏิทิน",
       icon: CalendarDaysIcon,
       href: "/d/calendar",
-    },
-    {
-      name: "ตั้งค่า",
-      icon: CogIcon,
-      href: "/d/settings",
     },
     {
       name: "ออกจากระบบ",
@@ -48,7 +42,7 @@ const SideBar = () => {
       <Image
         src={logo}
         alt="logo"
-        className="flex mx-auto rounded-full shadow-md"
+        className="flex mx-auto rounded-full shadow-shadow-bg"
         width={150}
         height={150}
       />
