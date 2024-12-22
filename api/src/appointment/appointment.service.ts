@@ -37,7 +37,6 @@ class AppointmentService {
       if (checkBooking.length > 0) {
         return { error: "Time slot already taken", status: 400 };
       }
-
       const dateTime = new Date(appointment_dateTime);
       const response = await calendarService.createEvent({
         year: dateTime.getFullYear(),
@@ -47,10 +46,11 @@ class AppointmentService {
         minute: dateTime.getMinutes(),
         description: symptom || "No description",
       });
+      let eventID = response.eventID || ""
 
       const booking = await this.prisma.appointments.create({
         data: {
-          eventId: response.eventID || "",
+          eventId: eventID,
           firstname: firstname,
           lastname: lastname,
           phone_number: phone_number,
@@ -321,7 +321,7 @@ class AppointmentService {
         updatedAt: checkBooking.updatedAt,
       }
 
-      if (this.isChanged(checkBooking, newData)) {
+      if (!this.isChanged(checkBooking, newData)) {
         return { error: "No changes", status: 304 };
       }
 
@@ -341,7 +341,7 @@ class AppointmentService {
             day: dateTime.getDate(),
             hour: dateTime.getHours(),
             minute: dateTime.getMinutes(),
-            description: symptom || "No description",
+            description: symptom || checkBooking.symptom || "No description",
           });
           eventId = newEventId.eventID ? newEventId.eventID : checkBooking.eventId;
         }
@@ -354,12 +354,13 @@ class AppointmentService {
           id: checkBooking.id,
         },
         data: {
-          ...(firstname && { firstname: firstname }),
-          ...(lastname && { lastname: lastname }),
-          ...(phone_number && { phone_number: phone_number }),
-          ...(symptom && { symptom: symptom }),
-          ...(appointment_dateTime && { appointment_dateTime: appointment_dateTime }),
-          ...(eventId && { eventId: eventId }),
+          ...checkBooking,
+          firstname: firstname || checkBooking.firstname,
+          lastname: lastname || checkBooking.lastname,
+          phone_number: phone_number || checkBooking.phone_number,
+          symptom: symptom || checkBooking.symptom,
+          appointment_dateTime: appointment_dateTime || checkBooking.appointment_dateTime,
+          eventId: eventId || checkBooking.eventId,
         },
       });
 
