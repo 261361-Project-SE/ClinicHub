@@ -20,7 +20,7 @@ const BookingLayout: React.FC<LayoutProps> = ({ children }) => {
       className={`${inter.className} min-h-screen antialiased overflow-x-hidden w-full`}
     >
       <GradientBackground />
-      <div className="md:block hidden">
+      <div className="hidden md:block">
         <Navbar />
       </div>
       <div className="block md:hidden">

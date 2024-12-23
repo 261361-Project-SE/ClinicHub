@@ -20,16 +20,19 @@ const Calendar: React.FC<CalendarProps> = ({
   className,
 }) => {
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkIfDesktop = () => {
-      setIsDesktop(window.innerWidth >= 768);
+    const checkDeviceType = () => {
+      const width = window.innerWidth;
+      setIsDesktop(width >= 1024); // Desktop
+      setIsTablet(width >= 768 && width < 1024); // Tablet
     };
 
-    checkIfDesktop();
-    window.addEventListener("resize", checkIfDesktop);
+    checkDeviceType();
+    window.addEventListener("resize", checkDeviceType);
 
-    return () => window.removeEventListener("resize", checkIfDesktop);
+    return () => window.removeEventListener("resize", checkDeviceType);
   }, []);
 
   const handleDayClick = (day: Date) => {
@@ -49,6 +52,8 @@ const Calendar: React.FC<CalendarProps> = ({
             {
               "md:w-[1080px] md:h-[600px] md:p-4 md:justify-center md:mx-auto":
                 isDesktop,
+              "sm:w-[600px] sm:h-[400px] sm:p-2 sm:justify-center sm:mx-auto":
+                isTablet,
             },
             className
           )}
@@ -57,17 +62,21 @@ const Calendar: React.FC<CalendarProps> = ({
               "flex flex-col sm:flex-row space-y-8 sm:space-x-6 sm:space-y-0",
               {
                 "md:w-full md:justify-center md:max-w-7xl": isDesktop,
+                "sm:w-full sm:justify-center sm:max-w-5xl": isTablet,
               }
             ),
             month: cn("space-y-6", {
               "md:w-full md:max-w-7xl": isDesktop,
+              "sm:w-full sm:max-w-5xl": isTablet,
             }),
             caption: cn("flex justify-center pt-2 relative items-center", {
               "md:py-4": isDesktop,
-              "text-sm": !isDesktop,
+              "text-sm": !isDesktop && !isTablet,
+              "text-base": isTablet,
             }),
             caption_label: cn("text-base font-medium", {
               "md:text-2xl": isDesktop,
+              "text-lg": isTablet,
             }),
             nav: "space-x-2 flex items-center",
             nav_button: cn(
@@ -75,13 +84,16 @@ const Calendar: React.FC<CalendarProps> = ({
               "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100",
               {
                 "md:h-12 md:w-12": isDesktop,
+                "sm:h-10 sm:w-10": isTablet,
               }
             ),
             nav_button_previous: cn("absolute left-2", {
               "md:left-4": isDesktop,
+              "sm:left-3": isTablet,
             }),
             nav_button_next: cn("absolute right-2", {
               "md:right-4": isDesktop,
+              "sm:right-3": isTablet,
             }),
             table: cn("w-full border-collapse space-y-2", {
               "md:mt-4": isDesktop,
@@ -91,7 +103,8 @@ const Calendar: React.FC<CalendarProps> = ({
               "text-muted-foreground rounded-md w-12 font-normal text-[0.9rem]",
               {
                 "md:w-[88px] md:text-sm md:font-medium": isDesktop,
-                "text-xs": !isDesktop,
+                "text-xs": !isDesktop && !isTablet,
+                "md:text-sm": isTablet,
               }
             ),
             row: cn("flex w-full mt-3 justify-center", {
@@ -111,7 +124,8 @@ const Calendar: React.FC<CalendarProps> = ({
               "h-10 w-10 p-0 font-normal aria-selected:opacity-100",
               {
                 "md:h-[50px] md:w-[80px] md:text-lg": isDesktop,
-                "h-8 w-8 text-sm": !isDesktop,
+                "h-8 w-8 text-sm": !isDesktop && !isTablet,
+                "h-9 w-9 text-base": isTablet,
               }
             ),
             day_selected:
@@ -130,6 +144,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   "h-5 w-5",
                   {
                     "md:h-8 md:w-8": isDesktop,
+                    "sm:h-7 sm:w-7": isTablet,
                   },
                   className
                 )}
@@ -142,6 +157,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   "h-5 w-5",
                   {
                     "md:h-8 md:w-8": isDesktop,
+                    "sm:h-7 sm:w-7": isTablet,
                   },
                   className
                 )}

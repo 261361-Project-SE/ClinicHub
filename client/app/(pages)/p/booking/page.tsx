@@ -78,11 +78,11 @@ const BookingPage: React.FC = () => {
 
   useEffect(() => {
     // Client-side logic here
-  }, []);
+  }, [name, lastname, phone, symptom, selectedTime, appointmentDateTime]);
 
   return (
     <BookingLayout>
-      <div className="bg-gray-50 rounded-xl  md:h-[800px] md:w-[1920px] md:mx-auto w-full max-w-screen-xl mx-auto pb-6 md:shadow-xl">
+      <div className="bg-gray-50 rounded-xl md:h-[800px] w-full max-w-screen-xl mx-auto pb-6 md:shadow-xl">
         <h1 className="text-3xl font-bold text-gray-800 text-center md:text-end md:pt-4 md:mr-20">
           จองการนัดหมาย
         </h1>
@@ -90,7 +90,7 @@ const BookingPage: React.FC = () => {
           เลือกเวลาที่ต้องการจอง:
         </label>
         <div className="pt-4 flex justify-start flex-wrap max-w-7xl mx-auto md:justify-center">
-          <div className="flex overflow-hidden gap-2 relative  md:w-[1180px] pb-4">
+          <div className="flex overflow-hidden gap-2 relative md:w-[1180px] pb-4">
             <div
               className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar"
               style={{ scrollBehavior: "smooth" }}
@@ -121,7 +121,7 @@ const BookingPage: React.FC = () => {
               display: none;
             }
             .no-scrollbar {
-              -ms-overflow-style: none;cl
+              -ms-overflow-style: none;
               scrollbar-width: none;
             }
           `}</style>
