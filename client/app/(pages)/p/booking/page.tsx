@@ -9,7 +9,7 @@ import BookingDialog from "../components/BookingDialog";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const BookingPage: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -21,22 +21,18 @@ const BookingPage: React.FC = () => {
   const [invalidPhone, setInvalidPhone] = useState(false);
   const [symptom, setSymptom] = useState("");
   const [invalidSymptom, setInvalidSymptom] = useState(false);
-  const [appointmentDateTime, setAppointmentDateTime] = useState("");
-  const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const [appointment_dateTime, setAppointment_dateTime] = useState("");
 
-  const TIME_START = 9 * 60; // 9 AM
-  const TIME_END = 17 * 60; // 5 PM
-  const TIME_INTERVAL = 15; // 15 minutes
-
-  const generateTimes = (start: number, end: number, interval: number) =>
-    Array.from({ length: (end - start) / interval + 1 }, (_, i) => {
+  const generateTimes = (start: number, end: number, interval: number) => {
+    return Array.from({ length: (end - start) / interval + 1 }, (_, i) => {
       const time = start + i * interval;
-      return `${String(Math.floor(time / 60)).padStart(2, "0")}:${String(
-        time % 60
-      ).padStart(2, "0")}`;
+      const hours = String(Math.floor(time / 60)).padStart(2, "0");
+      const minutes = String(time % 60).padStart(2, "0");
+      return `${hours}:${minutes}`;
     });
+  };
 
-  const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
+  const times = generateTimes(9 * 60, 17 * 60, 15);
 
   const handleValidation = () => {
     setInvalidName(!validateName(name));
@@ -45,53 +41,20 @@ const BookingPage: React.FC = () => {
     setInvalidSymptom(!validateSymptom(symptom));
   };
 
-  const setAppointmentDate = (time: string) => {
-    const newDateTime = new Date(appointmentDateTime || new Date());
-    newDateTime.setHours(
-      parseInt(time.split(":")[0]),
-      parseInt(time.split(":")[1])
-    );
-    setAppointmentDateTime(newDateTime.toISOString());
-  };
-
-  const handleBooking = () => {
-    handleValidation();
-    if (
-      !invalidName &&
-      !invalidLastname &&
-      !invalidPhone &&
-      !invalidSymptom &&
-      selectedTime &&
-      appointmentDateTime
-    ) {
-      const appointmentData = {
-        appointmentDateTime,
-        name,
-        lastname,
-        phone,
-        symptom,
-      };
-      console.log("Booking initiated", appointmentData);
-      setShowBookingDialog(true);
-    }
-  };
-
-  useEffect(() => {
-    // Client-side logic here
-  }, []);
+  if (typeof window !== "undefined") {
+    const currentTime = Date.now();
+    console.log(currentTime);
+  }
 
   return (
     <BookingLayout>
-      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 text-center md:text-end md:mt-4 md:mr-20">
-          จองการนัดหมาย
-        </h1>
-
-        <div className="mt-4 flex justify-start flex-wrap max-w-7xl mx-auto">
-          <label className="block text-gray-600 font-noto font-medium text-lg">
-            เลือกเวลาที่ต้องการจอง:
-          </label>
-
+      <h1 className="text-3xl font-bold text-gray-800 text-center">
+        จองการนัดหมาย
+      </h1>
+      <p className="text-gray-600">เวลาทำการ:</p>
+      <div className="mt-4 flex justify-start flex-wrap max-w-7xl mx-auto">
+        <label className="block text-gray-600">เลือกเวลาที่ต้องการจอง:</label>
+        <div className="mt-2 relative">
           <div className="flex overflow-hidden gap-2 relative w-[440px] md:w-[1280px] pb-4">
             <div
               className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar"
@@ -104,20 +67,18 @@ const BookingPage: React.FC = () => {
                 <button
                   key={time}
                   value={time}
-                  className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
-                    selectedTime === time ? "bg-green-400 shadow-xl" : ""
+                  className={`p-2 rounded-md hover:bg-gray-200 bg-white min-w-[100px] flex-shrink-0 ${
+                    selectedTime === time ? "bg-yellow-400" : ""
                   }`}
-                  onClick={() => {
-                    setSelectedTime(time);
-                    setAppointmentDate(time);
-                  }}
+                  onClick={() =>
+                    setSelectedTime(selectedTime === time ? null : time)
+                  }
                 >
                   {time}
                 </button>
               ))}
             </div>
           </div>
-
           <style jsx>{`
             .no-scrollbar::-webkit-scrollbar {
               display: none;
@@ -127,59 +88,38 @@ const BookingPage: React.FC = () => {
               scrollbar-width: none;
             }
           `}</style>
-
-          <Calendar
-            mode="single"
-            selected={
-              appointmentDateTime ? new Date(appointmentDateTime) : undefined
-            }
-            onSelect={(date) => {
-              if (date && selectedTime) {
-                const selectedDateTime = new Date(date);
-                selectedDateTime.setHours(
-                  parseInt(selectedTime.split(":")[0]),
-                  parseInt(selectedTime.split(":")[1])
-                );
-                setAppointmentDateTime(selectedDateTime.toISOString());
-              }
-            }}
-            className="rounded-md border shadow-lg"
-          />
         </div>
       </div>
-      <div className="md:mr-60 md:mt-4">
-        <div className="flex flex-col md:items-end md:justify-end items-center justify-center font-noto h-fit">
-          <div className="flex gap-6 mt-6 md:gap-6 md:mt-0">
-            <Link href="/">
-              <button className="bg-gray-300 text-black hover:opacity-80 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-[100px] items-center text-center">
-                กลับหน้าหลัก
-              </button>
-            </Link>
-            <button
-              className="bg-pink-200 text-white hover:bg-pink-600 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-[100px] items-center text-center"
-              onClick={handleBooking}
-            >
-              จองการนัด
+      <Calendar
+        mode="single"
+        appointment_dateTime={appointment_dateTime}
+        setAppointment_dateTime={setAppointment_dateTime}
+        className="rounded-md border shadow-lg"
+      />
+      <div className="flex flex-col md:items-end md:justify-end items-center justify-center font-noto h-fit mt-2">
+        <div className="flex gap-6 mt-6 md:gap-6 md:mt-6">
+          <Link href="/">
+            <button className="bg-gray-300 text-black hover:opacity-80 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-[100px] items-center text-center">
+              กลับหน้าหลัก
             </button>
-            <BookingDialog
-              isOpen={showBookingDialog}
-              onClose={() => setShowBookingDialog(false)}
-              message="กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด"
-              invalidSymptom={invalidSymptom}
-              appointment_dateTime={appointmentDateTime}
-              symptom={symptom}
-              setSymptom={setSymptom}
-              name={name}
-              lastname={lastname}
-              setName={setName}
-              setLastname={setLastname}
-              phone={phone}
-              setPhone={setPhone}
-              invalidName={invalidName}
-              invalidLastname={invalidLastname}
-              invalidPhone={invalidPhone}
-            />
-          </div>
+          </Link>
+          <BookingDialog
+            invalidSymptom={invalidSymptom}
+            appointment_dateTime={appointment_dateTime}
+            setAppointment_dateTime={setAppointment_dateTime}
+            symptom={symptom}
+            setSymptom={setSymptom}
+            name={name}
+            lastname={lastname}
+            setName={setName}
+            setLastname={setLastname}
+            phone={phone}
+            setPhone={setPhone}
+            invalidName={invalidName}
+            invalidLastname={invalidLastname}
+            invalidPhone={invalidPhone}
+            handleValidation={handleValidation}
+          />
         </div>
       </div>
     </BookingLayout>
