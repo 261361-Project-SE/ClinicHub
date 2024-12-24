@@ -1,4 +1,5 @@
 import axios from "axios";
+import { split } from "postcss/lib/list";
 
 // const API_END_POINT = process.env.API_END_POINT || "http://localhost:5000";
 
@@ -31,6 +32,40 @@ export const postRequest = async (
     } else {
       throw new Error(
         `Error while creating appointment service: ${String(error)}`
+      );
+    }
+  }
+};
+
+export const getfilteredAppointment = async (appointment_dateTime: string) => {
+  try {
+    const date = appointment_dateTime.split("T")[0];
+    const response = await axios.get(
+      `http://localhost:7777/api/doctor/appointment/?date=${date}`
+    );
+    const appointments = response.data;
+
+    const times = appointments.map((appointment: any) => {
+      const timeString = appointment.appointment_dateTime
+        .split("T")[1]
+        .split(".")[0];
+      return timeString.substring(0, 5); // ตัดเวลาที่ได้ออกมาเป็น 07:30
+    });
+
+    return times; // Returns an array of times
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return [];
+      }
+      throw new Error(
+        `Error while fetching appointment service: ${
+          error.response?.data || error.message
+        }`
+      );
+    } else {
+      throw new Error(
+        `Error while fetching appointment service: ${String(error)}`
       );
     }
   }

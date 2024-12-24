@@ -6,6 +6,7 @@ import {
   validateSymptom,
 } from "../(utils)/validation";
 import BookingDialog from "../components/BookingDialog";
+import { getfilteredAppointment } from "../services/api-p";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import Link from "next/link";
@@ -37,6 +38,8 @@ const BookingPage: React.FC = () => {
     });
 
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
+  console.log(appointmentDateTime);
+  console.log(getfilteredAppointment(appointmentDateTime));
 
   const handleValidation = () => {
     setInvalidName(!validateName(name));
@@ -53,7 +56,6 @@ const BookingPage: React.FC = () => {
     );
     setAppointmentDateTime(newDateTime.toISOString());
   };
-
   const handleBooking = () => {
     handleValidation();
     if (
@@ -76,9 +78,16 @@ const BookingPage: React.FC = () => {
     }
   };
 
+  const [fillertime, setFillertime] = useState([]);
+
   useEffect(() => {
     // Client-side logic here
-  }, []);
+    if (appointmentDateTime) {
+      const filteredTime: any = getfilteredAppointment(appointmentDateTime);
+      setFillertime(filteredTime);
+      console.log(fillertime);
+    }
+  }, [appointmentDateTime]);
 
   return (
     <BookingLayout>
@@ -108,9 +117,12 @@ const BookingPage: React.FC = () => {
                     selectedTime === time ? "bg-green-400 shadow-xl" : ""
                   }`}
                   onClick={() => {
+                    if (!fillertime.includes(time)) {
                     setSelectedTime(time);
                     setAppointmentDate(time);
+                    // }
                   }}
+                  disabled={fillertime.includes(time)}
                 >
                   {time}
                 </button>
@@ -145,6 +157,9 @@ const BookingPage: React.FC = () => {
             }}
             className="rounded-md border shadow-lg"
           />
+          {times.map((time, index) => (
+            <p key={index}>{time}</p> // แสดงค่าของอาร์เรย์
+          ))}
         </div>
       </div>
       <div className=" md:mt-4">
