@@ -78,16 +78,19 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  const [fillertime, setFillertime] = useState([]);
+  const [fillertime, setFillertime] = useState<string[]>([]);
 
   useEffect(() => {
-    // Client-side logic here
     if (appointmentDateTime) {
       const filteredTime: any = getfilteredAppointment(appointmentDateTime);
       setFillertime(filteredTime);
-      console.log(fillertime);
     }
   }, [appointmentDateTime]);
+
+  useEffect(() => {
+    console.log(fillertime); // จะทำงานเมื่อ fillertime ถูกอัปเดตแล้ว
+  }, [fillertime]);
+
   console.log(getfilteredAppointment(appointmentDateTime));
 
   return (
@@ -118,12 +121,12 @@ const BookingPage: React.FC = () => {
                     selectedTime === time ? "bg-green-400 shadow-xl" : ""
                   }`}
                   onClick={() => {
-                    // if (!fillertime.includes(time)) {
-                    setSelectedTime(time);
-                    setAppointmentDate(time);
-                    // }
+                    if (!fillertime.includes(time)) {
+                      setSelectedTime(time);
+                      setAppointmentDate(time);
+                    }
                   }}
-                  // disabled={fillertime.includes(time)}
+                  disabled={fillertime.includes(time)}
                 >
                   {time}
                 </button>
