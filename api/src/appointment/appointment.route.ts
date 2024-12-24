@@ -15,5 +15,8 @@ router.patch("/patient/appointment/update", appointmentController.updatePatientA
 router.post("/appointment/create", appointmentController.createAppointment);
 router.delete("/appointment/cancel", appointmentController.cancelAppointment);
 
+// Get appointment time slot
+router.get("/appointment/time-slot", appointmentController.getAppointmentTimeSlot);
+
 export default router;
 
