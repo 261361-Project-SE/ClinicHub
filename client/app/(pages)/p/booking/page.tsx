@@ -82,8 +82,13 @@ const BookingPage: React.FC = () => {
 
   useEffect(() => {
     if (appointmentDateTime) {
-      const filteredTime: any = getfilteredAppointment(appointmentDateTime);
-      setFillertime(filteredTime);
+      getfilteredAppointment(appointmentDateTime)
+        .then((filteredTime: string[]) => {
+          setFillertime(filteredTime);
+        })
+        .catch((error) => {
+          console.error("Error fetching filtered appointment times:", error);
+        });
     }
   }, [appointmentDateTime]);
 
@@ -113,24 +118,29 @@ const BookingPage: React.FC = () => {
                 e.currentTarget.scrollLeft += e.deltaY > 0 ? 100 : -100;
               }}
             >
-              {times.map((time) => (
-                <button
-                  key={time}
-                  value={time}
-                  className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
-                    selectedTime === time ? "bg-green-400 shadow-xl" : ""
-                  }`}
-                  onClick={() => {
-                    if (!fillertime.includes(time)) {
-                      setSelectedTime(time);
-                      setAppointmentDate(time);
-                    }
-                  }}
-                  disabled={fillertime.includes(time)}
-                >
-                  {time}
-                </button>
-              ))}
+              {times.map((time) => {
+                // ตรวจสอบว่าเวลานั้นอยู่ใน fillertime หรือไม่
+                const isDisabled = fillertime.includes(time);
+
+                return (
+                  <button
+                    key={time}
+                    value={time}
+                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
+                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
+                    } ${isDisabled ? "bg-gray-300 cursor-not-allowed" : ""}`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setSelectedTime(time);
+                        setAppointmentDate(time);
+                      }
+                    }}
+                    disabled={isDisabled}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -161,9 +171,6 @@ const BookingPage: React.FC = () => {
             }}
             className="rounded-md border shadow-lg"
           />
-          {times.map((time, index) => (
-            <p key={index}>{time}</p> // แสดงค่าของอาร์เรย์
-          ))}
         </div>
       </div>
       <div className=" md:mt-4">
