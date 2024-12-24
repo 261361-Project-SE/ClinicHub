@@ -78,19 +78,21 @@ const BookingPage: React.FC = () => {
 
   useEffect(() => {
     // Client-side logic here
-  }, [name, lastname, phone, symptom, selectedTime, appointmentDateTime]);
+  }, []);
 
   return (
     <BookingLayout>
-      <div className="bg-gray-50 rounded-xl md:h-[800px] w-full max-w-screen-xl mx-auto pb-6 md:shadow-xl">
-        <h1 className="text-3xl font-bold text-gray-800 text-center md:text-end md:pt-4 md:mr-20">
+      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl">
+        <h1 className="text-3xl font-bold text-gray-800 text-center md:text-end md:mt-4 md:mr-20">
           จองการนัดหมาย
         </h1>
-        <label className="block text-gray-600 font-noto font-medium text-lg md:text-xl md:pl-12">
-          เลือกเวลาที่ต้องการจอง:
-        </label>
-        <div className="pt-4 flex justify-start flex-wrap max-w-7xl mx-auto md:justify-center">
-          <div className="flex overflow-hidden gap-2 relative md:w-[1180px] pb-4">
+
+        <div className="mt-4 flex justify-start flex-wrap max-w-7xl mx-auto">
+          <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
+            เลือกเวลาที่ต้องการจอง:
+          </label>
+
+          <div className="flex justify-center overflow-hidden gap-2 relative w-[400px] md:w-[1200px] pb-4 md:max-w-screen-xl md:pl-10">
             <div
               className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar"
               style={{ scrollBehavior: "smooth" }}
@@ -102,7 +104,7 @@ const BookingPage: React.FC = () => {
                 <button
                   key={time}
                   value={time}
-                  className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[80px] md:min-w-[100px] flex-shrink-0 ${
+                  className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
                     selectedTime === time ? "bg-green-400 shadow-xl" : ""
                   }`}
                   onClick={() => {
@@ -122,7 +124,6 @@ const BookingPage: React.FC = () => {
             }
             .no-scrollbar {
               -ms-overflow-style: none;
-              -ms-overflow-style: none;
               scrollbar-width: none;
             }
           `}</style>
@@ -132,7 +133,7 @@ const BookingPage: React.FC = () => {
             selected={
               appointmentDateTime ? new Date(appointmentDateTime) : undefined
             }
-            onSelect={(date: Date | undefined) => {
+            onSelect={(date) => {
               if (date && selectedTime) {
                 const selectedDateTime = new Date(date);
                 selectedDateTime.setHours(
@@ -142,18 +143,24 @@ const BookingPage: React.FC = () => {
                 setAppointmentDateTime(selectedDateTime.toISOString());
               }
             }}
-            className="rounded-md border shadow-lg md:w-[1080px] md:h-[600px] md:p-4 justify-center mx-auto"
+            className="rounded-md border shadow-lg"
           />
         </div>
       </div>
-      <div className="md:mr-30 md:mt-4">
+      <div className=" md:mt-4">
         <div className="flex flex-col md:items-end md:justify-end items-center justify-center font-noto h-fit">
-          <div className="flex gap-6 mt-6 md:gap-6 md:mt-0 flex-wrap justify-center">
+          <div className="flex gap-6 mt-6 md:gap-6 md:mt-0">
             <Link href="/">
               <button className="bg-gray-300 text-black hover:opacity-80 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-[100px] items-center text-center">
                 กลับหน้าหลัก
               </button>
             </Link>
+            <button
+              className="bg-pink-200 text-white hover:bg-pink-600 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-[100px] items-center text-center"
+              onClick={handleBooking}
+            >
+              จองการนัด
+            </button>
             <BookingDialog
               isOpen={showBookingDialog}
               onClose={() => setShowBookingDialog(false)}

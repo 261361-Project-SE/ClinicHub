@@ -5,7 +5,7 @@ import AppointmentDialog from "../components/AppointmentDialog";
 import AppointmentDialogmobile from "../components/AppointmentDialogmobile";
 import { CalendarDays, MessagesSquare } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const MobileBookingPage: React.FC<{
   name: string;
@@ -23,41 +23,85 @@ const MobileBookingPage: React.FC<{
   invalidName,
   invalidPhone,
   handleValidation,
-}) => (
-  <div className="mx-auto w-full max-w-6xl mb-24 font-noto font-medium text-lg text-center">
-    <div className="flex items-center justify-center gap-10">
-      <Link
-        href="/p/booking"
-        className="w-[150px] h-[50px] bg-pink-200 text-white rounded-full hover:scale-105 transition-transform flex items-center justify-center"
-      >
-        จองการนัด
-      </Link>
-      <AppointmentDialogmobile
-        name={name}
-        setName={setName}
-        phone={phone}
-        setPhone={setPhone}
-        invalidName={invalidName}
-        invalidPhone={invalidPhone}
-        handleValidation={handleValidation}
-      />
-    </div>
-    <div className="bg-white rounded-full shadow-md p-6 mb-4 h-[600px]">
-      <h2 className="text-gray-700 text-2xl font-medium mb-2">
-        คู่มือ รายละเอียดการจอง
-      </h2>
-      <p className="text-gray-500 text-base">
-        กรุณาอ่านรายละเอียดและข้อกำหนดในการจอง
-      </p>
-    </div>
-  </div>
-);
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const changeSlide = (direction: number) => {
+    const slides = document.querySelectorAll(
+      ".absolute img"
+    ) as NodeListOf<HTMLElement>;
+    slides[currentIndex].style.opacity = "0";
+    const newIndex = (currentIndex + direction + slides.length) % slides.length;
+    setCurrentIndex(newIndex);
+    slides[newIndex].style.opacity = "1";
+  };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      changeSlide(1);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+  return (
+    <div className="mx-auto w-full max-w-6xl mb-24 font-noto font-medium text-lg text-center">
+      <div className="flex items-center justify-center gap-10">
+        <Link
+          href="/p/booking"
+          className="w-[150px] h-[50px] bg-pink-200 text-white rounded-full hover:scale-105 transition-transform flex items-center justify-center"
+        >
+          จองการนัด
+        </Link>
+        <AppointmentDialogmobile
+          name={name}
+          setName={setName}
+          phone={phone}
+          setPhone={setPhone}
+          invalidName={invalidName}
+          invalidPhone={invalidPhone}
+          handleValidation={handleValidation}
+        />
+      </div>
+      <div className=" shadow-md p-6 mb-4 h-[600px]">
+        <div className="relative h-full overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center">
+            {["/1mobile.png", "/2mobile.png", "/3mobile.png"].map(
+              (src, index) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt={`Mobile Slide ${index + 1}`}
+                  className={`h-full w-full object-cover transition-opacity duration-100`}
+                  style={{
+                    opacity: index === currentIndex ? 1 : 0,
+                    position: "absolute",
+                    transition: "opacity 1s ease-in-out",
+                  }}
+                />
+              )
+            )}
+            <button
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md"
+              onClick={() => changeSlide(-1)}
+            >
+              &lt;
+            </button>
+            <button
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md"
+              onClick={() => changeSlide(1)}
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 const BookingPage: React.FC = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [invalidName, setInvalidName] = useState(false);
   const [invalidPhone, setInvalidPhone] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleValidation = () => {
     setInvalidName(!validateName(name));
@@ -67,6 +111,23 @@ const BookingPage: React.FC = () => {
   const buttonClasses =
     "flex items-center justify-center gap-4 hover:shadow-xl hover:scale-[1.05] transition-all duration-300";
   const commonButtonStyles = "rounded-2xl p-6";
+
+  const changeSlide = (direction: number) => {
+    const slides = document.querySelectorAll(
+      ".absolute img"
+    ) as NodeListOf<HTMLElement>;
+    slides[currentIndex].style.opacity = "0";
+    const newIndex = (currentIndex + direction + slides.length) % slides.length;
+    setCurrentIndex(newIndex);
+    slides[newIndex].style.opacity = "1";
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      changeSlide(1);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [currentIndex]);
 
   return (
     <div>
@@ -93,13 +154,31 @@ const BookingPage: React.FC = () => {
                   key={src}
                   src={src}
                   alt={`Slide ${index + 1}`}
-                  className={`h-full w-full object-cover rounded-2xl transition-opacity duration-100 ${
-                    index > 0 ? "delay-[500ms]" : ""
-                  }`}
+                  className={`h-full w-full object-cover rounded-2xl transition-opacity duration-100`}
+                  style={{
+                    animation: `fade 2s ease-in-out ${index * 2}s infinite`,
+                    opacity: index === 0 ? 1 : 0,
+                  }}
                 />
               ))}
             </div>
           </div>
+          <style jsx>{`
+            @keyframes fade {
+              0% {
+                opacity: 0;
+              }
+              10% {
+                opacity: 1;
+              }
+              90% {
+                opacity: 1;
+              }
+              100% {
+                opacity: 0;
+              }
+            }
+          `}</style>
         </div>
         <div className="flex items-center justify-center gap-4 sm:gap-6">
           <Link href="/p/booking">
@@ -135,20 +214,19 @@ const BookingPage: React.FC = () => {
 
       {/* iPad View */}
       <div className="hidden md:block lg:hidden container mx-auto justify-center items-center px-4 py-2">
-        <div className="bg-white rounded-2xl p-6 lg:p-8 mb-5 shadow-md h-[300px] sm:h-[350px] md:h-[350px] w-full">
+        <div className="bg-white rounded-2xl p-6 lg:p-8 mb-5 shadow-md h-[300px] sm:h-[350px] md:h-[350px] lg:h-[400px] w-full">
           <div className="relative h-full overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              {["/1.png", "/2.png"].map((src, index) => (
-                <img
-                  key={src}
-                  src={src}
-                  alt={`Slide ${index + 1}`}
-                  className={`h-full w-full object-cover rounded-2xl transition-opacity duration-100 ${
-                    index > 0 ? "delay-[500ms]" : ""
-                  }`}
-                />
-              ))}
-            </div>
+            {["/1.png", "/2.png"].map((src, index) => (
+              <img
+                key={src}
+                src={src}
+                alt={`Slide ${index + 1}`}
+                className={`h-full w-full object-cover absolute transition-opacity duration-1000`}
+                style={{
+                  opacity: index === 0 ? 1 : 0,
+                }}
+              />
+            ))}
           </div>
         </div>
         <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-6">
@@ -188,12 +266,52 @@ const BookingPage: React.FC = () => {
       {/* Desktop View */}
       <div className="hidden lg:block container mx-auto justify-center items-center px-4 py-2">
         <div className="bg-white rounded-2xl p-6 lg:p-8 mb-5 shadow-md h-[300px] sm:h-[350px] md:h-[350px] lg:h-[400px] w-full">
-          <h2 className="text-gray-700 text-center text-2xl font-medium font-noto mb-4">
-            คู่มือ รายละเอียดการจอง
-          </h2>
-          <p className="text-gray-500 text-center text-base font-noto">
-            กรุณาอ่านรายละเอียดและข้อกำหนดในการจอง
-          </p>
+          <div className="relative h-full overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center">
+              {["/1.png", "/2.png"].map((src, index) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt={`Slide ${index + 1}`}
+                  className={`h-full w-full object-cover transition-opacity duration-100`}
+                  style={{
+                    opacity: index === currentIndex ? 1 : 0,
+                    position: "absolute",
+                    transition: "opacity 1s ease-in-out",
+                  }}
+                />
+              ))}
+              <button
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md"
+                onClick={() => changeSlide(-1)}
+              >
+                &lt;
+              </button>
+              <button
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md"
+                onClick={() => changeSlide(1)}
+              >
+                &gt;
+              </button>
+              <script>
+                {`
+                  let currentIndex = 0;
+                  const slides = document.querySelectorAll('.absolute img');
+                  const changeSlide = (direction) => {
+                    slides[currentIndex].style.opacity = 0;
+                    currentIndex = (currentIndex + direction + slides.length) % slides.length;
+                    slides[currentIndex].style.opacity = 1;
+                  };
+                  setInterval(() => {
+                    changeSlide(1);
+                    if (currentIndex === slides.length - 1) {
+                      setTimeout(() => changeSlide(-1), 3000);
+                    }
+                  }, 3000);
+                `}
+              </script>
+            </div>
+          </div>
         </div>
         <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-6">
           <Link href="/p/booking">

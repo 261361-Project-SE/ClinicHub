@@ -5,7 +5,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/app/(pages)/p/components/ui/dialog";
 import axios from "axios";
 import React, { useState } from "react";
@@ -31,7 +30,9 @@ const InputField: React.FC<InputFieldProps> = ({
     <input
       type={type}
       placeholder={placeholder}
-      className={`border rounded-md p-2 ${invalid ? "border-red-500" : ""}`}
+      className={`border rounded-md p-2 ${
+        invalid ? "border-red-500 bg-red-100" : ""
+      }`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
     />
@@ -43,101 +44,86 @@ const validateField = (value: string) => value.trim() !== "";
 
 const FirstNameField: React.FC<
   Omit<InputFieldProps, "type" | "placeholder">
-> = (props) => {
-  return (
-    <InputField
-      type="text"
-      placeholder="ชื่อ"
-      {...props}
-      invalid={props.invalid}
-      errorMessage={props.errorMessage}
-    />
-  );
-};
+> = (props) => (
+  <InputField
+    type="text"
+    placeholder="ชื่อ"
+    {...props}
+    errorMessage="กรุณากรอกเป็นภาษาไทย"
+  />
+);
 
 const LastNameField: React.FC<Omit<InputFieldProps, "type" | "placeholder">> = (
   props
-) => {
-  return (
-    <InputField
-      type="text"
-      placeholder="นามสกุล"
-      {...props}
-      invalid={props.invalid}
-      errorMessage={props.errorMessage}
-    />
-  );
-};
+) => (
+  <InputField
+    type="text"
+    placeholder="นามสกุล"
+    {...props}
+    errorMessage="กรุณากรอกเป็นภาษาไทย"
+  />
+);
 
 const PhoneNumberField: React.FC<
   Omit<InputFieldProps, "type" | "placeholder">
-> = ({ value, onChange, invalid, errorMessage }) => {
-  const isValid = /^[0-9]{10}$/.test(value);
-  return (
-    <InputField
-      type="tel"
-      placeholder="เบอร์โทรศัพท์"
-      value={value}
-      onChange={onChange}
-      invalid={invalid}
-      errorMessage={errorMessage}
-    />
-  );
-};
+> = ({ value, onChange, invalid, errorMessage }) => (
+  <InputField
+    type="tel"
+    placeholder="เบอร์โทรศัพท์"
+    value={value}
+    onChange={onChange}
+    invalid={invalid}
+    errorMessage={errorMessage}
+  />
+);
 
 const SymptomField: React.FC<Omit<InputFieldProps, "type" | "placeholder">> = (
   props
-) => {
-  return (
-    <InputField
-      type="text"
-      placeholder="อาการ"
-      {...props}
-      invalid={props.invalid}
-      errorMessage={props.errorMessage}
-    />
-  );
-};
+) => <InputField type="text" placeholder="อาการ" {...props} />;
 
 interface BookingDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  message: string;
   name: string;
   lastname: string;
   setName: React.Dispatch<React.SetStateAction<string>>;
   setLastname: React.Dispatch<React.SetStateAction<string>>;
   phone: string;
   setPhone: React.Dispatch<React.SetStateAction<string>>;
+  symptom: string;
+  setSymptom: React.Dispatch<React.SetStateAction<string>>;
+  appointment_dateTime: string;
   invalidName: boolean;
   invalidLastname: boolean;
   invalidPhone: boolean;
-  symptom: string;
-  setSymptom: React.Dispatch<React.SetStateAction<string>>;
   invalidSymptom: boolean;
-  appointment_dateTime: string;
-  setAppointment_dateTime: React.Dispatch<React.SetStateAction<string>>;
-  handleValidation: () => void;
 }
 
 const BookingDialog: React.FC<BookingDialogProps> = ({
+  isOpen,
+  onClose,
+  message,
   name,
   lastname,
   setName,
   setLastname,
   phone,
   setPhone,
-  invalidName,
-  invalidLastname,
-  invalidPhone,
   symptom,
   setSymptom,
   appointment_dateTime,
+  invalidName,
+  invalidLastname,
+  invalidPhone,
   invalidSymptom,
 }) => {
   const [showErrors, setShowErrors] = useState(false);
 
-  const validateAllFields = () => {
+  const areAllFieldsValid = () => {
     const isNameValid = validateField(name);
     const isLastnameValid = validateField(lastname);
-    const isPhoneValid = /^[0-9]{10}$/.test(phone); // Validates Thai phone numbers (10 digits)
+    const isPhoneValid = /^[0-9]{10}$/.test(phone);
     const isSymptomValid = validateField(symptom);
 
     return {
@@ -145,36 +131,32 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
       isLastnameValid,
       isPhoneValid,
       isSymptomValid,
-      hasErrors: !(
-        isNameValid &&
-        isLastnameValid &&
-        isPhoneValid &&
-        isSymptomValid
-      ),
     };
   };
 
   const handleSubmit = async () => {
-    const {
-      isNameValid,
-      isLastnameValid,
-      isPhoneValid,
-      isSymptomValid,
-      hasErrors,
-    } = validateAllFields();
+    const { isNameValid, isLastnameValid, isPhoneValid, isSymptomValid } =
+      areAllFieldsValid();
 
-    setShowErrors(true); // Show errors if any
+    invalidName = !isNameValid ? true : false;
+    invalidLastname = !isLastnameValid ? true : false;
+    invalidPhone = !isPhoneValid ? true : false;
+    invalidSymptom = !isSymptomValid ? true : false;
 
-    if (hasErrors) {
+    setShowErrors(true);
+
+    if (!(isNameValid && isLastnameValid && isPhoneValid && isSymptomValid)) {
       console.error("Validation errors present. Please correct the fields.");
-      return; // Prevent submission
+      return;
     }
+
+    setShowErrors(false);
 
     const data = {
       firstname: name,
-      lastname: lastname,
+      lastname,
       phone_number: phone,
-      symptom: symptom,
+      symptom,
       appointment_dateTime: appointment_dateTime.replace("Z", ""),
     };
 
@@ -191,17 +173,8 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
         console.error(
           "Error creating appointment:",
           error.message,
-          error.response ? error.response.data : "No response data"
+          error.response?.data || "No response data"
         );
-        console.error("Request data:", data);
-        console.error("Error status:", error.response?.status);
-        console.error("Error headers:", error.response?.headers);
-        console.error("Full error object:", error);
-        if (error.response?.status === 500) {
-          console.error("Server error: Please check the server logs.");
-        } else if (error.response?.status === 401) {
-          console.error("Unauthorized: Please check your credentials.");
-        }
       } else {
         console.error("Error creating appointment:", error);
       }
@@ -209,54 +182,59 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
   };
 
   return (
-    <Dialog>
-      <div className="max-w-sm mx-auto">
-        <DialogTrigger asChild>
-          <button className="bg-pink-200 text-white shadow-md w-[140px] md:w-[173px] h-[50px] rounded-full hover:scale-105 transition-transform">
-            <span className="font-noto font-medium text-lg">จองการนัด</span>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-center">จองการนัดหมาย</DialogTitle>
+          <DialogDescription className="text-center">
+            กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-4 flex flex-col space-y-4">
+          <label className="block text-gray-600 font-noto font-medium text-lg">
+            ชื่อ
+          </label>
+          <FirstNameField
+            value={name}
+            onChange={(value) => setName(value)}
+            invalid={showErrors && invalidName}
+            errorMessage="กรุณากรอกเป็นภาษาไทย"
+          />
+          <label className="block text-gray-600 font-noto font-medium text-lg">
+            นามสกุล
+          </label>
+          <LastNameField
+            value={lastname}
+            onChange={(value) => setLastname(value)}
+            invalid={showErrors && invalidLastname}
+            errorMessage="กรุณากรอกเป็นภาษาไทย"
+          />
+          <label className="block text-gray-600 font-noto font-medium text-lg">
+            เบอร์โทรศัพท์
+          </label>
+          <PhoneNumberField
+            value={phone}
+            onChange={(value) => setPhone(value)}
+            invalid={showErrors && invalidPhone}
+            errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
+          />
+          <label className="block text-gray-600 font-noto font-medium text-lg">
+            อาการ
+          </label>
+          <SymptomField
+            value={symptom}
+            onChange={(value) => setSymptom(value)}
+            invalid={showErrors && invalidSymptom}
+            errorMessage="กรุณากรอกเป็นภาษาไทย"
+          />
+          <button
+            className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
+            onClick={handleSubmit}
+          >
+            จองการนัด
           </button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-center">จองการนัดหมาย</DialogTitle>
-            <DialogDescription className="text-center">
-              กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-4 flex flex-col space-y-4">
-            <FirstNameField
-              value={name}
-              onChange={(value) => setName(value)}
-              invalid={showErrors && !validateField(name)}
-              errorMessage="กรุณากรอกเป็นภาษาไทย"
-            />
-            <LastNameField
-              value={lastname}
-              onChange={(value) => setLastname(value)}
-              invalid={showErrors && !validateField(lastname)}
-              errorMessage="กรุณากรอกเป็นภาษาไทย"
-            />
-            <PhoneNumberField
-              value={phone}
-              onChange={(value) => setPhone(value)}
-              invalid={showErrors && !/^[0-9]{10}$/.test(phone)}
-              errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
-            />
-            <SymptomField
-              value={symptom}
-              onChange={(value) => setSymptom(value)}
-              invalid={showErrors && !validateField(symptom)}
-              errorMessage="กรุณากรอกเป็นภาษาไทย"
-            />
-            <button
-              className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
-              onClick={handleSubmit}
-            >
-              จองการนัด
-            </button>
-          </div>
-        </DialogContent>
-      </div>
+        </div>
+      </DialogContent>
     </Dialog>
   );
 };
