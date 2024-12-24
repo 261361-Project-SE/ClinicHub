@@ -41,7 +41,7 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
   try {
     const date = appointment_dateTime.split("T")[0];
     const response = await axios.get(
-      `http://localhost:7777/api/doctor/appointment/?date=${date}`
+      `http://localhost:4444/appointment/time-slot?date=${date}`
     );
     const appointments = response.data;
 

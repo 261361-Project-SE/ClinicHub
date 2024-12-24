@@ -38,8 +38,8 @@ const BookingPage: React.FC = () => {
     });
 
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
-  console.log(appointmentDateTime);
-  console.log(getfilteredAppointment(appointmentDateTime));
+  // console.log(appointmentDateTime);
+  // console.log(getfilteredAppointment(appointmentDateTime));
 
   const handleValidation = () => {
     setInvalidName(!validateName(name));
@@ -88,6 +88,7 @@ const BookingPage: React.FC = () => {
       console.log(fillertime);
     }
   }, [appointmentDateTime]);
+  console.log(getfilteredAppointment(appointmentDateTime));
 
   return (
     <BookingLayout>
@@ -117,12 +118,12 @@ const BookingPage: React.FC = () => {
                     selectedTime === time ? "bg-green-400 shadow-xl" : ""
                   }`}
                   onClick={() => {
-                    if (!fillertime.includes(time)) {
+                    // if (!fillertime.includes(time)) {
                     setSelectedTime(time);
                     setAppointmentDate(time);
                     // }
                   }}
-                  disabled={fillertime.includes(time)}
+                  // disabled={fillertime.includes(time)}
                 >
                   {time}
                 </button>
