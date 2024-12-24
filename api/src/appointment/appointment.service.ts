@@ -25,12 +25,18 @@ class AppointmentService {
           appointment_dateTime: true,
         },
         where: {
-          appointment_dateTime: {
-            contains: date,
-          },
-          appointment_status: {
-            not: Status.CANCELED,
-          },
+          AND: [
+            {
+              appointment_dateTime: {
+                contains: date
+              }
+            },
+            {
+              appointment_status: {
+                not: Status.CANCELED
+              }
+            }
+          ]
         },
         orderBy: {
           appointment_dateTime: "asc",

@@ -13,9 +13,13 @@ class AppointmentController {
 
   async getAppointmentTimeSlot(req: Request, res: Response) {
     try {
-      const { date } = req.body
-      console.log(date)
-      const result = await appointmentService.getAppointmentTimeSlot(date)
+      const { date } = req.query
+      if (!date) {
+        res.status(400).send({ error: "Date is required" })
+        return
+      }
+
+      const result = await appointmentService.getAppointmentTimeSlot(date as string)
 
       res.status(200).send(result)
     } catch (error: any) {
