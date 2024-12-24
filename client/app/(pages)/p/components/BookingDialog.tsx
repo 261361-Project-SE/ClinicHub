@@ -100,13 +100,6 @@ const SymptomField: React.FC<Omit<InputFieldProps, "type" | "placeholder">> = (
 };
 
 interface BookingDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  message: string;
-  invalidSymptom: boolean;
-  appointment_dateTime: string;
-  symptom: string;
-  setSymptom: React.Dispatch<React.SetStateAction<string>>;
   name: string;
   lastname: string;
   setName: React.Dispatch<React.SetStateAction<string>>;
@@ -116,6 +109,12 @@ interface BookingDialogProps {
   invalidName: boolean;
   invalidLastname: boolean;
   invalidPhone: boolean;
+  symptom: string;
+  setSymptom: React.Dispatch<React.SetStateAction<string>>;
+  invalidSymptom: boolean;
+  appointment_dateTime: string;
+  setAppointment_dateTime: React.Dispatch<React.SetStateAction<string>>;
+  handleValidation: () => void;
 }
 
 const BookingDialog: React.FC<BookingDialogProps> = ({

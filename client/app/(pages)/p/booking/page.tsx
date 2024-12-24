@@ -122,6 +122,7 @@ const BookingPage: React.FC = () => {
             }
             .no-scrollbar {
               -ms-overflow-style: none;
+              -ms-overflow-style: none;
               scrollbar-width: none;
             }
           `}</style>
