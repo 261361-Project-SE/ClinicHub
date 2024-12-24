@@ -8,16 +8,20 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const MobileBookingPage: React.FC<{
-  name: string;
-  setName: (name: string) => void;
+  firstName: string;
+  setFirstName: (name: string) => void;
+  lastName: string;
+  setLastName: (name: string) => void;
   phone: string;
   setPhone: (phone: string) => void;
   invalidName: boolean;
   invalidPhone: boolean;
   handleValidation: () => void;
 }> = ({
-  name,
-  setName,
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
   phone,
   setPhone,
   invalidName,
@@ -51,11 +55,14 @@ const MobileBookingPage: React.FC<{
           จองการนัด
         </Link>
         <AppointmentDialogmobile
-          name={name}
-          setName={setName}
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
           phone={phone}
           setPhone={setPhone}
-          invalidName={invalidName}
+          invalidFirstName={invalidName}
+          invalidLastName={invalidName}
           invalidPhone={invalidPhone}
           handleValidation={handleValidation}
         />
@@ -97,14 +104,17 @@ const MobileBookingPage: React.FC<{
   );
 };
 const BookingPage: React.FC = () => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [invalidName, setInvalidName] = useState(false);
+  const [invalidLastName, setInvalidLastName] = useState(false);
   const [invalidPhone, setInvalidPhone] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleValidation = () => {
-    setInvalidName(!validateName(name));
+    setInvalidName(!validateName(firstName));
+    setInvalidLastName(!validateName(lastName));
     setInvalidPhone(!validatePhone(phone));
   };
 
@@ -134,8 +144,10 @@ const BookingPage: React.FC = () => {
       {/* Mobile View */}
       <div className="md:hidden w-full max-w-[600px] mx-auto">
         <MobileBookingPage
-          name={name}
-          setName={setName}
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
           phone={phone}
           setPhone={setPhone}
           invalidName={invalidName}
@@ -194,11 +206,14 @@ const BookingPage: React.FC = () => {
           </Link>
 
           <AppointmentDialog
-            name={name}
-            setName={setName}
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
             phone={phone}
             setPhone={setPhone}
-            invalidName={invalidName}
+            invalidFirstName={invalidName}
+            invalidLastName={invalidLastName}
             invalidPhone={invalidPhone}
             handleValidation={handleValidation}
           />
@@ -245,11 +260,14 @@ const BookingPage: React.FC = () => {
           </Link>
 
           <AppointmentDialog
-            name={name}
-            setName={setName}
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
             phone={phone}
             setPhone={setPhone}
-            invalidName={invalidName}
+            invalidFirstName={invalidName}
+            invalidLastName={invalidLastName}
             invalidPhone={invalidPhone}
             handleValidation={handleValidation}
           />
@@ -330,14 +348,16 @@ const BookingPage: React.FC = () => {
           </Link>
 
           <AppointmentDialog
-            name={name}
-            setName={setName}
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
             phone={phone}
             setPhone={setPhone}
-            invalidName={invalidName}
+            invalidFirstName={invalidName}
+            invalidLastName={invalidLastName}
             invalidPhone={invalidPhone}
             handleValidation={handleValidation}
-            className="w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px]"
           />
 
           <Link href="/p/feedback">

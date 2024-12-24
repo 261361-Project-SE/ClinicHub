@@ -6,27 +6,72 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/(pages)/p/components/ui/dialog";
-import React from "react";
+import React, { useState } from "react";
 
 interface AppointmentDialogMobileProps {
-  name: string;
-  setName: (name: string) => void;
+  firstName: string;
+  setFirstName: (name: string) => void;
+  lastName: string;
+  setLastName: (name: string) => void;
   phone: string;
   setPhone: (phone: string) => void;
-  invalidName: boolean;
+  invalidFirstName: boolean;
+  invalidLastName: boolean;
   invalidPhone: boolean;
   handleValidation: () => void;
 }
 
 const AppointmentDialogmobile: React.FC<AppointmentDialogMobileProps> = ({
-  name,
-  setName,
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
   phone,
   setPhone,
-  invalidName,
+  invalidFirstName,
+  invalidLastName,
   invalidPhone,
   handleValidation,
 }) => {
+  const [isInvalidFirstName, setIsInvalidFirstName] =
+    useState(invalidFirstName);
+  const [isInvalidLastName, setIsInvalidLastName] = useState(invalidLastName);
+  const [isInvalidPhone, setIsInvalidPhone] = useState(invalidPhone);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const validateField = (value: string) => value.trim() !== "";
+
+  const handleCheck = async () => {
+    const firstNameValid = validateField(firstName);
+    const lastNameValid = validateField(lastName);
+    const phoneValid = /^[0-9]{10}$/.test(phone);
+
+    setIsInvalidFirstName(!firstNameValid);
+    setIsInvalidLastName(!lastNameValid);
+    setIsInvalidPhone(!phoneValid);
+
+    if (firstNameValid && lastNameValid && phoneValid) {
+      try {
+        const response = await fetch(
+          `${process.env.API_END_POINT}/appointment?firstName=${firstName}&lastName=${lastName}&phone=${phone}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch appointment data.");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        handleValidation();
+      } catch (error) {
+        setErrorMessage(
+          "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง"
+        );
+        console.error("Error fetching appointment data:", error);
+      }
+    }
+  };
+
   return (
     <Dialog>
       <div className="max-w-sm mx-auto p-4">
@@ -45,31 +90,34 @@ const AppointmentDialogmobile: React.FC<AppointmentDialogMobileProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex flex-col space-y-4">
-            <FirstNameField
+            <InputField
               type="text"
               placeholder="ชื่อ"
-              value={name}
-              onChange={setName}
-              invalid={invalidName}
+              value={firstName}
+              onChange={setFirstName}
+              invalid={invalidFirstName}
               errorMessage="กรุณากรอกเป็นภาษาไทย"
             />
-            <LastNameField
+            <InputField
               type="text"
               placeholder="นามสกุล"
-              value={name}
-              onChange={setName}
-              invalid={invalidName}
+              value={lastName}
+              onChange={setLastName}
+              invalid={invalidLastName}
               errorMessage="กรุณากรอกเป็นภาษาไทย"
             />
-            <PhoneNumberField
+            <InputField
+              type="tel"
+              placeholder="เบอร์โทรศัพท์"
               value={phone}
               onChange={setPhone}
               invalid={invalidPhone}
               errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
             />
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             <button
               className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
-              onClick={handleValidation}
+              onClick={handleCheck}
             >
               ตรวจสอบ
             </button>
@@ -80,76 +128,35 @@ const AppointmentDialogmobile: React.FC<AppointmentDialogMobileProps> = ({
   );
 };
 
-const InputField: React.FC<{
+interface InputFieldProps {
   type: string;
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
-  <>
+  invalid?: boolean;
+  errorMessage?: string;
+}
+
+const InputField: React.FC<InputFieldProps> = ({
+  type,
+  placeholder,
+  value,
+  onChange,
+  invalid,
+  errorMessage,
+}) => (
+  <div>
     <input
       type={type}
       placeholder={placeholder}
-      className={`border rounded-md p-2 ${invalid ? "border-red-500" : ""}`}
+      className={`border rounded-md p-2 w-full ${
+        invalid ? "border-red-500 bg-red-100" : ""
+      }`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
     />
     {invalid && <span className="text-red-500 text-sm">{errorMessage}</span>}
-  </>
-);
-
-const FirstNameField: React.FC<{
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
-  <InputField
-    type={type}
-    placeholder={placeholder}
-    value={value}
-    onChange={onChange}
-    invalid={invalid}
-    errorMessage={errorMessage}
-  />
-);
-
-const LastNameField: React.FC<{
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
-  <InputField
-    type={type}
-    placeholder={placeholder}
-    value={value}
-    onChange={onChange}
-    invalid={invalid}
-    errorMessage={errorMessage}
-  />
-);
-
-const PhoneNumberField: React.FC<{
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ value, onChange, invalid, errorMessage }) => (
-  <InputField
-    type="tel"
-    placeholder="เบอร์โทรศัพท์"
-    value={value}
-    onChange={onChange}
-    invalid={invalid}
-    errorMessage={errorMessage}
-  />
+  </div>
 );
 
 export default AppointmentDialogmobile;

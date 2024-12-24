@@ -138,12 +138,12 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
     const { isNameValid, isLastnameValid, isPhoneValid, isSymptomValid } =
       areAllFieldsValid();
 
-    invalidName = !isNameValid ? true : false;
-    invalidLastname = !isLastnameValid ? true : false;
-    invalidPhone = !isPhoneValid ? true : false;
-    invalidSymptom = !isSymptomValid ? true : false;
-
     setShowErrors(true);
+
+    invalidName = !isNameValid;
+    invalidLastname = !isLastnameValid;
+    invalidPhone = !isPhoneValid;
+    invalidSymptom = !isSymptomValid;
 
     if (!(isNameValid && isLastnameValid && isPhoneValid && isSymptomValid)) {
       console.error("Validation errors present. Please correct the fields.");

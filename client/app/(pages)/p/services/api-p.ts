@@ -1,7 +1,5 @@
 import axios from "axios";
 
-// const API_END_POINT = process.env.API_END_POINT || "http://localhost:5000";
-
 export const postRequest = async (
   firstName: string,
   lastName: string,
@@ -32,6 +30,25 @@ export const postRequest = async (
       throw new Error(
         `Error while creating appointment service: ${String(error)}`
       );
+    }
+  }
+};
+
+export const Requestcheckbooking = async (
+  firstName: string,
+  lastName: string,
+  phone: string
+) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:4444/patient/appointment?firstName=${firstName}&lastName=${lastName}&phone=${phone}`
+    );
+    return response;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Error while checking booking service: ${error.message}`);
+    } else {
+      throw new Error(`Error while checking booking service: ${String(error)}`);
     }
   }
 };
