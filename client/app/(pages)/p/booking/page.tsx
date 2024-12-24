@@ -38,8 +38,6 @@ const BookingPage: React.FC = () => {
     });
 
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
-  // console.log(appointmentDateTime);
-  // console.log(getfilteredAppointment(appointmentDateTime));
 
   const handleValidation = () => {
     setInvalidName(!validateName(name));
@@ -56,6 +54,7 @@ const BookingPage: React.FC = () => {
     );
     setAppointmentDateTime(newDateTime.toISOString());
   };
+
   const handleBooking = () => {
     handleValidation();
     if (
@@ -78,26 +77,22 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  const [fillertime, setFillertime] = useState<string[]>([]);
+  const [filteredTimes, setFiltertime] = useState<string[]>([]);
 
   useEffect(() => {
     if (appointmentDateTime) {
       getfilteredAppointment(appointmentDateTime)
         .then((filteredTime: string[]) => {
-          setFillertime(filteredTime);
+          setFiltertime(filteredTime);
         })
         .catch((error) => {
           console.error("Error fetching filtered appointment times:", error);
         });
     }
   }, [appointmentDateTime]);
-
-  useEffect(() => {
-    console.log(fillertime); // จะทำงานเมื่อ fillertime ถูกอัปเดตแล้ว
-  }, [fillertime]);
-
-  console.log(getfilteredAppointment(appointmentDateTime));
-
+  // useEffect(() => {
+  //   console.log(filteredTimes); // จะทำงานเมื่อ filteredTimes ถูกอัปเดตแล้ว
+  // }, [filteredTimes]);
   return (
     <BookingLayout>
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl">
@@ -119,8 +114,8 @@ const BookingPage: React.FC = () => {
               }}
             >
               {times.map((time) => {
-                // ตรวจสอบว่าเวลานั้นอยู่ใน fillertime หรือไม่
-                const isDisabled = fillertime.includes(time);
+                // ตรวจสอบว่าเวลานั้นอยู่ใน filteredTimes หรือไม่
+                const isDisabled = filteredTimes.includes(time);
 
                 return (
                   <button
