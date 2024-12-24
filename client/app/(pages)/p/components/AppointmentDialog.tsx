@@ -61,11 +61,81 @@ const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
     setPhone(value);
     setIsInvalidPhone(!validatePhone(value));
   };
+  const InputField: React.FC<{
+    type: string;
+    placeholder: string;
+    value: string;
+    onChange: (value: string) => void;
+    invalid: boolean;
+    errorMessage: string;
+  }> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
+    <>
+      <input
+        type={type}
+        placeholder={placeholder}
+        className={`border rounded-md p-2 ${invalid ? "border-red-500" : ""}`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {invalid && <span className="text-red-500 text-sm">{errorMessage}</span>}
+    </>
+  );
 
+  const FirstNameField: React.FC<{
+    type: string;
+    placeholder: string;
+    value: string;
+    onChange: (value: string) => void;
+    invalid: boolean;
+    errorMessage: string;
+  }> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
+    <InputField
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      invalid={invalid}
+      errorMessage={errorMessage}
+    />
+  );
+
+  const LastNameField: React.FC<{
+    type: string;
+    placeholder: string;
+    value: string;
+    onChange: (value: string) => void;
+    invalid: boolean;
+    errorMessage: string;
+  }> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
+    <InputField
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      invalid={invalid}
+      errorMessage={errorMessage}
+    />
+  );
+
+  const PhoneNumberField: React.FC<{
+    value: string;
+    onChange: (value: string) => void;
+    invalid: boolean;
+    errorMessage: string;
+  }> = ({ value, onChange, invalid, errorMessage }) => (
+    <InputField
+      type="tel"
+      placeholder="เบอร์โทรศัพท์"
+      value={value}
+      onChange={onChange}
+      invalid={invalid}
+      errorMessage={errorMessage}
+    />
+  );
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex items-center justify-center w-full md:w-[400px] lg:w-[480px] h-[200px] md:h-[225px] lg:h-[255px] bg-amber-400 text-white hover:shadow-xl hover:scale-[1.05] transition-transform duration-200 rounded-2xl shadow-md">
+        <button className="flex items-center justify-center w-full  sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-amber-400 text-white hover:shadow-xl hover:scale-[1.05] transition-transform duration-200 rounded-2xl shadow-md">
           <div className="flex items-center">
             <ClipboardCheck className="icon-size w-24 h-24" strokeWidth={2} />
             <span className="mt-4 text-4xl font-medium">ตรวจสอบนัดหมาย</span>
@@ -80,21 +150,27 @@ const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4 flex flex-col space-y-4">
-          <InputField
+          <FirstNameField
             type="text"
-            placeholder="ชื่อ - นามสกุล"
+            placeholder="ชื่อ"
             value={name}
-            onChange={handleNameChange}
-            invalid={isInvalidName}
-            errorMessage={errorMessageName}
+            onChange={setName}
+            invalid={invalidName}
+            errorMessage="กรุณากรอกเป็นภาษาไทย"
           />
-          <InputField
-            type="tel"
-            placeholder="เบอร์โทรศัพท์"
+          <LastNameField
+            type="text"
+            placeholder="นามสกุล"
+            value={name}
+            onChange={setName}
+            invalid={invalidName}
+            errorMessage="กรุณากรอกเป็นภาษาไทย"
+          />
+          <PhoneNumberField
             value={phone}
-            onChange={handlePhoneChange}
-            invalid={isInvalidPhone}
-            errorMessage={errorMessagePhone}
+            onChange={setPhone}
+            invalid={invalidPhone}
+            errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
           />
           <button
             className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-[100px] ml-auto font-noto text-center font-normal"

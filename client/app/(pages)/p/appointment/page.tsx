@@ -253,13 +253,14 @@ const BookingPage: React.FC = () => {
             invalidPhone={invalidPhone}
             handleValidation={handleValidation}
           />
-
-          <button
-            className={`${buttonClasses} flex flex-col items-center justify-center w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-green-300 text-white rounded-2xl transition-transform duration-200`}
-          >
-            <MessagesSquare className="icon-size w-24 h-24" strokeWidth={2} />
-            <span className="text-xl font-noto pt-4">ประเมินความพึงพอใจ</span>
-          </button>
+          <Link href="/p/feedback">
+            <button
+              className={`${buttonClasses} flex flex-col items-center justify-center w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-green-300 text-white rounded-2xl transition-transform duration-200`}
+            >
+              <MessagesSquare className="icon-size w-24 h-24" strokeWidth={2} />
+              <span className="text-xl font-noto pt-4">ประเมินความพึงพอใจ</span>
+            </button>
+          </Link>
         </div>
       </div>
 
@@ -336,14 +337,17 @@ const BookingPage: React.FC = () => {
             invalidName={invalidName}
             invalidPhone={invalidPhone}
             handleValidation={handleValidation}
+            className="w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px]"
           />
 
-          <button
-            className={`${buttonClasses} flex flex-col items-center justify-center w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-green-300 text-white rounded-2xl transition-transform duration-200`}
-          >
-            <MessagesSquare className="icon-size w-24 h-24" strokeWidth={2} />
-            <span className="text-xl font-noto pt-4">ประเมินความพึงพอใจ</span>
-          </button>
+          <Link href="/p/feedback">
+            <button
+              className={`${buttonClasses} flex flex-col items-center justify-center w-full sm:w-[300px] md:w-[350px] lg:w-[400px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-green-300 text-white rounded-2xl transition-transform duration-200`}
+            >
+              <MessagesSquare className="icon-size w-24 h-24" strokeWidth={2} />
+              <span className="text-xl font-noto pt-4">ประเมินความพึงพอใจ</span>
+            </button>
+          </Link>
         </div>
       </div>
     </div>
