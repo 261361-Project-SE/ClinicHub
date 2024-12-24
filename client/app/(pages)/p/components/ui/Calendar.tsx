@@ -6,169 +6,150 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { DayPicker } from "react-day-picker";
 
-interface CalendarProps {
-  mode: "single" | "multiple" | "range";
-  selected?: Date;
-  onSelect: (date: Date | undefined) => void;
-  className?: string;
-}
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 const Calendar: React.FC<CalendarProps> = ({
-  mode,
-  selected,
-  onSelect,
   className,
+  classNames,
+  showOutsideDays = true,
+  ...props
 }) => {
   const [isDesktop, setIsDesktop] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkDeviceType = () => {
-      const width = window.innerWidth;
-      setIsDesktop(width >= 1024); // Desktop
-      setIsTablet(width >= 768 && width < 1024); // Tablet
+    const checkIfDesktop = () => {
+      setIsDesktop(window.innerWidth >= 768);
     };
 
-    checkDeviceType();
-    window.addEventListener("resize", checkDeviceType);
+    checkIfDesktop();
+    window.addEventListener("resize", checkIfDesktop);
 
-    return () => window.removeEventListener("resize", checkDeviceType);
+    return () => window.removeEventListener("resize", checkIfDesktop);
   }, []);
 
-  const handleDayClick = (day: Date) => {
-    onSelect(day);
-  };
-
   return (
-    <>
-      {mode === "single" && (
-        <DayPicker
-          locale={th}
-          mode="single"
-          selected={selected}
-          onDayClick={handleDayClick}
-          className={cn(
-            "p-4 bg-white",
-            {
-              "md:w-[1080px] md:h-[600px] md:p-4 md:justify-center md:mx-auto":
-                isDesktop,
-              "sm:w-[600px] sm:h-[400px] sm:p-2 sm:justify-center sm:mx-auto":
-                isTablet,
-            },
-            className
-          )}
-          classNames={{
-            months: cn(
-              "flex flex-col sm:flex-row space-y-8 sm:space-x-6 sm:space-y-0",
-              {
-                "md:w-full md:justify-center md:max-w-7xl": isDesktop,
-                "sm:w-full sm:justify-center sm:max-w-5xl": isTablet,
-              }
-            ),
-            month: cn("space-y-6", {
-              "md:w-full md:max-w-7xl": isDesktop,
-              "sm:w-full sm:max-w-5xl": isTablet,
-            }),
-            caption: cn("flex justify-center pt-2 relative items-center", {
-              "md:py-4": isDesktop,
-              "text-sm": !isDesktop && !isTablet,
-              "text-base": isTablet,
-            }),
-            caption_label: cn("text-base font-medium", {
-              "md:text-2xl": isDesktop,
-              "text-lg": isTablet,
-            }),
-            nav: "space-x-2 flex items-center",
-            nav_button: cn(
-              buttonVariants({ variant: "outline" }),
-              "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100",
-              {
-                "md:h-12 md:w-12": isDesktop,
-                "sm:h-10 sm:w-10": isTablet,
-              }
-            ),
-            nav_button_previous: cn("absolute left-2", {
-              "md:left-4": isDesktop,
-              "sm:left-3": isTablet,
-            }),
-            nav_button_next: cn("absolute right-2", {
-              "md:right-4": isDesktop,
-              "sm:right-3": isTablet,
-            }),
-            table: cn("w-full border-collapse space-y-2", {
-              "md:mt-4": isDesktop,
-            }),
-            head_row: "flex justify-center",
-            head_cell: cn(
-              "text-muted-foreground rounded-md w-12 font-normal text-[0.9rem]",
-              {
-                "md:w-[88px] md:text-sm md:font-medium": isDesktop,
-                "text-xs": !isDesktop && !isTablet,
-                "md:text-sm": isTablet,
-              }
-            ),
-            row: cn("flex w-full mt-3 justify-center", {
-              "md:mt-4": isDesktop,
-            }),
-            cell: cn(
-              "relative p-1 text-center text-sm focus-within:relative focus-within:z-20",
-              mode === "single"
-                ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md"
-                : "[&:has([aria-selected])]:rounded-md",
-              {
-                "md:p-1": isDesktop,
-              }
-            ),
-            day: cn(
-              buttonVariants({ variant: "ghost" }),
-              "h-10 w-10 p-0 font-normal aria-selected:opacity-100",
-              {
-                "md:h-[50px] md:w-[80px] md:text-lg": isDesktop,
-                "h-8 w-8 text-sm": !isDesktop && !isTablet,
-                "h-9 w-9 text-base": isTablet,
-              }
-            ),
-            day_selected:
-              "bg-pink-200 text-primary-foreground hover:bg-pink-200 hover:text-primary-foreground focus:bg-pink-200 focus:text-primary-foreground",
-            day_today: "bg-accent text-accent-foreground",
-            day_outside: "text-muted-foreground opacity-50",
-            day_disabled: "text-muted-foreground opacity-50",
-            day_range_middle:
-              "aria-selected:bg-accent aria-selected:text-accent-foreground",
-            day_hidden: "invisible",
-          }}
-          components={{
-            IconLeft: ({ className, ...props }) => (
-              <ChevronLeft
-                className={cn(
-                  "h-5 w-5",
-                  {
-                    "md:h-8 md:w-8": isDesktop,
-                    "sm:h-7 sm:w-7": isTablet,
-                  },
-                  className
-                )}
-                {...props}
-              />
-            ),
-            IconRight: ({ className, ...props }) => (
-              <ChevronRight
-                className={cn(
-                  "h-5 w-5",
-                  {
-                    "md:h-8 md:w-8": isDesktop,
-                    "sm:h-7 sm:w-7": isTablet,
-                  },
-                  className
-                )}
-                {...props}
-              />
-            ),
-          }}
-        />
+    <DayPicker
+      showOutsideDays={showOutsideDays}
+      locale={th}
+      className={cn(
+        "p-3 bg-white",
+        {
+          "md:w-[922px] md:h-[600px] md:p-4 mx-auto md:mb-20": isDesktop, // Centering in desktop view
+          "w-full h-auto p-2": !isDesktop, // Mobile responsive styles
+        },
+        className
       )}
-      {/* Similar changes for "multiple" and "range" modes */}
-    </>
+      classNames={{
+        months: cn(
+          "flex flex-col sm:flex-row space-y-6 sm:space-x-6 sm:space-y-0",
+          {
+            "md:w-full md:justify-center": isDesktop,
+            "justify-center": !isDesktop, // Centering for mobile
+          }
+        ),
+        month: cn("space-y-4", {
+          "md:w-full md:max-w-[800px]": isDesktop,
+          "w-full": !isDesktop, // Full width for mobile
+        }),
+        caption: cn("flex justify-center pt-1 relative items-center", {
+          "md:py-4": isDesktop,
+          "py-2": !isDesktop, // Padding for mobile
+        }),
+        caption_label: cn("text-sm font-medium", {
+          "md:text-2xl": isDesktop,
+          "text-lg": !isDesktop, // Larger text for mobile
+        }),
+        nav: "space-x-1 flex items-center",
+        nav_button: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          {
+            "md:h-12 md:w-12": isDesktop,
+            "h-7 w-7": !isDesktop, // Adjust button size for mobile
+          }
+        ),
+        nav_button_previous: cn("absolute left-1", {
+          "md:left-4": isDesktop,
+          "left-2": !isDesktop, // Adjust position for mobile
+        }),
+        nav_button_next: cn("absolute right-1", {
+          "md:right-4": isDesktop,
+          "right-2": !isDesktop, // Adjust position for mobile
+        }),
+        table: cn("w-full border-collapse space-y-1", {
+          "md:mt-4": isDesktop,
+          "mt-2": !isDesktop, // Margin for mobile
+        }),
+        head_row: "flex justify-center",
+        head_cell: cn(
+          "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+          {
+            "md:w-[88px] md:text-sm md:font-medium": isDesktop,
+            "w-9 text-base": !isDesktop, // Adjust cell size for mobile
+          }
+        ),
+        row: cn("flex w-full mt-2 justify-center", {
+          "md:mt-4": isDesktop,
+          "mt-2": !isDesktop, // Margin for mobile
+        }),
+        cell: cn(
+          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20",
+          props.mode === "range"
+            ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md"
+            : "[&:has([aria-selected])]:rounded-md",
+          {
+            "md:p-1": isDesktop,
+            "p-1": !isDesktop, // Padding for mobile
+          }
+        ),
+        day: cn(
+          buttonVariants({ variant: "ghost" }),
+          "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
+          {
+            "md:h-[50px] md:w-[80px] md:text-lg": isDesktop,
+            "h-9 w-9 text-base": !isDesktop, // Adjust day size for mobile
+          }
+        ),
+        day_selected:
+          "bg-pink-200 text-primary-foreground hover:bg-pink-200 hover:text-primary-foreground focus:bg-pink-200 focus:text-primary-foreground",
+        day_today: "bg-accent text-accent-foreground",
+        day_outside: "text-muted-foreground opacity-50",
+        day_disabled: "text-muted-foreground opacity-50",
+        day_range_middle:
+          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        day_hidden: "invisible",
+        ...classNames,
+      }}
+      components={{
+        IconLeft: ({ className, ...props }) => (
+          <ChevronLeft
+            className={cn(
+              "h-4 w-4",
+              {
+                "md:h-8 md:w-8": isDesktop,
+                "h-6 w-6": !isDesktop, // Adjust icon size for mobile
+              },
+              className
+            )}
+            {...props}
+          />
+        ),
+        IconRight: ({ className, ...props }) => (
+          <ChevronRight
+            className={cn(
+              "h-4 w-4",
+              {
+                "md:h-8 md:w-8": isDesktop,
+                "h-6 w-6": !isDesktop, // Adjust icon size for mobile
+              },
+              className
+            )}
+            {...props}
+          />
+        ),
+      }}
+      {...props}
+    />
   );
 };
 
