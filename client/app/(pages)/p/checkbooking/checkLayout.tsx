@@ -17,7 +17,7 @@ const GradientBackground: React.FC = () => (
   <div className="absolute top-0 left-0 w-full h-[650px] bg-gradient-to-r from-pink-200 to-pink-300 -z-10 hidden md:block" />
 );
 
-const BookingLayout: React.FC<LayoutProps> = ({ children }) => {
+const checkingLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div
       className={`${notoSansThaiLooped.className} min-h-screen antialiased overflow-x-hidden w-full`}
@@ -36,4 +36,4 @@ const BookingLayout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default BookingLayout;
+export default checkingLayout;
