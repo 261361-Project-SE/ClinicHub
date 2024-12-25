@@ -45,15 +45,6 @@ const BookingPage: React.FC = () => {
     setInvalidSymptom(!validateSymptom(symptom));
   };
 
-  const setAppointmentDate = (time: string) => {
-    const newDateTime = new Date(appointmentDateTime || new Date());
-    newDateTime.setHours(
-      parseInt(time.split(":")[0]),
-      parseInt(time.split(":")[1])
-    );
-    setAppointmentDateTime(newDateTime.toISOString());
-  };
-
   const handleBooking = () => {
     handleValidation();
     if (
@@ -76,10 +67,6 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    // Client-side logic here
-  }, []);
-
   return (
     <BookingLayout>
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl">
@@ -91,7 +78,6 @@ const BookingPage: React.FC = () => {
           <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
             เลือกเวลาที่ต้องการจอง:
           </label>
-
           <div className="flex justify-center overflow-hidden gap-2 relative w-[400px] md:w-[1200px] pb-4 md:max-w-screen-xl md:pl-10">
             <div
               className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar"
@@ -109,7 +95,14 @@ const BookingPage: React.FC = () => {
                   }`}
                   onClick={() => {
                     setSelectedTime(time);
-                    setAppointmentDate(time);
+                    if (appointmentDateTime) {
+                      const newDateTime = new Date(appointmentDateTime);
+                      newDateTime.setHours(
+                        parseInt(time.split(":")[0]),
+                        parseInt(time.split(":")[1])
+                      );
+                      setAppointmentDateTime(newDateTime.toISOString());
+                    }
                   }}
                 >
                   {time}
@@ -127,27 +120,31 @@ const BookingPage: React.FC = () => {
               scrollbar-width: none;
             }
           `}</style>
-
-          <Calendar
-            mode="single"
-            selected={
-              appointmentDateTime ? new Date(appointmentDateTime) : undefined
-            }
-            onSelect={(date) => {
-              if (date && selectedTime) {
-                const selectedDateTime = new Date(date);
-                selectedDateTime.setHours(
-                  parseInt(selectedTime.split(":")[0]),
-                  parseInt(selectedTime.split(":")[1])
-                );
-                setAppointmentDateTime(selectedDateTime.toISOString());
+          <div className="flex justify-center overflow-hidden gap-2 relative w-[400px] md:w-[1200px] pb-4 md:max-w-screen-xl md:pl-10">
+            <Calendar
+              mode="single"
+              selected={
+                appointmentDateTime ? new Date(appointmentDateTime) : undefined
               }
-            }}
-            className="rounded-md border shadow-lg"
-          />
+              onSelect={(date) => {
+                if (date) {
+                  const selectedDateTime = new Date(date);
+                  if (selectedTime) {
+                    selectedDateTime.setHours(
+                      parseInt(selectedTime.split(":")[0]),
+                      parseInt(selectedTime.split(":")[1])
+                    );
+                  }
+                  setAppointmentDateTime(selectedDateTime.toISOString());
+                }
+              }}
+              className="rounded-md border shadow-lg"
+            />
+          </div>
         </div>
       </div>
-      <div className=" md:mt-4">
+
+      <div className="md:mt-4">
         <div className="flex flex-col md:items-end md:justify-end items-center justify-center font-noto h-fit">
           <div className="flex gap-6 mt-6 md:gap-6 md:mt-0">
             <Link href="/">
