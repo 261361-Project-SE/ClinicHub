@@ -9,10 +9,11 @@ import BookingDialog from "../components/BookingDialog";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 
 const BookingPage: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [appointmentDateTime, setAppointmentDateTime] = useState("");
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,12 +22,11 @@ const BookingPage: React.FC = () => {
   const [invalidPhone, setInvalidPhone] = useState(false);
   const [symptom, setSymptom] = useState("");
   const [invalidSymptom, setInvalidSymptom] = useState(false);
-  const [appointmentDateTime, setAppointmentDateTime] = useState("");
   const [showBookingDialog, setShowBookingDialog] = useState(false);
 
-  const TIME_START = 9 * 60; // 9 AM
-  const TIME_END = 17 * 60; // 5 PM
-  const TIME_INTERVAL = 15; // 15 minutes
+  const TIME_START = 9 * 60;
+  const TIME_END = 17 * 60;
+  const TIME_INTERVAL = 15;
 
   const generateTimes = (start: number, end: number, interval: number) =>
     Array.from({ length: (end - start) / interval + 1 }, (_, i) => {
@@ -39,10 +39,17 @@ const BookingPage: React.FC = () => {
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
 
   const handleValidation = () => {
-    setInvalidName(!validateName(name));
-    setInvalidLastname(!validateName(lastname));
-    setInvalidPhone(!validatePhone(phone));
-    setInvalidSymptom(!validateSymptom(symptom));
+    const isNameValid = validateName(name);
+    const isLastNameValid = validateName(lastname);
+    const isPhoneValid = validatePhone(phone);
+    const isSymptomValid = validateSymptom(symptom);
+
+    setInvalidName(!isNameValid);
+    setInvalidLastname(!isLastNameValid);
+    setInvalidPhone(!isPhoneValid);
+    setInvalidSymptom(!isSymptomValid);
+
+    return isNameValid && isLastNameValid && isPhoneValid && isSymptomValid;
   };
 
   const handleBooking = () => {
@@ -67,6 +74,33 @@ const BookingPage: React.FC = () => {
     }
   };
 
+  const handleConfirmBooking = () => {
+    console.log("Booking confirmed");
+    resetBookingState();
+  };
+
+  const handleCloseDialog = useCallback(() => {
+    setShowBookingDialog(false);
+    setInvalidName(false);
+    setInvalidLastname(false);
+    setInvalidPhone(false);
+    setInvalidSymptom(false);
+  }, []);
+
+  const resetBookingState = () => {
+    setSelectedTime(null);
+    setAppointmentDateTime("");
+    setName("");
+    setLastname("");
+    setPhone("");
+    setSymptom("");
+    setInvalidName(false);
+    setInvalidLastname(false);
+    setInvalidPhone(false);
+    setInvalidSymptom(false);
+    setShowBookingDialog(false);
+  };
+
   return (
     <BookingLayout>
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl">
@@ -74,7 +108,7 @@ const BookingPage: React.FC = () => {
           จองการนัดหมาย
         </h1>
 
-        <div className="mt-4 flex justify-start flex-wrap max-w-7xl mx-auto">
+        <div className="flex justify-start flex-wrap max-w-7xl mx-auto">
           <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
             เลือกเวลาที่ต้องการจอง:
           </label>
@@ -120,6 +154,7 @@ const BookingPage: React.FC = () => {
               scrollbar-width: none;
             }
           `}</style>
+
           <div className="flex justify-center overflow-hidden gap-2 relative w-[400px] md:w-[1200px] pb-4 md:max-w-screen-xl md:pl-10">
             <Calendar
               mode="single"
@@ -160,7 +195,7 @@ const BookingPage: React.FC = () => {
             </button>
             <BookingDialog
               isOpen={showBookingDialog}
-              onClose={() => setShowBookingDialog(false)}
+              onClose={handleCloseDialog}
               message="กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด"
               invalidSymptom={invalidSymptom}
               appointment_dateTime={appointmentDateTime}
@@ -175,6 +210,7 @@ const BookingPage: React.FC = () => {
               invalidName={invalidName}
               invalidLastname={invalidLastname}
               invalidPhone={invalidPhone}
+              onConfirm={handleConfirmBooking}
             />
           </div>
         </div>

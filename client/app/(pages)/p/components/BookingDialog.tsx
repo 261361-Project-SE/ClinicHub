@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/app/(pages)/p/components/ui/dialog";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface InputFieldProps {
   type: string;
@@ -73,7 +73,7 @@ const PhoneNumberField: React.FC<
     value={value}
     onChange={onChange}
     invalid={invalid}
-    errorMessage={errorMessage}
+    errorMessage="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"
   />
 );
 
@@ -98,6 +98,7 @@ interface BookingDialogProps {
   invalidLastname: boolean;
   invalidPhone: boolean;
   invalidSymptom: boolean;
+  onConfirm: () => void;
 }
 
 const BookingDialog: React.FC<BookingDialogProps> = ({
@@ -117,8 +118,18 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
   invalidLastname,
   invalidPhone,
   invalidSymptom,
+  onConfirm,
 }) => {
   const [showErrors, setShowErrors] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Reset showErrors when dialog opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setShowErrors(false);
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
 
   const areAllFieldsValid = () => {
     const isNameValid = validateField(name);
@@ -131,26 +142,23 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
       isLastnameValid,
       isPhoneValid,
       isSymptomValid,
+      isAllValid:
+        isNameValid && isLastnameValid && isPhoneValid && isSymptomValid,
     };
   };
 
   const handleSubmit = async () => {
-    const { isNameValid, isLastnameValid, isPhoneValid, isSymptomValid } =
-      areAllFieldsValid();
+    if (isSubmitting) return;
 
+    const validation = areAllFieldsValid();
     setShowErrors(true);
 
-    invalidName = !isNameValid;
-    invalidLastname = !isLastnameValid;
-    invalidPhone = !isPhoneValid;
-    invalidSymptom = !isSymptomValid;
-
-    if (!(isNameValid && isLastnameValid && isPhoneValid && isSymptomValid)) {
+    if (!validation.isAllValid) {
       console.error("Validation errors present. Please correct the fields.");
       return;
     }
 
-    setShowErrors(false);
+    setIsSubmitting(true);
 
     const data = {
       firstname: name,
@@ -168,6 +176,8 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
         data.symptom,
         data.appointment_dateTime
       );
+      setShowErrors(false);
+      onConfirm();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error(
@@ -178,16 +188,24 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
       } else {
         console.error("Error creating appointment:", error);
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        setShowErrors(false);
+        onClose();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center">จองการนัดหมาย</DialogTitle>
           <DialogDescription className="text-center">
-            กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด
+            {message}
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4 flex flex-col space-y-4">
@@ -197,7 +215,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
           <FirstNameField
             value={name}
             onChange={(value) => setName(value)}
-            invalid={showErrors && invalidName}
+            invalid={showErrors && !validateField(name)}
             errorMessage="กรุณากรอกเป็นภาษาไทย"
           />
           <label className="block text-gray-600 font-noto font-medium text-lg">
@@ -206,7 +224,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
           <LastNameField
             value={lastname}
             onChange={(value) => setLastname(value)}
-            invalid={showErrors && invalidLastname}
+            invalid={showErrors && !validateField(lastname)}
             errorMessage="กรุณากรอกเป็นภาษาไทย"
           />
           <label className="block text-gray-600 font-noto font-medium text-lg">
@@ -215,8 +233,8 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
           <PhoneNumberField
             value={phone}
             onChange={(value) => setPhone(value)}
-            invalid={showErrors && invalidPhone}
-            errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
+            invalid={showErrors && !/^[0-9]{10}$/.test(phone)}
+            errorMessage="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"
           />
           <label className="block text-gray-600 font-noto font-medium text-lg">
             อาการ
@@ -224,14 +242,17 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
           <SymptomField
             value={symptom}
             onChange={(value) => setSymptom(value)}
-            invalid={showErrors && invalidSymptom}
-            errorMessage="กรุณากรอกเป็นภาษาไทย"
+            invalid={showErrors && !validateField(symptom)}
+            errorMessage="กรุณากรอกอาการ"
           />
           <button
-            className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
+            className={`bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={handleSubmit}
+            disabled={isSubmitting}
           >
-            จองการนัด
+            {isSubmitting ? "กำลังดำเนินการ..." : "จองการนัด"}
           </button>
         </div>
       </DialogContent>
