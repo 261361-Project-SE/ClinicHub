@@ -39,17 +39,14 @@ class CalendarService {
   }): Promise<{ eventID?: string; error?: string; status?: number }> {
     const { year, month, day, hour, minute, description } = eventDetails;
 
-    // const eventStartTime = new Date(year, month - 1, day, hour, minute);
-    const eventStartTime = new Date(
-      Date.UTC(year, month - 1, day, hour, minute)
-    ); // Use UTC directly
+    // Create date in GMT+7 by subtracting 7 hours from UTC
+    const eventStartTime = new Date(Date.UTC(year, month - 1, day, hour - 7, minute));
     if (eventStartTime.getMinutes() % 15 !== 0) {
       return {
         error: "Please select a time that is a multiple of 15 minutes.",
         status: 400,
       };
     }
-    // const eventEndTime = new Date(eventStartTime.getTime() + 15 * 60000);
     const eventEndTime = new Date(
       eventStartTime.getTime() + 15 * 60000 // Adjust for 15 minutes duration
     );
@@ -61,11 +58,11 @@ class CalendarService {
       colorId: "1",
       start: {
         dateTime: eventStartTime.toISOString(),
-        timeZone: "Asia/Bangkok",
+        timeZone: "GMT+07:00"  // Using GMT+07:00 format
       },
       end: {
         dateTime: eventEndTime.toISOString(),
-        timeZone: "Asia/Bangkok",
+        timeZone: "GMT+07:00"  // Using GMT+07:00 format
       },
     };
 
@@ -74,7 +71,7 @@ class CalendarService {
       requestBody: {
         timeMin: eventStartTime.toISOString(),
         timeMax: eventEndTime.toISOString(),
-        timeZone: "Asia/Bangkok",
+        timeZone: "GMT+07:00",  // Using GMT+07:00 format
         items: [{ id: "primary" }],
       },
     });
