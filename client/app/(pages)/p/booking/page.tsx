@@ -82,6 +82,8 @@ const BookingPage: React.FC = () => {
 
   const [filteredTimes, setFiltertime] = useState<string[]>([]);
 
+  
+
   useEffect(() => {
     if (appointmentDateTime) {
       getfilteredAppointment(appointmentDateTime)
@@ -99,21 +101,10 @@ const BookingPage: React.FC = () => {
   return (
     <BookingLayout>
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl">
-        <h1 className="text-3xl font-bold text-gray-800 text-center md:text-end md:mt-4 md:mr-20">
+        <h1 className="text-3xl font-bold text-gray-800 text-left md:mt-10 md:ml-10 ">
           จองการนัดหมาย
         </h1>
-
-        <div className="mt-4 flex justify-start flex-wrap max-w-7xl mx-auto">
-          <style jsx>{`
-            .no-scrollbar::-webkit-scrollbar {
-              display: none;
-            }
-            .no-scrollbar {
-              -ms-overflow-style: none;
-              scrollbar-width: none;
-            }
-          `}</style>
-
+        <div className="mt-4 flex flex-col md:flex-row justify-between items-start max-w-7xl mx-auto gap-8">
           <Calendar
             mode="single"
             selected={
@@ -125,38 +116,48 @@ const BookingPage: React.FC = () => {
                 console.log(selectedDate);
               }
             }}
-            className="rounded-md border shadow-lg"
+            className="rounded-md border shadow-lg "
+
           />
           <div className="w-full md:w-1/2">
             <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
               เลือกเวลาที่ต้องการจอง:
             </label>
-
-            {selectedDate !== "" && (
-              <>
-                {times.map((time) => {
-                  const isDisabled = filteredTimes.includes(time);
+            <div className="grid grid-cols-3 gap-4 mt-4 md:mt-6 md:grid-cols-4">
+              {times.map((time) => {
+                const isDisabled = filteredTimes.includes(time);
+                if (selectedDate == "") {
                   return (
                     <button
                       key={time}
                       value={time}
-                      className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
-                        selectedTime === time ? "bg-green-400 shadow-xl" : ""
-                      } ${isDisabled ? "bg-gray-300 cursor-not-allowed" : ""}`}
-                      onClick={() => {
-                        if (!isDisabled) {
-                          setSelectedTime(time);
-                          setAppointmentDate(time);
-                        }
-                      }}
+                      className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0  bg-gray-300 cursor-not-allowed`}
                       disabled={isDisabled}
                     >
                       {time}
                     </button>
                   );
-                })}
-              </>
-            )}
+                }
+                return (
+                  <button
+                    key={time}
+                    value={time}
+                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
+                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
+                    } ${isDisabled ? "bg-gray-300 cursor-not-allowed" : ""}`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setSelectedTime(time);
+                        setAppointmentDate(time);
+                      }
+                    }}
+                    disabled={isDisabled}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
