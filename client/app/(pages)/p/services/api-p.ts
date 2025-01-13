@@ -51,7 +51,6 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
         .split(".")[0];
       return timeString.substring(0, 5); // ตัดเวลาที่ได้ออกมาเป็น 07:30
     });
-
     return times; // Returns an array of times
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

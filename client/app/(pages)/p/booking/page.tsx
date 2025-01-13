@@ -9,6 +9,7 @@ import BookingDialog from "../components/BookingDialog";
 import { getfilteredAppointment } from "../services/api-p";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
+import { log } from "console";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
@@ -23,6 +24,8 @@ const BookingPage: React.FC = () => {
   const [symptom, setSymptom] = useState("");
   const [invalidSymptom, setInvalidSymptom] = useState(false);
   const [appointmentDateTime, setAppointmentDateTime] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+
   const [showBookingDialog, setShowBookingDialog] = useState(false);
 
   const TIME_START = 9 * 60; // 9 AM
@@ -101,44 +104,6 @@ const BookingPage: React.FC = () => {
         </h1>
 
         <div className="mt-4 flex justify-start flex-wrap max-w-7xl mx-auto">
-          <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
-            เลือกเวลาที่ต้องการจอง:
-          </label>
-
-          <div className="flex justify-center overflow-hidden gap-2 relative w-[400px] md:w-[1200px] pb-4 md:max-w-screen-xl md:pl-10">
-            <div
-              className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar"
-              style={{ scrollBehavior: "smooth" }}
-              onWheel={(e) => {
-                e.currentTarget.scrollLeft += e.deltaY > 0 ? 100 : -100;
-              }}
-            >
-              {times.map((time) => {
-                // ตรวจสอบว่าเวลานั้นอยู่ใน filteredTimes หรือไม่
-                const isDisabled = filteredTimes.includes(time);
-
-                return (
-                  <button
-                    key={time}
-                    value={time}
-                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
-                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
-                    } ${isDisabled ? "bg-gray-300 cursor-not-allowed" : ""}`}
-                    onClick={() => {
-                      if (!isDisabled) {
-                        setSelectedTime(time);
-                        setAppointmentDate(time);
-                      }
-                    }}
-                    disabled={isDisabled}
-                  >
-                    {time}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           <style jsx>{`
             .no-scrollbar::-webkit-scrollbar {
               display: none;
@@ -155,17 +120,44 @@ const BookingPage: React.FC = () => {
               appointmentDateTime ? new Date(appointmentDateTime) : undefined
             }
             onSelect={(date) => {
-              if (date && selectedTime) {
-                const selectedDateTime = new Date(date);
-                selectedDateTime.setHours(
-                  parseInt(selectedTime.split(":")[0]),
-                  parseInt(selectedTime.split(":")[1])
-                );
-                setAppointmentDateTime(selectedDateTime.toISOString());
+              if (date) {
+                setSelectedDate(date.toISOString());
+                console.log(selectedDate);
               }
             }}
             className="rounded-md border shadow-lg"
           />
+          <div className="w-full md:w-1/2">
+            <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
+              เลือกเวลาที่ต้องการจอง:
+            </label>
+
+            {selectedDate !== "" && (
+              <>
+                {times.map((time) => {
+                  const isDisabled = filteredTimes.includes(time);
+                  return (
+                    <button
+                      key={time}
+                      value={time}
+                      className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
+                        selectedTime === time ? "bg-green-400 shadow-xl" : ""
+                      } ${isDisabled ? "bg-gray-300 cursor-not-allowed" : ""}`}
+                      onClick={() => {
+                        if (!isDisabled) {
+                          setSelectedTime(time);
+                          setAppointmentDate(time);
+                        }
+                      }}
+                      disabled={isDisabled}
+                    >
+                      {time}
+                    </button>
+                  );
+                })}
+              </>
+            )}
+          </div>
         </div>
       </div>
       <div className=" md:mt-4">
