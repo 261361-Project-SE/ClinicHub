@@ -14,7 +14,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
 const BookingPage: React.FC = () => {
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [phone, setPhone] = useState("");
@@ -23,8 +23,10 @@ const BookingPage: React.FC = () => {
   const [invalidPhone, setInvalidPhone] = useState(false);
   const [symptom, setSymptom] = useState("");
   const [invalidSymptom, setInvalidSymptom] = useState(false);
+
   const [appointmentDateTime, setAppointmentDateTime] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const [showBookingDialog, setShowBookingDialog] = useState(false);
 
@@ -81,12 +83,9 @@ const BookingPage: React.FC = () => {
   };
 
   const [filteredTimes, setFiltertime] = useState<string[]>([]);
-
-  
-
   useEffect(() => {
-    if (appointmentDateTime) {
-      getfilteredAppointment(appointmentDateTime)
+    if (selectedDate) {
+      getfilteredAppointment(selectedDate)
         .then((filteredTime: string[]) => {
           setFiltertime(filteredTime);
         })
@@ -94,7 +93,8 @@ const BookingPage: React.FC = () => {
           console.error("Error fetching filtered appointment times:", error);
         });
     }
-  }, [appointmentDateTime]);
+
+  }, [selectedDate]);
   // useEffect(() => {
   //   console.log(filteredTimes); // จะทำงานเมื่อ filteredTimes ถูกอัปเดตแล้ว
   // }, [filteredTimes]);
@@ -112,8 +112,11 @@ const BookingPage: React.FC = () => {
             }
             onSelect={(date) => {
               if (date) {
-                setSelectedDate(date.toISOString());
+                const stringDate = date.toISOString();
+                setSelectedDate(stringDate.split("T")[0]);
+                setAppointmentDate(stringDate);
                 console.log(selectedDate);
+                console.log(filteredTimes);
               }
             }}
             className="rounded-md border shadow-lg "
@@ -132,7 +135,7 @@ const BookingPage: React.FC = () => {
                       key={time}
                       value={time}
                       className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0  bg-gray-300 cursor-not-allowed`}
-                      disabled={isDisabled}
+                      disabled={true}
                     >
                       {time}
                     </button>
@@ -142,9 +145,7 @@ const BookingPage: React.FC = () => {
                   <button
                     key={time}
                     value={time}
-                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
-                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
-                    } ${isDisabled ? "bg-gray-300 cursor-not-allowed" : ""}`}
+                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0 ${isDisabled ? "bg-gray-300 cursor-not-allowed " : "hover:bg-green-200"}`}
                     onClick={() => {
                       if (!isDisabled) {
                         setSelectedTime(time);
