@@ -44,14 +44,14 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
       `http://localhost:4444/appointment/time-slot?date=${date}`
     );
     const appointments = response.data;
-
+    console.log(appointments);
     const times = appointments.map((appointment: any) => {
       const timeString = appointment.appointment_dateTime
         .split("T")[1]
         .split(".")[0];
+      console.log(timeString.substring(0, 5));
       return timeString.substring(0, 5); // ตัดเวลาที่ได้ออกมาเป็น 07:30
     });
-
     return times; // Returns an array of times
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

@@ -119,6 +119,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
   invalidSymptom,
 }) => {
   const [showErrors, setShowErrors] = useState(false);
+  const [showSuccessImage, setShowSuccessImage] = useState(false); // state สำหรับรูปภาพ
 
   const areAllFieldsValid = () => {
     const isNameValid = validateField(name);
@@ -168,6 +169,15 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
         data.symptom,
         data.appointment_dateTime
       );
+
+      // แสดงรูปภาพสำเร็จ
+      onClose();
+      setShowSuccessImage(true);
+
+      // เปลี่ยนหน้าใหม่หลังจาก 5 วินาที
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 5000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error(
@@ -182,60 +192,75 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-center">จองการนัดหมาย</DialogTitle>
-          <DialogDescription className="text-center">
-            กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด
-          </DialogDescription>
-        </DialogHeader>
-        <div className="mt-4 flex flex-col space-y-4">
-          <label className="block text-gray-600 font-noto font-medium text-lg">
-            ชื่อ
-          </label>
-          <FirstNameField
-            value={name}
-            onChange={(value) => setName(value)}
-            invalid={showErrors && invalidName}
-            errorMessage="กรุณากรอกเป็นภาษาไทย"
-          />
-          <label className="block text-gray-600 font-noto font-medium text-lg">
-            นามสกุล
-          </label>
-          <LastNameField
-            value={lastname}
-            onChange={(value) => setLastname(value)}
-            invalid={showErrors && invalidLastname}
-            errorMessage="กรุณากรอกเป็นภาษาไทย"
-          />
-          <label className="block text-gray-600 font-noto font-medium text-lg">
-            เบอร์โทรศัพท์
-          </label>
-          <PhoneNumberField
-            value={phone}
-            onChange={(value) => setPhone(value)}
-            invalid={showErrors && invalidPhone}
-            errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
-          />
-          <label className="block text-gray-600 font-noto font-medium text-lg">
-            อาการ
-          </label>
-          <SymptomField
-            value={symptom}
-            onChange={(value) => setSymptom(value)}
-            invalid={showErrors && invalidSymptom}
-            errorMessage="กรุณากรอกเป็นภาษาไทย"
-          />
-          <button
-            className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
-            onClick={handleSubmit}
-          >
-            จองการนัด
-          </button>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-center">จองการนัดหมาย</DialogTitle>
+            <DialogDescription className="text-center">
+              กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex flex-col space-y-4">
+            {/* Fields */}
+            <label className="block text-gray-600 font-noto font-medium text-lg">
+              ชื่อ
+            </label>
+            <FirstNameField
+              value={name}
+              onChange={(value) => setName(value)}
+              invalid={showErrors && invalidName}
+              errorMessage="กรุณากรอกเป็นภาษาไทย"
+            />
+            <label className="block text-gray-600 font-noto font-medium text-lg">
+              นามสกุล
+            </label>
+            <LastNameField
+              value={lastname}
+              onChange={(value) => setLastname(value)}
+              invalid={showErrors && invalidLastname}
+              errorMessage="กรุณากรอกเป็นภาษาไทย"
+            />
+            <label className="block text-gray-600 font-noto font-medium text-lg">
+              เบอร์โทรศัพท์
+            </label>
+            <PhoneNumberField
+              value={phone}
+              onChange={(value) => setPhone(value)}
+              invalid={showErrors && invalidPhone}
+              errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
+            />
+            <label className="block text-gray-600 font-noto font-medium text-lg">
+              อาการ
+            </label>
+            <SymptomField
+              value={symptom}
+              onChange={(value) => setSymptom(value)}
+              invalid={showErrors && invalidSymptom}
+              errorMessage="กรุณากรอกเป็นภาษาไทย"
+            />
+            <button
+              className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
+              onClick={handleSubmit}
+            >
+              จองการนัด
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Image */}
+      {showSuccessImage && (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-6 flex flex-col items-center">
+            <img src="/check.png" alt="Booking Success" className="w-32 h-32" />
+            <p className="mt-4 text-lg font-bold text-green-500">
+              การจองสำเร็จ!
+            </p>
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </>
   );
 };
 

@@ -9,11 +9,11 @@ import BookingDialog from "../components/BookingDialog";
 import { getfilteredAppointment } from "../services/api-p";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
+import { log } from "console";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
 const BookingPage: React.FC = () => {
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [phone, setPhone] = useState("");
@@ -22,7 +22,11 @@ const BookingPage: React.FC = () => {
   const [invalidPhone, setInvalidPhone] = useState(false);
   const [symptom, setSymptom] = useState("");
   const [invalidSymptom, setInvalidSymptom] = useState(false);
+
   const [appointmentDateTime, setAppointmentDateTime] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
   const [showBookingDialog, setShowBookingDialog] = useState(false);
 
   const TIME_START = 9 * 60; // 9 AM
@@ -38,8 +42,6 @@ const BookingPage: React.FC = () => {
     });
 
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
-  // console.log(appointmentDateTime);
-  // console.log(getfilteredAppointment(appointmentDateTime));
 
   const handleValidation = () => {
     setInvalidName(!validateName(name));
@@ -50,12 +52,18 @@ const BookingPage: React.FC = () => {
 
   const setAppointmentDate = (time: string) => {
     const newDateTime = new Date(appointmentDateTime || new Date());
-    newDateTime.setHours(
-      parseInt(time.split(":")[0]),
-      parseInt(time.split(":")[1])
-    );
+    newDateTime.setDate(parseInt(selectedDate.split("-")[2]));
+    newDateTime.setMonth(parseInt(selectedDate.split("-")[1]) - 1);
+    newDateTime.setFullYear(parseInt(selectedDate.split("-")[0]));
+    newDateTime.setHours(parseInt(time.split(":")[0]));
+    newDateTime.setMinutes(parseInt(time.split(":")[1]));
+    console.log(time.split(":")[0]);
+    console.log(time.split(":")[1]);
+    console.log(newDateTime);
+    console.log(newDateTime.toISOString());  // todo  
     setAppointmentDateTime(newDateTime.toISOString());
   };
+
   const handleBooking = () => {
     handleValidation();
     if (
@@ -78,89 +86,88 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  const [fillertime, setFillertime] = useState([]);
-
+  const [filteredTimes, setFiltertime] = useState<string[]>([]);
   useEffect(() => {
-    // Client-side logic here
-    if (appointmentDateTime) {
-      const filteredTime: any = getfilteredAppointment(appointmentDateTime);
-      setFillertime(filteredTime);
-      console.log(fillertime);
+    if (selectedDate) {
+      getfilteredAppointment(selectedDate)
+        .then((filteredTime: string[]) => {
+          setFiltertime(filteredTime);
+        })
+        .catch((error) => {
+          console.error("Error fetching filtered appointment times:", error);
+        });
     }
-  }, [appointmentDateTime]);
-  console.log(getfilteredAppointment(appointmentDateTime));
-
+  }, [selectedDate]);
+  // useEffect(() => {
+  //   console.log(filteredTimes); // จะทำงานเมื่อ filteredTimes ถูกอัปเดตแล้ว
+  // }, [filteredTimes]);
   return (
     <BookingLayout>
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl">
-        <h1 className="text-3xl font-bold text-gray-800 text-center md:text-end md:mt-4 md:mr-20">
+        <h1 className="text-3xl font-bold text-gray-800 text-left md:mt-10 md:ml-10 ">
           จองการนัดหมาย
         </h1>
-
-        <div className="mt-4 flex justify-start flex-wrap max-w-7xl mx-auto">
-          <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
-            เลือกเวลาที่ต้องการจอง:
-          </label>
-
-          <div className="flex justify-center overflow-hidden gap-2 relative w-[400px] md:w-[1200px] pb-4 md:max-w-screen-xl md:pl-10">
-            <div
-              className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar"
-              style={{ scrollBehavior: "smooth" }}
-              onWheel={(e) => {
-                e.currentTarget.scrollLeft += e.deltaY > 0 ? 100 : -100;
-              }}
-            >
-              {times.map((time) => (
-                <button
-                  key={time}
-                  value={time}
-                  className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
-                    selectedTime === time ? "bg-green-400 shadow-xl" : ""
-                  }`}
-                  onClick={() => {
-                    // if (!fillertime.includes(time)) {
-                    setSelectedTime(time);
-                    setAppointmentDate(time);
-                    // }
-                  }}
-                  // disabled={fillertime.includes(time)}
-                >
-                  {time}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <style jsx>{`
-            .no-scrollbar::-webkit-scrollbar {
-              display: none;
-            }
-            .no-scrollbar {
-              -ms-overflow-style: none;
-              scrollbar-width: none;
-            }
-          `}</style>
-
+        <div className="mt-4 flex flex-col md:flex-row justify-between items-start max-w-7xl mx-auto gap-8">
           <Calendar
             mode="single"
             selected={
               appointmentDateTime ? new Date(appointmentDateTime) : undefined
             }
             onSelect={(date) => {
-              if (date && selectedTime) {
-                const selectedDateTime = new Date(date);
-                selectedDateTime.setHours(
-                  parseInt(selectedTime.split(":")[0]),
-                  parseInt(selectedTime.split(":")[1])
-                );
-                setAppointmentDateTime(selectedDateTime.toISOString());
+              if (date) {
+                date.setDate(date.getDate()+1);
+                const stringDate = date.toISOString();
+                console.log(stringDate.split("T")[0]);
+                setSelectedDate(stringDate.split("T")[0]);
               }
             }}
-            className="rounded-md border shadow-lg"
+            className="rounded-md border shadow-lg "
           />
-          {times.map((time, index) => (
-            <p key={index}>{time}</p> // แสดงค่าของอาร์เรย์
-          ))}
+          <div className="w-full md:w-1/2">
+            <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
+              เลือกเวลาที่ต้องการจอง:
+            </label>
+            <div className="grid grid-cols-3 gap-4 mt-4 md:mt-6 md:grid-cols-4">
+              {times.map((time) => {
+                const isDisabled = filteredTimes.includes(time);
+                if (selectedDate == "") {
+                  return (
+                    <button
+                      key={time}
+                      value={time}
+                      className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0  bg-gray-300 cursor-not-allowed`}
+                      disabled={true}
+                    >
+                      {time}
+                    </button>
+                  );
+                }
+                return (
+                  <button
+                    key={time}
+                    value={time}
+                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0 ${
+                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
+                    }  ${
+                      isDisabled
+                        ? "bg-gray-300 cursor-not-allowed "
+                        : "hover:bg-green-200"
+                    }`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setSelectedTime(time);
+                        setAppointmentDate(time);
+                        console.log(times);
+                      }
+                    }}
+                    disabled={isDisabled}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
       <div className=" md:mt-4">
