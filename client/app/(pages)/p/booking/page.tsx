@@ -14,7 +14,6 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
 const BookingPage: React.FC = () => {
-  
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [phone, setPhone] = useState("");
@@ -53,10 +52,15 @@ const BookingPage: React.FC = () => {
 
   const setAppointmentDate = (time: string) => {
     const newDateTime = new Date(appointmentDateTime || new Date());
-    newDateTime.setHours(
-      parseInt(time.split(":")[0]),
-      parseInt(time.split(":")[1])
-    );
+    newDateTime.setDate(parseInt(selectedDate.split("-")[2]));
+    newDateTime.setMonth(parseInt(selectedDate.split("-")[1]) - 1);
+    newDateTime.setFullYear(parseInt(selectedDate.split("-")[0]));
+    newDateTime.setHours(parseInt(time.split(":")[0]));
+    newDateTime.setMinutes(parseInt(time.split(":")[1]));
+    console.log(time.split(":")[0]);
+    console.log(time.split(":")[1]);
+    console.log(newDateTime);
+    console.log(newDateTime.toISOString());  // todo  
     setAppointmentDateTime(newDateTime.toISOString());
   };
 
@@ -93,7 +97,6 @@ const BookingPage: React.FC = () => {
           console.error("Error fetching filtered appointment times:", error);
         });
     }
-
   }, [selectedDate]);
   // useEffect(() => {
   //   console.log(filteredTimes); // จะทำงานเมื่อ filteredTimes ถูกอัปเดตแล้ว
@@ -112,15 +115,13 @@ const BookingPage: React.FC = () => {
             }
             onSelect={(date) => {
               if (date) {
+                date.setDate(date.getDate()+1);
                 const stringDate = date.toISOString();
+                console.log(stringDate.split("T")[0]);
                 setSelectedDate(stringDate.split("T")[0]);
-                setAppointmentDate(stringDate);
-                console.log(selectedDate);
-                console.log(filteredTimes);
               }
             }}
             className="rounded-md border shadow-lg "
-
           />
           <div className="w-full md:w-1/2">
             <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
@@ -145,11 +146,18 @@ const BookingPage: React.FC = () => {
                   <button
                     key={time}
                     value={time}
-                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0 ${isDisabled ? "bg-gray-300 cursor-not-allowed " : "hover:bg-green-200"}`}
+                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0 ${
+                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
+                    }  ${
+                      isDisabled
+                        ? "bg-gray-300 cursor-not-allowed "
+                        : "hover:bg-green-200"
+                    }`}
                     onClick={() => {
                       if (!isDisabled) {
                         setSelectedTime(time);
                         setAppointmentDate(time);
+                        console.log(times);
                       }
                     }}
                     disabled={isDisabled}
