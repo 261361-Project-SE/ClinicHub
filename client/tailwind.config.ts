@@ -22,6 +22,8 @@ const config: Config = {
       colors: {
         "pink-200": "#FB6F92",
         "pink-300": "#FFC2D1",
+        error: "#E57373",
+        success: "#98C99F",
         "whitegray-100": "#F5F5F5",
         darkgray: "#666",
         lightgray: "#999",
@@ -72,11 +74,6 @@ const config: Config = {
       },
       fontFamily: {
         noto: ["Noto Sans Thai Looped", "sans-serif"],
-      },
-      borderRadius: {
-        lg: "`var(--radius)`",
-        md: "`calc(var(--radius) - 2px)`",
-        sm: "calc(var(--radius) - 4px)",
       },
     },
   },
