@@ -55,6 +55,8 @@ const BookingPage: React.FC = () => {
     newDateTime.setDate(parseInt(selectedDate.split("-")[2]));
     newDateTime.setMonth(parseInt(selectedDate.split("-")[1]) - 1);
     newDateTime.setFullYear(parseInt(selectedDate.split("-")[0]));
+
+    //Function .toISOString() จะไม่บวก GMT+7 ให้ ทำให้ต้อง HardCode เพิ่มเอง
     const hours = parseInt(time.split(":")[0]) + 7;
     const minutes = parseInt(time.split(":")[1]);
     newDateTime.setHours(hours);
