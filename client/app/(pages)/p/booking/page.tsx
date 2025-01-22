@@ -55,8 +55,10 @@ const BookingPage: React.FC = () => {
     newDateTime.setDate(parseInt(selectedDate.split("-")[2]));
     newDateTime.setMonth(parseInt(selectedDate.split("-")[1]) - 1);
     newDateTime.setFullYear(parseInt(selectedDate.split("-")[0]));
-    newDateTime.setHours(parseInt(time.split(":")[0]));
-    newDateTime.setMinutes(parseInt(time.split(":")[1]));
+    const hours = parseInt(time.split(":")[0]) + 7;
+    const minutes = parseInt(time.split(":")[1]);
+    newDateTime.setHours(hours);
+    newDateTime.setMinutes(minutes);
     console.log(time.split(":")[0]);
     console.log(time.split(":")[1]);
     console.log(newDateTime);

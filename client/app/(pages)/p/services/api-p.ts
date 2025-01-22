@@ -43,8 +43,12 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
     const response = await axios.get(
       `http://localhost:4444/appointment/time-slot?date=${date}`
     );
-    const appointments = response.data;
+    const appointments = response.data.data;
     console.log(appointments);
+    if (!Array.isArray(appointments)) {
+      console.error("appointments is not an array", appointments);
+      return []; // หรือจัดการกรณีที่ appointments ไม่ใช่อาร์เรย์
+    }
     const times = appointments.map((appointment: any) => {
       const timeString = appointment.appointment_dateTime
         .split("T")[1]
