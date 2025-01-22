@@ -60,7 +60,7 @@ const BookingPage: React.FC = () => {
     console.log(time.split(":")[0]);
     console.log(time.split(":")[1]);
     console.log(newDateTime);
-    console.log(newDateTime.toISOString());  // todo  
+    console.log(newDateTime.toISOString()); // todo
     setAppointmentDateTime(newDateTime.toISOString());
   };
 
@@ -103,11 +103,12 @@ const BookingPage: React.FC = () => {
   // }, [filteredTimes]);
   return (
     <BookingLayout>
-      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl">
-        <h1 className="text-3xl font-bold text-gray-800 text-left md:mt-10 md:ml-10 ">
+      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl p-6 md:p-12">
+        <h1 className="text-3xl font-bold text-gray-800 text-left md:text-left md:mt-4">
           จองการนัดหมาย
         </h1>
-        <div className="mt-4 flex flex-col md:flex-row justify-between items-start max-w-7xl mx-auto gap-8">
+        <div className="mt-6 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto gap-6">
+          {/* ปฏิทิน */}
           <Calendar
             mode="single"
             selected={
@@ -115,49 +116,37 @@ const BookingPage: React.FC = () => {
             }
             onSelect={(date) => {
               if (date) {
-                date.setDate(date.getDate()+1);
-                const stringDate = date.toISOString();
-                console.log(stringDate.split("T")[0]);
-                setSelectedDate(stringDate.split("T")[0]);
+                date.setDate(date.getDate() + 1);
+                setSelectedDate(date.toISOString().split("T")[0]);
               }
             }}
-            className="rounded-md border shadow-lg "
+            className="rounded-md border shadow-lg"
           />
+
+          {/* เลือกเวลา */}
           <div className="w-full md:w-1/2">
-            <label className="block text-gray-600 font-noto font-medium text-lg md:pl-10">
+            <label className="block text-gray-600 font-medium text-lg md:pl-10">
               เลือกเวลาที่ต้องการจอง:
             </label>
-            <div className="grid grid-cols-3 gap-4 mt-4 md:mt-6 md:grid-cols-4">
+            <div className="grid grid-cols-3 gap-4 mt-4 md:mt-6">
               {times.map((time) => {
-                const isDisabled = filteredTimes.includes(time);
-                if (selectedDate == "") {
-                  return (
-                    <button
-                      key={time}
-                      value={time}
-                      className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0  bg-gray-300 cursor-not-allowed`}
-                      disabled={true}
-                    >
-                      {time}
-                    </button>
-                  );
-                }
+                const isDisabled =
+                  selectedDate === "" || filteredTimes.includes(time);
                 return (
                   <button
                     key={time}
                     value={time}
-                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200  min-w-[100px] flex-shrink-0 ${
-                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
-                    }  ${
+                    className={`p-2 rounded-md shadow-xl border border-black min-w-[100px] flex-shrink-0 ${
                       isDisabled
-                        ? "bg-gray-300 cursor-not-allowed "
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : selectedTime === time
+                        ? "bg-green-400"
                         : "hover:bg-green-200"
                     }`}
                     onClick={() => {
                       if (!isDisabled) {
                         setSelectedTime(time);
                         setAppointmentDate(time);
-                        console.log(times);
                       }
                     }}
                     disabled={isDisabled}
@@ -170,41 +159,43 @@ const BookingPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className=" md:mt-4">
-        <div className="flex flex-col md:items-end md:justify-end items-center justify-center font-noto h-fit">
-          <div className="flex gap-6 mt-6 md:gap-6 md:mt-0">
-            <Link href="/">
-              <button className="bg-gray-300 text-black hover:opacity-80 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-[100px] items-center text-center">
-                กลับหน้าหลัก
-              </button>
-            </Link>
-            <button
-              className="bg-pink-200 text-white hover:bg-pink-600 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-[100px] items-center text-center"
-              onClick={handleBooking}
-            >
-              จองการนัด
+
+      {/* ปุ่มด้านล่าง */}
+      <div className="mt-6 flex flex-col md:items-end items-center">
+        <div className="flex gap-6">
+          <Link href="/">
+            <button className="bg-gray-300 text-black hover:opacity-80 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-full">
+              กลับหน้าหลัก
             </button>
-            <BookingDialog
-              isOpen={showBookingDialog}
-              onClose={() => setShowBookingDialog(false)}
-              message="กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด"
-              invalidSymptom={invalidSymptom}
-              appointment_dateTime={appointmentDateTime}
-              symptom={symptom}
-              setSymptom={setSymptom}
-              name={name}
-              lastname={lastname}
-              setName={setName}
-              setLastname={setLastname}
-              phone={phone}
-              setPhone={setPhone}
-              invalidName={invalidName}
-              invalidLastname={invalidLastname}
-              invalidPhone={invalidPhone}
-            />
-          </div>
+          </Link>
+          <button
+            className="bg-pink-200 text-white hover:bg-pink-600 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-full"
+            onClick={handleBooking}
+          >
+            จองการนัด
+          </button>
         </div>
       </div>
+
+      {/* Booking Dialog */}
+      <BookingDialog
+        isOpen={showBookingDialog}
+        onClose={() => setShowBookingDialog(false)}
+        message="กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด"
+        invalidSymptom={invalidSymptom}
+        appointment_dateTime={appointmentDateTime}
+        symptom={symptom}
+        setSymptom={setSymptom}
+        name={name}
+        lastname={lastname}
+        setName={setName}
+        setLastname={setLastname}
+        phone={phone}
+        setPhone={setPhone}
+        invalidName={invalidName}
+        invalidLastname={invalidLastname}
+        invalidPhone={invalidPhone}
+      />
     </BookingLayout>
   );
 };
