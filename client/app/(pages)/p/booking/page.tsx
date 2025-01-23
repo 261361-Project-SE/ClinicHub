@@ -11,7 +11,7 @@ import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import { log } from "console";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 
 const BookingPage: React.FC = () => {
   const [name, setName] = useState("");
@@ -29,9 +29,9 @@ const BookingPage: React.FC = () => {
 
   const [showBookingDialog, setShowBookingDialog] = useState(false);
 
-  const TIME_START = 9 * 60; // 9 AM
-  const TIME_END = 17 * 60; // 5 PM
-  const TIME_INTERVAL = 15; // 15 minutes
+  const TIME_START = 9 * 60;
+  const TIME_END = 17 * 60;
+  const TIME_INTERVAL = 15;
 
   const generateTimes = (start: number, end: number, interval: number) =>
     Array.from({ length: (end - start) / interval + 1 }, (_, i) => {
@@ -44,11 +44,16 @@ const BookingPage: React.FC = () => {
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
 
   const handleValidation = () => {
-    setInvalidName(!validateName(name));
-    setInvalidLastname(!validateName(lastname));
-    setInvalidPhone(!validatePhone(phone));
-    setInvalidSymptom(!validateSymptom(symptom));
-  };
+    const isNameValid = validateName(name);
+    const isLastNameValid = validateName(lastname);
+    const isPhoneValid = validatePhone(phone);
+    const isSymptomValid = validateSymptom(symptom);
+
+    setInvalidName(!isNameValid);
+    setInvalidLastname(!isLastNameValid);
+    setInvalidPhone(!isPhoneValid);
+    setInvalidSymptom(!isSymptomValid);
+
 
   const setAppointmentDate = (time: string) => {
     const newDateTime = new Date(appointmentDateTime || new Date());
@@ -101,10 +106,12 @@ const BookingPage: React.FC = () => {
           console.error("Error fetching filtered appointment times:", error);
         });
     }
+<<<<<
   }, [selectedDate]);
   // useEffect(() => {
   //   console.log(filteredTimes); // จะทำงานเมื่อ filteredTimes ถูกอัปเดตแล้ว
   // }, [filteredTimes]);
+
   return (
     <BookingLayout>
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl p-6 md:p-12">

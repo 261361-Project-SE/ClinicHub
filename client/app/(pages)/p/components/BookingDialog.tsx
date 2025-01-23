@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/app/(pages)/p/components/ui/dialog";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface InputFieldProps {
   type: string;
@@ -73,7 +73,7 @@ const PhoneNumberField: React.FC<
     value={value}
     onChange={onChange}
     invalid={invalid}
-    errorMessage={errorMessage}
+    errorMessage="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"
   />
 );
 
@@ -98,6 +98,7 @@ interface BookingDialogProps {
   invalidLastname: boolean;
   invalidPhone: boolean;
   invalidSymptom: boolean;
+  onConfirm: () => void;
 }
 
 const BookingDialog: React.FC<BookingDialogProps> = ({
@@ -117,9 +118,11 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
   invalidLastname,
   invalidPhone,
   invalidSymptom,
+  onConfirm,
 }) => {
   const [showErrors, setShowErrors] = useState(false);
   const [showSuccessImage, setShowSuccessImage] = useState(false); // state สำหรับรูปภาพ
+
 
   const areAllFieldsValid = () => {
     const isNameValid = validateField(name);
@@ -132,26 +135,23 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
       isLastnameValid,
       isPhoneValid,
       isSymptomValid,
+      isAllValid:
+        isNameValid && isLastnameValid && isPhoneValid && isSymptomValid,
     };
   };
 
   const handleSubmit = async () => {
-    const { isNameValid, isLastnameValid, isPhoneValid, isSymptomValid } =
-      areAllFieldsValid();
+    if (isSubmitting) return;
 
-    invalidName = !isNameValid ? true : false;
-    invalidLastname = !isLastnameValid ? true : false;
-    invalidPhone = !isPhoneValid ? true : false;
-    invalidSymptom = !isSymptomValid ? true : false;
-
+    const validation = areAllFieldsValid();
     setShowErrors(true);
 
-    if (!(isNameValid && isLastnameValid && isPhoneValid && isSymptomValid)) {
+    if (!validation.isAllValid) {
       console.error("Validation errors present. Please correct the fields.");
       return;
     }
 
-    setShowErrors(false);
+    setIsSubmitting(true);
 
     const data = {
       firstname: name,
@@ -178,6 +178,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
       setTimeout(() => {
         window.location.href = "/";
       }, 5000);
+
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error(
@@ -188,6 +189,8 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
       } else {
         console.error("Error creating appointment:", error);
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -258,6 +261,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({
               การจองสำเร็จ!
             </p>
           </div>
+
         </div>
       )}
     </>

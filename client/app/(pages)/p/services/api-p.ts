@@ -1,8 +1,6 @@
 import axios from "axios";
 import { split } from "postcss/lib/list";
 
-// const API_END_POINT = process.env.API_END_POINT || "http://localhost:5000";
-
 export const postRequest = async (
   firstName: string,
   lastName: string,
