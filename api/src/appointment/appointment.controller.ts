@@ -11,6 +11,22 @@ const validateDateTimeFormat = (dateTime: string): boolean => {
 class AppointmentController {
   constructor() { }
 
+  async getAppointmentTimeSlot(req: Request, res: Response) {
+    try {
+      const { date } = req.query
+      if (!date) {
+        res.status(400).send({ error: "Date is required" })
+        return
+      }
+
+      const result = await appointmentService.getAppointmentTimeSlot(date as string)
+
+      res.status(200).send(result)
+    } catch (error: any) {
+      res.status(500).send({ error: "An unexpected error occurred while fetching appointment time slot:" + error.message })
+    }
+  }
+
   // สร้างการจอง ทั้งหมอและ คนไข้
   async createAppointment(req: Request, res: Response) {
     try {

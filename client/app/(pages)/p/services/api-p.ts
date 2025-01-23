@@ -1,4 +1,5 @@
 import axios from "axios";
+import { split } from "postcss/lib/list";
 
 export const postRequest = async (
   firstName: string,
@@ -34,21 +35,36 @@ export const postRequest = async (
   }
 };
 
-export const Requestcheckbooking = async (
-  firstName: string,
-  lastName: string,
-  phone: string
-) => {
+export const getfilteredAppointment = async (appointment_dateTime: string) => {
   try {
+    const date = appointment_dateTime.split("T")[0];
     const response = await axios.get(
-      `http://localhost:4444/patient/appointment?firstName=${firstName}&lastName=${lastName}&phone=${phone}`
+      `http://localhost:4444/appointment/time-slot?date=${date}`
     );
-    return response;
+    const appointments = response.data;
+
+    const times = appointments.map((appointment: any) => {
+      const timeString = appointment.appointment_dateTime
+        .split("T")[1]
+        .split(".")[0];
+      return timeString.substring(0, 5); // ตัดเวลาที่ได้ออกมาเป็น 07:30
+    });
+
+    return times; // Returns an array of times
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      throw new Error(`Error while checking booking service: ${error.message}`);
+      if (error.response?.status === 404) {
+        return [];
+      }
+      throw new Error(
+        `Error while fetching appointment service: ${
+          error.response?.data || error.message
+        }`
+      );
     } else {
-      throw new Error(`Error while checking booking service: ${String(error)}`);
+      throw new Error(
+        `Error while fetching appointment service: ${String(error)}`
+      );
     }
   }
 };

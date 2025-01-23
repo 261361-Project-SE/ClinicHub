@@ -6,6 +6,7 @@ import {
   validateSymptom,
 } from "../(utils)/validation";
 import BookingDialog from "../components/BookingDialog";
+import { getfilteredAppointment } from "../services/api-p";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import Link from "next/link";
@@ -37,6 +38,8 @@ const BookingPage: React.FC = () => {
     });
 
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
+  // console.log(appointmentDateTime);
+  // console.log(getfilteredAppointment(appointmentDateTime));
 
   const handleValidation = () => {
     const isNameValid = validateName(name);
@@ -51,7 +54,6 @@ const BookingPage: React.FC = () => {
 
     return isNameValid && isLastNameValid && isPhoneValid && isSymptomValid;
   };
-
   const handleBooking = () => {
     handleValidation();
     if (
@@ -74,18 +76,26 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  const handleConfirmBooking = () => {
-    console.log("Booking confirmed");
-    resetBookingState();
-  };
+  const [fillertime, setFillertime] = useState<string[]>([]);
 
-  const handleCloseDialog = useCallback(() => {
-    setShowBookingDialog(false);
-    setInvalidName(false);
-    setInvalidLastname(false);
-    setInvalidPhone(false);
-    setInvalidSymptom(false);
-  }, []);
+  useEffect(() => {
+    if (appointmentDateTime) {
+      getfilteredAppointment(appointmentDateTime)
+        .then((filteredTime: string[]) => {
+          setFillertime(filteredTime);
+        })
+        .catch((error) => {
+          console.error("Error fetching filtered appointment times:", error);
+        });
+    }
+  }, [appointmentDateTime]);
+
+  useEffect(() => {
+    console.log(fillertime); // จะทำงานเมื่อ fillertime ถูกอัปเดตแล้ว
+  }, [fillertime]);
+
+  console.log(getfilteredAppointment(appointmentDateTime));
+
 
   const resetBookingState = () => {
     setSelectedTime(null);
@@ -120,28 +130,29 @@ const BookingPage: React.FC = () => {
                 e.currentTarget.scrollLeft += e.deltaY > 0 ? 100 : -100;
               }}
             >
-              {times.map((time) => (
-                <button
-                  key={time}
-                  value={time}
-                  className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
-                    selectedTime === time ? "bg-green-400 shadow-xl" : ""
-                  }`}
-                  onClick={() => {
-                    setSelectedTime(time);
-                    if (appointmentDateTime) {
-                      const newDateTime = new Date(appointmentDateTime);
-                      newDateTime.setHours(
-                        parseInt(time.split(":")[0]),
-                        parseInt(time.split(":")[1])
-                      );
-                      setAppointmentDateTime(newDateTime.toISOString());
-                    }
-                  }}
-                >
-                  {time}
-                </button>
-              ))}
+              {times.map((time) => {
+                // ตรวจสอบว่าเวลานั้นอยู่ใน fillertime หรือไม่
+                const isDisabled = fillertime.includes(time);
+
+                return (
+                  <button
+                    key={time}
+                    value={time}
+                    className={`p-2 rounded-md shadow-xl border border-black bg-white-200 hover:bg-green-200 min-w-[100px] flex-shrink-0 ${
+                      selectedTime === time ? "bg-green-400 shadow-xl" : ""
+                    } ${isDisabled ? "bg-gray-300 cursor-not-allowed" : ""}`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setSelectedTime(time);
+                        setAppointmentDate(time);
+                      }
+                    }}
+                    disabled={isDisabled}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

@@ -18,6 +18,39 @@ class AppointmentService {
     }
   }
 
+  async getAppointmentTimeSlot(date: string) {
+    try {
+      const appointments = await this.prisma.appointments.findMany({
+        select: {
+          appointment_dateTime: true,
+        },
+        where: {
+          AND: [
+            {
+              appointment_dateTime: {
+                contains: date
+              }
+            },
+            {
+              appointment_status: {
+                not: Status.CANCELED
+              }
+            }
+          ]
+        },
+        orderBy: {
+          appointment_dateTime: "asc",
+        },
+      });
+      if (appointments.length <= 0) {
+        return [];
+      }
+      return appointments;
+    } catch (error) {
+      return { error: "Error while fetching appointment time slot service: " + error, status: 500 };
+    }
+  }
+
   // ME
   async creteBooking(firstname: string, lastname: string, phone_number: string, symptom: string, appointment_dateTime: string) {
     try {

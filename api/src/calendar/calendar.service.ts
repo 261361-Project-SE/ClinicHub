@@ -41,10 +41,13 @@ class CalendarService {
 
     // const eventStartTime = new Date(year, month - 1, day, hour, minute);
     const eventStartTime = new Date(
-      Date.UTC(year, month - 1, day, hour - 7, minute)
+      Date.UTC(year, month - 1, day, hour, minute)
     ); // Use UTC directly
     if (eventStartTime.getMinutes() % 15 !== 0) {
-      return { error: "Please select a time that is a multiple of 15 minutes.", status: 400 };
+      return {
+        error: "Please select a time that is a multiple of 15 minutes.",
+        status: 400,
+      };
     }
     // const eventEndTime = new Date(eventStartTime.getTime() + 15 * 60000);
     const eventEndTime = new Date(
@@ -94,7 +97,9 @@ class CalendarService {
     return { eventID: response.data.id, status: 200 };
   }
 
-  async deleteEvent(eventId: string): Promise<void | { error?: string; message?: string; status?: number }> {
+  async deleteEvent(
+    eventId: string
+  ): Promise<void | { error?: string; message?: string; status?: number }> {
     if (!eventId) {
       return { error: "Event ID is required", status: 400 };
     }
