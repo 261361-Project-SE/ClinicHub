@@ -1,5 +1,6 @@
 import { Appointments, PrismaClient, Status } from "@prisma/client";
 import { calendarService } from "../calendar/calendar.service";
+import { error } from "console";
 
 
 class AppointmentService {
@@ -45,7 +46,6 @@ class AppointmentService {
     }
   }
 
-  // ME
   async creteBooking(firstname: string, lastname: string, phone_number: string, symptom: string, appointment_dateTime: string) {
     try {
 
@@ -114,7 +114,7 @@ class AppointmentService {
       });
 
       if (appointments.length <= 0) {
-        return { error: "No appointment found.", status: 404 };
+        return { data: {}, status: 200 };
       }
 
       return appointments;
@@ -148,7 +148,7 @@ class AppointmentService {
       });
 
       if (appointments.length <= 0) {
-        return { error: "No appointment found.", status: 404 };
+        return { data: {}, status: 200 };
       }
 
       return appointments;
@@ -158,73 +158,8 @@ class AppointmentService {
     }
   }
 
-  // Not used. Now change to getDoctorAppointmentByParameter
-  // async getDoctorAppointmentName(firstname: string, lastname: string) {
-  //   try {
-  //     const appointments = await this.prisma.appointments.findMany({
-  //       where: {
-  //         firstname: firstname,
-  //         lastname: lastname,
-  //       },
-  //       orderBy: {
-  //         appointment_dateTime: "asc",
-  //       },
-  //     });
-  //     if (appointments.length === 0) {
-  //       return "No appointment found";
-  //     }
-  //     return appointments;
-  //   } catch (error) {
-  //     throw new Error(
-  //       "Error while fetching doctor appointment by patient name"
-  //     );
-  //   }
-  // }
-
-  // async getDoctorAppointmentStatus(status: string) {
-  //   try {
-  //     const status_prisma = Status[status as keyof typeof Status];
-  //     const appointments = await this.prisma.appointments.findMany({
-  //       where: {
-  //         status: status_prisma,
-  //       },
-  //       orderBy: {
-  //         appointment_dateTime: "asc",
-  //       },
-  //     });
-  //     if (appointments.length === 0) {
-  //       return "No appointment found";
-  //     }
-  //     return appointments;
-  //   } catch (error) {
-  //     throw new Error("Error while fetching doctor appointment by status");
-  //   }
-  // }
-
-  // async getDoctorAppointmentPhoneNumber(phone: string) {
-  //   try {
-  //     const appointments = await this.prisma.appointments.findMany({
-  //       where: {
-  //         phone_number: phone,
-  //       },
-  //     });
-  //     if (appointments.length === 0) {
-  //       return "No appointment found";
-  //     }
-  //     return appointments;
-  //   } catch (error) {
-  //     throw new Error(
-  //       "Error while fetching doctor appointment by phone number"
-  //     );
-  //   }
-  // }
-
-
-  //fix
-  //ME
   async updateDoctorAppointment(id: number, appointment_dateTime: string, status: string) {
     try {
-      // ตรวจสอบว่ามีการจองอยู่หรือไม่
       const checkBooking = await this.prisma.appointments.findUnique({
         where: {
           id: id,
@@ -308,7 +243,7 @@ class AppointmentService {
       });
 
       if (appointments.length < 1) {
-        return { error: "No appointments found for this patient.", status: 404 };
+        return { data: {}, status: 200 };
       }
 
       return { appointments };
@@ -317,7 +252,6 @@ class AppointmentService {
     }
   }
 
-  //Me
   async updatePatientAppointment(id: number, firstname: string, lastname: string, phone_number: string, appointment_dateTime: string, symptom: string) {
     try {
 
@@ -328,7 +262,7 @@ class AppointmentService {
       });
 
       if (!checkBooking) {
-        return { error: "Appointment not found", status: 404 };
+        return { error: "No appointment found", status: 404 };
       }
 
       if (checkBooking.appointment_status == Status.CANCELED) {
@@ -352,7 +286,6 @@ class AppointmentService {
         return { error: "No changes", status: 304 };
       }
 
-      // ตรวจสอบว่า มีการจองอยู่หรือไม่
       let eventId = '';
       try {
         if (checkBooking.appointment_dateTime !== appointment_dateTime) {

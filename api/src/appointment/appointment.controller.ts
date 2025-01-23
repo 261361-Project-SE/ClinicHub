@@ -14,7 +14,6 @@ class AppointmentController {
   async getAppointmentTimeSlot(req: Request, res: Response) {
     try {
       const { date } = req.body
-      console.log(date)
       const result = await appointmentService.getAppointmentTimeSlot(date)
 
       res.status(200).send(result)
@@ -23,7 +22,6 @@ class AppointmentController {
     }
   }
 
-  // สร้างการจอง ทั้งหมอและ คนไข้
   async createAppointment(req: Request, res: Response) {
     try {
 
@@ -51,7 +49,6 @@ class AppointmentController {
     }
   }
 
-  // ดู การจองทั้งหมด หมอ
   async getDoctorAppointment(req: Request, res: Response) {
     try {
       const { date, firstname, lastname, status, phone_number } = req.query;
@@ -94,8 +91,6 @@ class AppointmentController {
     }
   }
 
-  //  update การจอง ทั้งหมอและ คนไข้
-  //  รับ UID เพื่อ หา และ อัพเดทข้อมูล
   async updateDoctorAppointment(req: Request, res: Response) {
     try {
 
@@ -130,7 +125,6 @@ class AppointmentController {
 
   async cancelDoctorAppointment(req: Request, res: Response) {
     try {
-      console.log(req.body);
       const result = await appointmentService.cancelAppointment(req.body);
       res.status(200).send(result);
     } catch (err: any) {
@@ -165,10 +159,8 @@ class AppointmentController {
     }
   }
 
-  // อัพเดทข้อมูลการจอง ของคนไข้ update ได้หมด
   async updatePatientAppointment(req: Request, res: Response) {
     try {
-      console.log(req.body);
       const { id, appointment_dateTime, symptom, firstname, lastname, phone_number } = req.body;
 
       if (!id || !(appointment_dateTime || symptom || firstname || lastname || phone_number)) {
@@ -199,11 +191,6 @@ class AppointmentController {
     }
   }
 
-  //  delete (ยกเลิกการจอง) การจอง ทั้งหมอ
-  //  รับ UID
-
-  //  delete (ยกเลิกการจอง) การจอง ของคนไข้
-  //  รับ firstname และ lastname
   async cancelAppointment(req: Request, res: Response) {
     try {
       const result: any = await appointmentService.cancelAppointment(req.body);
