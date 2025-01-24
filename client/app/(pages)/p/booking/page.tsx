@@ -9,70 +9,66 @@ import BookingDialog from "../components/BookingDialog";
 import { getfilteredAppointment } from "../services/api-p";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
-import { log } from "console";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+
+const TIME_START = 9 * 60; // 9 AM
+const TIME_END = 16 * 60 + 45;
+const TIME_INTERVAL = 15; // 15 minutes
+
+const generateTimes = (start: number, end: number, interval: number) =>
+  Array.from({ length: (end - start) / interval + 1 }, (_, i) => {
+    const time = start + i * interval;
+    return `${String(Math.floor(time / 60)).padStart(2, "0")}:${String(
+      time % 60
+    ).padStart(2, "0")}`;
+  });
 
 const BookingPage: React.FC = () => {
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [phone, setPhone] = useState("");
-  const [invalidName, setInvalidName] = useState(false);
-  const [invalidLastname, setInvalidLastname] = useState(false);
-  const [invalidPhone, setInvalidPhone] = useState(false);
   const [symptom, setSymptom] = useState("");
-  const [invalidSymptom, setInvalidSymptom] = useState(false);
-
   const [appointmentDateTime, setAppointmentDateTime] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
   const [showBookingDialog, setShowBookingDialog] = useState(false);
-
-  const TIME_START = 9 * 60; // 9 AM
-  const TIME_END = 17 * 60; // 5 PM
-  const TIME_INTERVAL = 15; // 15 minutes
-
-  const generateTimes = (start: number, end: number, interval: number) =>
-    Array.from({ length: (end - start) / interval + 1 }, (_, i) => {
-      const time = start + i * interval;
-      return `${String(Math.floor(time / 60)).padStart(2, "0")}:${String(
-        time % 60
-      ).padStart(2, "0")}`;
-    });
+  const [filteredTimes, setFilteredTimes] = useState<string[]>([]);
+  const [invalidFields, setInvalidFields] = useState({
+    name: false,
+    lastname: false,
+    phone: false,
+    symptom: false,
+  });
 
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
 
   const handleValidation = () => {
-    setInvalidName(!validateName(name));
-    setInvalidLastname(!validateName(lastname));
-    setInvalidPhone(!validatePhone(phone));
-    setInvalidSymptom(!validateSymptom(symptom));
+    setInvalidFields({
+      name: !validateName(name),
+      lastname: !validateName(lastname),
+      phone: !validatePhone(phone),
+      symptom: !validateSymptom(symptom),
+    });
   };
 
   const setAppointmentDate = (time: string) => {
     const newDateTime = new Date(appointmentDateTime || new Date());
-    newDateTime.setDate(parseInt(selectedDate.split("-")[2]));
-    newDateTime.setMonth(parseInt(selectedDate.split("-")[1]) - 1);
-    newDateTime.setFullYear(parseInt(selectedDate.split("-")[0]));
-    const hours = parseInt(time.split(":")[0]) + 7;
-    const minutes = parseInt(time.split(":")[1]);
-    newDateTime.setHours(hours);
-    newDateTime.setMinutes(minutes);
-    console.log(time.split(":")[0]);
-    console.log(time.split(":")[1]);
-    console.log(newDateTime);
-    console.log(newDateTime.toISOString()); // todo
+    const [year, month, day] = selectedDate.split("-").map(Number);
+    const [hours, minutes] = time.split(":").map(Number);
+    newDateTime.setFullYear(year, month - 1, day);
+    newDateTime.setHours(hours + 7, minutes);
     setAppointmentDateTime(newDateTime.toISOString());
   };
 
   const handleBooking = () => {
     handleValidation();
+    const { name, lastname, phone, symptom } = invalidFields;
     if (
-      !invalidName &&
-      !invalidLastname &&
-      !invalidPhone &&
-      !invalidSymptom &&
+      !name &&
+      !lastname &&
+      !phone &&
+      !symptom &&
       selectedTime &&
       appointmentDateTime
     ) {
@@ -88,29 +84,27 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  const [filteredTimes, setFiltertime] = useState<string[]>([]);
   useEffect(() => {
     if (selectedDate) {
       getfilteredAppointment(selectedDate)
-        .then((filteredTime: string[]) => {
-          setFiltertime(filteredTime);
-        })
-        .catch((error) => {
-          console.error("Error fetching filtered appointment times:", error);
-        });
+        .then(setFilteredTimes)
+        .catch((error) =>
+          console.error("Error fetching filtered appointment times:", error)
+        );
     }
   }, [selectedDate]);
-  // useEffect(() => {
-  //   console.log(filteredTimes); // จะทำงานเมื่อ filteredTimes ถูกอัปเดตแล้ว
-  // }, [filteredTimes]);
+
+  // Get today's date at the start of the day
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   return (
     <BookingLayout>
-      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[800px] md:w-[1440px] md:mx-auto md:max-w-screen-xl p-6 md:p-12">
-        <h1 className="text-3xl font-bold text-gray-800 text-left md:text-left md:mt-4">
+      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[760px] md:w-[1440px] md:mx-auto md:max-w-screen-xl md:p-6 ">
+        <h1 className="text-3xl font-bold text-gray-800 text-right md:text-left ">
           จองการนัดหมาย
         </h1>
-        <div className="mt-6 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto gap-6">
-          {/* ปฏิทิน */}
+        <div className="mt-2 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto gap-6">
           <Calendar
             mode="single"
             selected={
@@ -119,13 +113,30 @@ const BookingPage: React.FC = () => {
             onSelect={(date) => {
               if (date) {
                 date.setDate(date.getDate() + 1);
-                setSelectedDate(date.toISOString().split("T")[0]);
+                const selectedDateString = date.toISOString().split("T")[0];
+                if (selectedDate !== selectedDateString) {
+                  setSelectedDate(selectedDateString);
+                }
               }
             }}
+            disabled={(date) => {
+              // Disable dates before today
+              const checkDate = new Date(date);
+              checkDate.setHours(0, 0, 0, 0);
+              return checkDate < today;
+            }}
             className="rounded-md border shadow-lg"
+            modifiers={{
+              disabled: (date) => {
+                const checkDate = new Date(date);
+                checkDate.setHours(0, 0, 0, 0);
+                return checkDate < today;
+              },
+            }}
+            modifiersClassNames={{
+              disabled: "bg-gray-300 text-gray-500 cursor-not-allowed",
+            }}
           />
-
-          {/* เลือกเวลา */}
           <div className="w-full md:w-1/2">
             <label className="block text-gray-600 font-medium text-lg md:pl-10">
               เลือกเวลาที่ต้องการจอง:
@@ -161,8 +172,6 @@ const BookingPage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* ปุ่มด้านล่าง */}
       <div className="mt-6 flex flex-col md:items-end items-center">
         <div className="flex gap-6">
           <Link href="/">
@@ -178,13 +187,11 @@ const BookingPage: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Booking Dialog */}
       <BookingDialog
         isOpen={showBookingDialog}
         onClose={() => setShowBookingDialog(false)}
         message="กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด"
-        invalidSymptom={invalidSymptom}
+        invalidSymptom={invalidFields.symptom}
         appointment_dateTime={appointmentDateTime}
         symptom={symptom}
         setSymptom={setSymptom}
@@ -194,9 +201,9 @@ const BookingPage: React.FC = () => {
         setLastname={setLastname}
         phone={phone}
         setPhone={setPhone}
-        invalidName={invalidName}
-        invalidLastname={invalidLastname}
-        invalidPhone={invalidPhone}
+        invalidName={invalidFields.name}
+        invalidLastname={invalidFields.lastname}
+        invalidPhone={invalidFields.phone}
       />
     </BookingLayout>
   );

@@ -102,6 +102,8 @@ const BookingPage: React.FC = () => {
   const [invalidName, setInvalidName] = useState(false);
   const [invalidPhone, setInvalidPhone] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const handleValidation = () => {
     setInvalidName(!validateName(name));
@@ -194,12 +196,12 @@ const BookingPage: React.FC = () => {
           </Link>
 
           <AppointmentDialog
-            name={name}
-            setName={setName}
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
             phone={phone}
             setPhone={setPhone}
-            invalidName={invalidName}
-            invalidPhone={invalidPhone}
             handleValidation={handleValidation}
           />
 
@@ -245,12 +247,12 @@ const BookingPage: React.FC = () => {
           </Link>
 
           <AppointmentDialog
-            name={name}
-            setName={setName}
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
             phone={phone}
             setPhone={setPhone}
-            invalidName={invalidName}
-            invalidPhone={invalidPhone}
             handleValidation={handleValidation}
           />
           <Link href="/p/feedback">
@@ -330,14 +332,13 @@ const BookingPage: React.FC = () => {
           </Link>
 
           <AppointmentDialog
-            name={name}
-            setName={setName}
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
             phone={phone}
             setPhone={setPhone}
-            invalidName={invalidName}
-            invalidPhone={invalidPhone}
             handleValidation={handleValidation}
-            className="w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px]"
           />
 
           <Link href="/p/feedback">

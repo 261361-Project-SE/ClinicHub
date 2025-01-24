@@ -30,7 +30,7 @@ const BookingLayout: React.FC<LayoutProps> = ({ children }) => {
         <Navbarinpage />
       </div>
       <main className="relative w-full">
-        <div className="max-w-7xl mx-auto py-1">{children}</div>
+        <div className="max-w-7xl mx-auto ">{children}</div>
       </main>
     </div>
   );
