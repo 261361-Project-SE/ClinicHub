@@ -1,5 +1,4 @@
 import { validateName, validatePhone } from "../(utils)/validation";
-import { getfilterpatient } from "../services/api-p";
 import {
   Dialog,
   DialogContent,
@@ -17,82 +16,54 @@ const InputField: React.FC<{
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
+}> = ({ type, placeholder, value, onChange }) => (
   <div className="flex flex-col">
     <input
       type={type}
       placeholder={placeholder}
-      className={`border rounded-md p-2 ${
-        invalid ? "border-red-500" : "border-gray-300"
-      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+      className="border rounded-md p-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
       value={value}
       onChange={(e) => onChange(e.target.value)}
     />
-    {invalid && <span className="text-red-500 text-sm">{errorMessage}</span>}
   </div>
 );
 
 const AppointmentDialog: React.FC = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [invalidFirstName, setInvalidFirstName] = useState(false);
-  const [invalidLastName, setInvalidLastName] = useState(false);
-  const [invalidPhone, setInvalidPhone] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [firstname, setFirstName] = useState("");
+  const [lastname, setLastName] = useState("");
+  const [phoneNumber, setphoneNumber] = useState("");
+  const [error, setError] = useState<string | null>(null); // Store error messages
 
-  const errorMessageName = "กรุณากรอกเป็นภาษาไทย";
-  const errorMessagePhone = "กรุณากรอกเป็นตัวเลขเท่านั้น";
-
-  const handleNameChange = (
-    value: string,
-    setter: (val: string) => void,
-    setInvalid: (val: boolean) => void
-  ) => {
-    setter(value);
-    setInvalid(!validateName(value));
+  // Create URL query string
+  const createQueryString = () => {
+    return `/p/checkbooking?${new URLSearchParams({
+      phoneNumber,
+      firstname,
+      lastname,
+    }).toString()}`;
   };
 
-  const handlePhoneChange = (value: string) => {
-    setPhone(value);
-    setInvalidPhone(!validatePhone(value));
-  };
-
-  const handleValidation = async () => {
-    if (
-      !validateName(firstName) ||
-      !validateName(lastName) ||
-      !validatePhone(phone)
-    ) {
-      setError("กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง");
+  const handleSubmit = () => {
+    // Validate input fields
+    if (!validateName(firstname)) {
+      setError("กรุณากรอกชื่อที่ถูกต้อง");
+      return;
+    }
+    if (!validateName(lastname)) {
+      setError("กรุณากรอกนามสกุลที่ถูกต้อง");
+      return;
+    }
+    if (!validatePhone(phoneNumber)) {
+      setError("กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง");
       return;
     }
 
-    try {
-      // Call API to get appointments based on the input
-      const fetchedAppointments = await getfilterpatient(
-        phone,
-        firstName,
-        lastName
-      );
+    // Create query string after successful validation
+    const queryString = createQueryString();
 
-      if (fetchedAppointments.length > 0) {
-        setAppointments(fetchedAppointments);
-      } else {
-        setError("ไม่พบนัดหมายสำหรับข้อมูลที่ให้มา");
-      }
-    } catch (error) {
-      setError("เกิดข้อผิดพลาดในการตรวจสอบนัดหมาย");
-      console.error(error);
-    }
+    // Redirect to the appointment check page
+    window.location.href = queryString;
   };
-
-  // Determine whether the form is valid or not
-  const isFormValid =
-    validateName(firstName) && validateName(lastName) && validatePhone(phone);
 
   return (
     <Dialog>
@@ -108,46 +79,32 @@ const AppointmentDialog: React.FC = () => {
         <DialogHeader>
           <DialogTitle>ตรวจสอบนัดหมาย</DialogTitle>
           <DialogDescription>
-            กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการตรวจสอบนัดหมาย
+            กรุณากรอกข้อมูลด้านล่างเพื่อไปยังหน้าตรวจสอบนัดหมาย
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4 flex flex-col space-y-4">
           <InputField
             type="text"
             placeholder="ชื่อ"
-            value={firstName}
-            onChange={(value) =>
-              handleNameChange(value, setFirstName, setInvalidFirstName)
-            }
-            invalid={invalidFirstName}
-            errorMessage={errorMessageName}
+            value={firstname}
+            onChange={setFirstName}
           />
           <InputField
             type="text"
             placeholder="นามสกุล"
-            value={lastName}
-            onChange={(value) =>
-              handleNameChange(value, setLastName, setInvalidLastName)
-            }
-            invalid={invalidLastName}
-            errorMessage={errorMessageName}
+            value={lastname}
+            onChange={setLastName}
           />
           <InputField
             type="tel"
             placeholder="เบอร์โทรศัพท์"
-            value={phone}
-            onChange={handlePhoneChange}
-            invalid={invalidPhone}
-            errorMessage={errorMessagePhone}
+            value={phoneNumber}
+            onChange={setphoneNumber}
           />
-          {error && <span className="text-red-500">{error}</span>}
-          {/* Show the "ตรวจสอบ" button only if the form is valid */}
+          {error && <p className="text-red-500">{error}</p>}
           <button
-            onClick={handleValidation}
-            disabled={!isFormValid}
-            className={`bg-pink-200 text-md text-white rounded-lg px-4 py-2 hover:bg-pink-600 transition duration-200 w-[100px] ml-auto font-noto text-center font-normal ${
-              !isFormValid ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            onClick={handleSubmit}
+            className="bg-pink-200 text-md text-white rounded-lg px-4 py-2 hover:bg-pink-300 transition duration-200 w-[100px] ml-auto font-noto text-center font-normal"
           >
             ตรวจสอบ
           </button>
