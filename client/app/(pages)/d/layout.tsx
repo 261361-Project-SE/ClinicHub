@@ -1,7 +1,7 @@
 "use client";
 
 import Searchbar from "@/components/dashboard/Searchbar";
-import Sidebar from "@/components/ui/SIdebar";
+import Sidebar from "@/components/ui/DashboardSIdebar";
 import { usePathname } from "next/navigation";
 
 const PAGE_TITLES: Record<string, string> = {
@@ -27,12 +27,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </aside>
 
           <section className="flex-1 h-full p-5">
-            <header className="flex items-center justify-between h-[86px] px-6 bg-white shadow-shadow-bg rounded-xl">
+            <header className="flex items-center justify-between h-[86px] px-6 bg-white shadow-shadow-bg rounded-2xl">
               <h1 className="text-2xl font-medium text-darkgray md:text-3xl xl:text-4xl">
                 {pageTitle}
               </h1>
-
-              <Searchbar />
+              <div className="min-w-[300px]">
+                <Searchbar />
+              </div>
             </header>
 
             <div className="h-[calc(100vh-130px)] mt-5 overflow-auto">
