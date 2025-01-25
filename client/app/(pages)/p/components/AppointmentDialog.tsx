@@ -11,6 +11,16 @@ import { ClipboardCheck } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 
+interface AppointmentDialogProps {
+  firstName: string;
+  setFirstName: React.Dispatch<React.SetStateAction<string>>;
+  lastName: string;
+  setLastName: React.Dispatch<React.SetStateAction<string>>;
+  phone: string;
+  setPhone: React.Dispatch<React.SetStateAction<string>>;
+  handleValidation: () => void;
+}
+
 const InputField: React.FC<{
   type: string;
   placeholder: string;
@@ -28,40 +38,41 @@ const InputField: React.FC<{
   </div>
 );
 
-const AppointmentDialog: React.FC = () => {
-  const [firstname, setFirstName] = useState("");
-  const [lastname, setLastName] = useState("");
-  const [phoneNumber, setphoneNumber] = useState("");
-  const [error, setError] = useState<string | null>(null); // Store error messages
+const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+  phone,
+  setPhone,
+  handleValidation,
+}) => {
+  const [error, setError] = useState<string | null>(null);
 
-  // Create URL query string
   const createQueryString = () => {
     return `/p/checkbooking?${new URLSearchParams({
-      phoneNumber,
-      firstname,
-      lastname,
+      phoneNumber: phone,
+      firstname: firstName,
+      lastname: lastName,
     }).toString()}`;
   };
 
   const handleSubmit = () => {
-    // Validate input fields
-    if (!validateName(firstname)) {
+    handleValidation();
+    if (!validateName(firstName)) {
       setError("กรุณากรอกชื่อที่ถูกต้อง");
       return;
     }
-    if (!validateName(lastname)) {
+    if (!validateName(lastName)) {
       setError("กรุณากรอกนามสกุลที่ถูกต้อง");
       return;
     }
-    if (!validatePhone(phoneNumber)) {
+    if (!validatePhone(phone)) {
       setError("กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง");
       return;
     }
 
-    // Create query string after successful validation
     const queryString = createQueryString();
-
-    // Redirect to the appointment check page
     window.location.href = queryString;
   };
 
@@ -86,20 +97,20 @@ const AppointmentDialog: React.FC = () => {
           <InputField
             type="text"
             placeholder="ชื่อ"
-            value={firstname}
+            value={firstName}
             onChange={setFirstName}
           />
           <InputField
             type="text"
             placeholder="นามสกุล"
-            value={lastname}
+            value={lastName}
             onChange={setLastName}
           />
           <InputField
             type="tel"
             placeholder="เบอร์โทรศัพท์"
-            value={phoneNumber}
-            onChange={setphoneNumber}
+            value={phone}
+            onChange={setPhone}
           />
           {error && <p className="text-red-500">{error}</p>}
           <button

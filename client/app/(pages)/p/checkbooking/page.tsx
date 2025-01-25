@@ -1,6 +1,6 @@
 "use client";
 
-import CheckingLayout from "./checkLayout";
+import CheckingLayout from "./CheckLayout";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 

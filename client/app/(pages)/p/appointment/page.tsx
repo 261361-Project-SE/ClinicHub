@@ -9,17 +9,25 @@ import React, { useEffect, useState } from "react";
 
 const MobileBookingPage: React.FC<{
   name: string;
-  setName: (name: string) => void;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+  firstName: string;
+  setFirstName: React.Dispatch<React.SetStateAction<string>>;
+  lastName: string;
+  setLastName: React.Dispatch<React.SetStateAction<string>>;
   phone: string;
-  setPhone: (phone: string) => void;
+  setPhone: React.Dispatch<React.SetStateAction<string>>;
   invalidName: boolean;
   invalidPhone: boolean;
   handleValidation: () => void;
 }> = ({
   name,
   setName,
+  firstName,
+  setFirstName,
   phone,
   setPhone,
+  lastName,
+  setLastName,
   invalidName,
   invalidPhone,
   handleValidation,
@@ -51,12 +59,12 @@ const MobileBookingPage: React.FC<{
           จองการนัด
         </Link>
         <AppointmentDialogmobile
-          name={name}
-          setName={setName}
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
           phone={phone}
           setPhone={setPhone}
-          invalidName={invalidName}
-          invalidPhone={invalidPhone}
           handleValidation={handleValidation}
         />
       </div>
@@ -138,6 +146,10 @@ const BookingPage: React.FC = () => {
         <MobileBookingPage
           name={name}
           setName={setName}
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
           phone={phone}
           setPhone={setPhone}
           invalidName={invalidName}

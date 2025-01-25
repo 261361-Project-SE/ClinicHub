@@ -1,3 +1,4 @@
+import { validateName, validatePhone } from "../(utils)/validation";
 import {
   Dialog,
   DialogContent,
@@ -6,27 +7,74 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/(pages)/p/components/ui/dialog";
-import React from "react";
+import { ClipboardCheck } from "lucide-react";
+import React, { useState } from "react";
 
 interface AppointmentDialogMobileProps {
-  name: string;
-  setName: (name: string) => void;
+  firstName: string;
+  setFirstName: React.Dispatch<React.SetStateAction<string>>;
+  lastName: string;
+  setLastName: React.Dispatch<React.SetStateAction<string>>;
   phone: string;
-  setPhone: (phone: string) => void;
-  invalidName: boolean;
-  invalidPhone: boolean;
+  setPhone: React.Dispatch<React.SetStateAction<string>>;
   handleValidation: () => void;
 }
 
-const AppointmentDialogmobile: React.FC<AppointmentDialogMobileProps> = ({
-  name,
-  setName,
+const InputField: React.FC<{
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: React.Dispatch<React.SetStateAction<string>>;
+}> = ({ type, placeholder, value, onChange }) => (
+  <div className="flex flex-col">
+    <input
+      type={type}
+      placeholder={placeholder}
+      className="border rounded-md p-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      value={value}
+      onChange={(e) => onChange(e.target.value)} // ใช้ `onChange` จาก React State
+    />
+  </div>
+);
+
+const AppointmentDialogMobile: React.FC<AppointmentDialogMobileProps> = ({
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
   phone,
   setPhone,
-  invalidName,
-  invalidPhone,
   handleValidation,
 }) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const createQueryString = () => {
+    return `/p/checkbooking?${new URLSearchParams({
+      phoneNumber: phone,
+      firstname: firstName,
+      lastname: lastName,
+    }).toString()}`;
+  };
+
+  const handleSubmit = () => {
+    handleValidation();
+    if (!validateName(firstName)) {
+      setError("กรุณากรอกชื่อที่ถูกต้อง");
+      return;
+    }
+    if (!validateName(lastName)) {
+      setError("กรุณากรอกนามสกุลที่ถูกต้อง");
+      return;
+    }
+    if (!validatePhone(phone)) {
+      setError("กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง");
+      return;
+    }
+
+    const queryString = createQueryString();
+    window.location.href = queryString;
+  };
+
   return (
     <Dialog>
       <div className="max-w-sm mx-auto p-4">
@@ -45,31 +93,28 @@ const AppointmentDialogmobile: React.FC<AppointmentDialogMobileProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex flex-col space-y-4">
-            <FirstNameField
+            <InputField
               type="text"
               placeholder="ชื่อ"
-              value={name}
-              onChange={setName}
-              invalid={invalidName}
-              errorMessage="กรุณากรอกเป็นภาษาไทย"
+              value={firstName}
+              onChange={setFirstName}
             />
-            <LastNameField
+            <InputField
               type="text"
               placeholder="นามสกุล"
-              value={name}
-              onChange={setName}
-              invalid={invalidName}
-              errorMessage="กรุณากรอกเป็นภาษาไทย"
+              value={lastName}
+              onChange={setLastName}
             />
-            <PhoneNumberField
+            <InputField
+              type="tel"
+              placeholder="เบอร์โทรศัพท์"
               value={phone}
               onChange={setPhone}
-              invalid={invalidPhone}
-              errorMessage="กรุณากรอกเป็นตัวเลขเท่านั้น"
             />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
             <button
-              className="bg-pink-200 text-xl text-white rounded-lg p-2 hover:bg-pink-600 transition duration-200 w-full font-noto text-center font-normal"
-              onClick={handleValidation}
+              onClick={handleSubmit}
+              className="bg-pink-200 text-md text-white rounded-lg px-4 py-2 hover:bg-pink-300 transition duration-200 w-full font-noto text-center font-normal"
             >
               ตรวจสอบ
             </button>
@@ -80,76 +125,4 @@ const AppointmentDialogmobile: React.FC<AppointmentDialogMobileProps> = ({
   );
 };
 
-const InputField: React.FC<{
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
-  <>
-    <input
-      type={type}
-      placeholder={placeholder}
-      className={`border rounded-md p-2 ${invalid ? "border-red-500" : ""}`}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-    {invalid && <span className="text-red-500 text-sm">{errorMessage}</span>}
-  </>
-);
-
-const FirstNameField: React.FC<{
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
-  <InputField
-    type={type}
-    placeholder={placeholder}
-    value={value}
-    onChange={onChange}
-    invalid={invalid}
-    errorMessage={errorMessage}
-  />
-);
-
-const LastNameField: React.FC<{
-  type: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ type, placeholder, value, onChange, invalid, errorMessage }) => (
-  <InputField
-    type={type}
-    placeholder={placeholder}
-    value={value}
-    onChange={onChange}
-    invalid={invalid}
-    errorMessage={errorMessage}
-  />
-);
-
-const PhoneNumberField: React.FC<{
-  value: string;
-  onChange: (value: string) => void;
-  invalid: boolean;
-  errorMessage: string;
-}> = ({ value, onChange, invalid, errorMessage }) => (
-  <InputField
-    type="tel"
-    placeholder="เบอร์โทรศัพท์"
-    value={value}
-    onChange={onChange}
-    invalid={invalid}
-    errorMessage={errorMessage}
-  />
-);
-
-export default AppointmentDialogmobile;
+export default AppointmentDialogMobile;
