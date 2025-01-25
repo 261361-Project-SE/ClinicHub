@@ -6,12 +6,13 @@ import {
   CalendarDaysIcon,
   LayoutDashboardIcon,
   LogOutIcon,
+  SettingsIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const SideBar = () => {
+const DashboardSideBar = () => {
   const pathname = usePathname();
 
   const menuList = [
@@ -31,6 +32,11 @@ const SideBar = () => {
       href: "/d/calendar",
     },
     {
+      name: "ตั้งค่า",
+      icon: SettingsIcon,
+      href: "/d/settings",
+    },
+    {
       name: "ออกจากระบบ",
       icon: LogOutIcon,
       href: "#",
@@ -39,13 +45,15 @@ const SideBar = () => {
 
   return (
     <div className="flex flex-col h-full p-4 ml-5 bg-white gap-y-12 shadow-shadow-bg">
-      <Image
-        src={logo}
-        alt="logo"
-        className="flex mx-auto rounded-full shadow-shadow-bg"
-        width={150}
-        height={150}
-      />
+      <Link href="/d/dashboard">
+        <Image
+          src={logo}
+          alt="logo"
+          className="flex mx-auto rounded-full shadow-lg hover:shadow-xl duration-300"
+          width={150}
+          height={150}
+        />
+      </Link>
       <ul className="flex flex-col mt-8 gap-y-10">
         {menuList.map((menu) => {
           const isActive = pathname === menu.href;
@@ -73,4 +81,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default DashboardSideBar;

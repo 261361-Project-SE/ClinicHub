@@ -68,8 +68,8 @@ const PaginationPrevious = ({
     className={cn("gap-1 pl-2.5", className)}
     {...props}
   >
-    <ChevronLeft className="w-4 h-4" />
-    <span>Previous</span>
+    <ChevronLeft className="w-4 mt-0.5 h-4" />
+    <span>ก่อนหน้า</span>
   </PaginationLink>
 );
 PaginationPrevious.displayName = "PaginationPrevious";
@@ -84,7 +84,7 @@ const PaginationNext = ({
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    <span>Next</span>
+    <span>ถัดไป</span>
     <ChevronRight className="w-4 h-4" />
   </PaginationLink>
 );
