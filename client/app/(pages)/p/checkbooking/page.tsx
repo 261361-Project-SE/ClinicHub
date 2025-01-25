@@ -1,9 +1,12 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import CheckingLayout from "./CheckLayout";
 import SearchAppointments from "@/app/(pages)/p/components/SearchAppointments";
 import { Card, CardContent } from "@/app/(pages)/p/components/ui/card";
 import { Appointment } from "@/app/(pages)/p/types/appointment";
+import { Terminal } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -13,6 +16,10 @@ const CheckBookingPage: React.FC = () => {
   const [filteredData, setFilteredData] = useState<Appointment[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   const firstName = searchParams.get("firstname");
   const lastName = searchParams.get("lastname");
@@ -50,44 +57,37 @@ const CheckBookingPage: React.FC = () => {
     }
   }, [firstName, lastName, phone]);
 
-  const updateAppointment = async (
-    id: number,
-    updatedData: Partial<Appointment>
-  ) => {
+  const cancelAppointment = async (appointment: Appointment) => {
+    const appointmentDate = new Date(appointment.appointment_dateTime);
+    const now = new Date();
+    const timeDiff = appointmentDate.getTime() - now.getTime();
+    const diffDays = timeDiff / (1000 * 3600 * 24); // Convert time diff to days
+
+    if (diffDays <= 1) {
+      setCancelError("ไม่สามารถยกเลิกการนัดหมายได้");
+      return;
+    }
+
     try {
-      const response = await fetch(
-        "http://localhost:4444/patient/appointment/update",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id,
-            ...updatedData,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:4444/appointment/cancel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: appointment.id }),
+      });
 
       if (response.ok) {
-        const updatedAppointment = await response.json();
-        const updatedBookingData = bookingData.map((appointment) =>
-          appointment.id === id ? updatedAppointment : appointment
+        const updatedData = bookingData.filter(
+          (item) => item.id !== appointment.id
         );
-        setBookingData(updatedBookingData);
-
-        // Update filtered data with the newly updated status
-        const updatedFilteredData = updatedBookingData.filter(
-          (appointment) =>
-            appointment.appointment_status !== "CANCELED" &&
-            new Date(appointment.appointment_dateTime) > new Date()
-        );
-        setFilteredData(updatedFilteredData);
+        setBookingData(updatedData);
+        setFilteredData(updatedData);
       } else {
-        setError("ไม่สามารถอัพเดตการนัดหมายได้");
+        setCancelError("ไม่สามารถยกเลิกการนัดหมายได้");
       }
     } catch (err) {
-      setError("เกิดข้อผิดพลาดในการอัพเดตการนัดหมาย");
+      setCancelError("เกิดข้อผิดพลาดในการยกเลิกการนัดหมาย");
     }
   };
 
@@ -118,6 +118,14 @@ const CheckBookingPage: React.FC = () => {
 
   return (
     <CheckingLayout>
+      {cancelError && (
+        <Alert className="mb-4 bg-white text-red-500 border border-red-500 font-noto font-semibold">
+          <AlertTitle>ไม่สามารถยกเลิกการนัดหมายได้</AlertTitle>
+          <AlertDescription>
+            กรุณาติดต่อเจ้าหน้าที่เพื่อยกเลิกการนัดหมาย
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[760px] md:w-[1440px] md:mx-auto md:max-w-screen-xl md:p-6">
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-8 text-right">นัดหมายทั้งหมด</h1>
@@ -162,12 +170,11 @@ const CheckBookingPage: React.FC = () => {
                           ).toLocaleTimeString("th-TH")}
                         </p>
                         <button
-                          className="text-blue-500"
-                          onClick={() =>
-                            updateAppointment(appointment.id, {
-                              appointment_status: "CANCELED",
-                            })
-                          }
+                          className="text-white bg-red-500 rounded-lg px-4 py-2 mt-4"
+                          onClick={() => {
+                            setSelectedAppointment(appointment);
+                            setShowCancelDialog(true);
+                          }}
                         >
                           ยกเลิกนัดหมาย
                         </button>
@@ -227,6 +234,16 @@ const CheckBookingPage: React.FC = () => {
                             ยกเลิกแล้ว
                           </div>
                         )}
+
+                        <button
+                          className="text-white bg-red-500 rounded-lg px-4 py-2 mt-4"
+                          onClick={() => {
+                            setSelectedAppointment(appointment);
+                            setShowCancelDialog(true);
+                          }}
+                        >
+                          ยกเลิกนัดหมาย
+                        </button>
                       </CardContent>
                     </Card>
                   ))
@@ -238,6 +255,37 @@ const CheckBookingPage: React.FC = () => {
           )}
         </div>
       </div>
+      <div className="mt-6 flex flex-col md:items-end items-center">
+        <div className="flex gap-6">
+          <Link href="/">
+            <button className="bg-gray-300 text-black hover:opacity-80 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-full">
+              กลับหน้าหลัก
+            </button>
+          </Link>
+        </div>
+      </div>
+      {showCancelDialog && selectedAppointment && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold">ยืนยันการยกเลิก</h2>
+            <p>คุณต้องการยกเลิกการนัดหมายนี้หรือไม่?</p>
+            <div className="mt-4 flex justify-between">
+              <button
+                className="text-white bg-gray-500 rounded-lg px-4 py-2"
+                onClick={() => setShowCancelDialog(false)}
+              >
+                ยกเลิก
+              </button>
+              <button
+                className="text-white bg-red-500 rounded-lg px-4 py-2"
+                onClick={() => cancelAppointment(selectedAppointment)}
+              >
+                ยืนยัน
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </CheckingLayout>
   );
 };
