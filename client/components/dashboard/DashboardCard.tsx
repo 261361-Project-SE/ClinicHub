@@ -7,7 +7,7 @@ const DashboardCard = ({
   date,
 }: {
   title: string;
-  count: string;
+  count: number;
   date: string;
 }) => (
   <div className="flex items-center justify-center w-1/3 p-4 bg-white rounded-xl shadow-shadow-bg gap-8">
