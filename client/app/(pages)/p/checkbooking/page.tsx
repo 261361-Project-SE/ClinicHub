@@ -5,7 +5,6 @@ import CheckingLayout from "./CheckLayout";
 import SearchAppointments from "@/app/(pages)/p/components/SearchAppointments";
 import { Card, CardContent } from "@/app/(pages)/p/components/ui/card";
 import { Appointment } from "@/app/(pages)/p/types/appointment";
-import { Terminal } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -119,14 +118,14 @@ const CheckBookingPage: React.FC = () => {
   return (
     <CheckingLayout>
       {cancelError && (
-        <Alert className="mb-4 bg-white text-red-500 border border-red-500 font-noto font-semibold">
+        <Alert className="mb-2 bg-white text-red-500 border border-red-500 font-noto font-semibold">
           <AlertTitle>ไม่สามารถยกเลิกการนัดหมายได้</AlertTitle>
           <AlertDescription>
             กรุณาติดต่อเจ้าหน้าที่เพื่อยกเลิกการนัดหมาย
           </AlertDescription>
         </Alert>
       )}
-      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[760px] md:w-[1440px] md:mx-auto md:max-w-screen-xl md:p-6">
+      <div className="bg-gray-50 rounded-xl shadow-xl md:h-[700px] md:w-[1440px] md:mx-auto md:max-w-screen-xl md:p-6">
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-8 text-right">นัดหมายทั้งหมด</h1>
           <SearchAppointments
@@ -255,7 +254,7 @@ const CheckBookingPage: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="mt-6 flex flex-col md:items-end items-center">
+      <div className="mt-6 flex flex-col md:items-end itgiems-center">
         <div className="flex gap-6">
           <Link href="/">
             <button className="bg-gray-300 text-black hover:opacity-80 shadow-md w-[140px] md:w-[173px] h-[50px] rounded-full">

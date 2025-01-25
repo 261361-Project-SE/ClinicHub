@@ -1,7 +1,9 @@
 export interface Appointment {
-  id: number;
+  id: string;
   firstname: string;
   lastname: string;
+  phone_number: string;
+  symptom: string;
   appointment_dateTime: string;
-  appointment_status: string;
+  appointment_status: "CONFIRMED" | "CANCELED" | "COMPLETED";
 }
