@@ -15,7 +15,6 @@ import {
 import { cn } from "@/lib/utils";
 
 export function AppointmentDatePicker({
-  value,
   setValue,
 }: {
   value: string;
