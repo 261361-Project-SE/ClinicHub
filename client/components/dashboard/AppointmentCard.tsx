@@ -1,9 +1,8 @@
-import { ClipboardPlusIcon, Clock4Icon } from "lucide-react";
-
 import { formattedDateTime } from "@/app/utils/formattedDateTime";
 import { AppointmentPopover } from "@/components/dashboard/AppointmentPopover";
 import { AppointmentProps } from "@/lib/types";
 import { AppointmentStatus } from "@/lib/variables";
+import { ClipboardPlusIcon, Clock4Icon } from "lucide-react";
 
 const AppointmentCard: React.FC<AppointmentProps> = (props) => {
   const {
@@ -44,9 +43,9 @@ const AppointmentCard: React.FC<AppointmentProps> = (props) => {
         <div>{weekday}</div>
         <div className="text-2xl">{shortDate}</div>
       </div>
-      <div className="flex items-start justify-between w-11/12 mr-4 gap-x-16">
-        <div className="flex gap-x-32">
-          <div className="flex flex-col gap-y-1">
+      <div className="flex items-start justify-between w-full mr-4 gap-x-16">
+        <div className="flex w-full gap-x-32">
+          <div className="flex flex-col w-1/5 gap-y-1">
             <div className="flex items-center text-sm gap-x-1 text-darkgray">
               <Clock4Icon className="mt-0.5" size={14} />
               {time} - {formattedEndOfBookingTime}
@@ -56,9 +55,7 @@ const AppointmentCard: React.FC<AppointmentProps> = (props) => {
             </div>
           </div>
           <div>
-            <div>
-              คนไข้ {firstname} {lastname}
-            </div>
+            คนไข้ {firstname} {lastname}
           </div>
         </div>
         <div>{!isHistoryOrCanceled && <AppointmentPopover {...props} />}</div>
