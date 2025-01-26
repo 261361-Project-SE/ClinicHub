@@ -1,9 +1,12 @@
-import { PatientTableProps } from "@/lib/types";
+import { format } from "date-fns";
+import { th } from "date-fns/locale";
 import { PhoneIcon } from "lucide-react";
+
+import { PatientTableProps } from "@/lib/types";
 
 const PatientInformation: React.FC<PatientTableProps> = ({ patients }) => {
   return (
-    <div className="flex flex-col p-2 gap-y-2">
+    <div className="flex flex-col p-2">
       {patients.map((patient, index) => (
         <div key={index} className="flex flex-col gap-y-4">
           <div className="flex flex-col gap-y-1">
@@ -36,9 +39,18 @@ const PatientInformation: React.FC<PatientTableProps> = ({ patients }) => {
                 <td className="text-right">Reg. Date</td>
               </tr>
               <tr className="text-lightgray">
-                <td>15 ธันวาคม 2515</td>
+                <td>
+                  {" "}
+                  {format(new Date(patient.LastAppointment), "dd MMM yyyy", {
+                    locale: th,
+                  })}
+                </td>
                 <td>{patient.Height}</td>
-                <td className="text-right">{patient.created_at}</td>
+                <td className="text-right">
+                  {format(new Date(patient.created_at), "dd MMM yyyy", {
+                    locale: th,
+                  })}
+                </td>
               </tr>
             </tbody>
           </table>
