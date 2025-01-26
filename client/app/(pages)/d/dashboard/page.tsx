@@ -45,16 +45,16 @@ const DashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col animate-pulse h-screen gap-y-6">
-        <div className="flex gap-x-9 w-full h-1/4">
+      <div className="flex flex-col h-screen animate-pulse gap-y-6">
+        <div className="flex w-full gap-x-9 h-1/4">
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
         </div>
-        <div className="flex h-2/4 w-full">
+        <div className="flex w-full h-2/4">
           <Skeleton className="w-full h-full rounded-xl"></Skeleton>
         </div>
-        <div className="flex gap-x-9 w-full h-1/4">
+        <div className="flex w-full gap-x-9 h-1/4">
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
@@ -77,7 +77,7 @@ const DashboardPage = () => {
   return (
     <div className="flex flex-col h-full gap-y-6">
       {/* Top section */}
-      <div className="flex gap-x-9 w-full h-1/4">
+      <div className="flex w-full gap-x-9 h-1/4">
         <DashboardCard
           title="การนัดหมายวันนี้"
           count={todayAppointments?.length || 0}
@@ -116,7 +116,7 @@ const DashboardPage = () => {
         </div>
       </div>
       {/* Middle section */}
-      <div className="bg-white dark:bg-gray-800 p-4 flex gap-x-9 h-2/4 w-full rounded-xl">
+      <div className="flex w-full p-4 bg-white dark:bg-gray-800 gap-x-9 h-2/4 rounded-xl">
         <div className="flex flex-col items-center justify-between w-1/3">
           <PatientChart />
         </div>
@@ -137,7 +137,7 @@ const DashboardPage = () => {
         </div>
       </div>
       {/* Bottom section */}
-      <div className="flex gap-x-9 w-full h-1/4">
+      <div className="flex w-full gap-x-9 h-1/4">
         <div className="flex flex-col w-1/3 p-4 bg-white dark:bg-gray-800 rounded-xl gap-y-2 shadow-shadow-bg dark:shadow-none">
           <div className="font-medium text-darkgray dark:text-gray-300">
             ความพึงพอใจการใช้งานระบบ
@@ -152,7 +152,7 @@ const DashboardPage = () => {
               {pendingAppointmentCount}
             </Link>
           </div>
-          <div className="overflow-y-auto h-40">
+          <div className="h-40 overflow-y-auto">
             <AppointmentTable
               appointments={appointments.filter(
                 (appointment) => appointment.appointment_status === "PENDING"
