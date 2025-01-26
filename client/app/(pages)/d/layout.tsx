@@ -1,7 +1,7 @@
 "use client";
 
 import Searchbar from "@/components/dashboard/Searchbar";
-import Sidebar from "@/components/ui/DashboardSIdebar";
+import Sidebar from "@/components/ui/DashboardSidebar";
 import { usePathname } from "next/navigation";
 
 const PAGE_TITLES: Record<string, string> = {
