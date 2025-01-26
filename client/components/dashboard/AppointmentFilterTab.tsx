@@ -1,4 +1,6 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AppointmentFilterTabProps {
   onFilterChange: (filter: string) => void;
@@ -7,54 +9,37 @@ interface AppointmentFilterTabProps {
 export function AppointmentFilterTab({
   onFilterChange,
 }: AppointmentFilterTabProps) {
+  const searchParams = useSearchParams();
+  const initialFilter = searchParams.get("filter") || "upcoming";
+  const [filter, setFilter] = useState(initialFilter);
+
+  useEffect(() => {
+    setFilter(initialFilter);
+  }, [initialFilter]);
+
   return (
-    <Tabs defaultValue="upcoming" className="rounded-xl">
+    <Tabs
+      defaultValue="upcoming"
+      className="rounded-xl"
+      onValueChange={(value) => onFilterChange(value)}
+    >
       <TabsList className="h-full grid grid-cols-5 gap-1 rounded-xl text-lightgray bg-lightgray-100">
-        <TabsTrigger
-          value="upcoming"
-          onClick={() => onFilterChange("upcoming")}
-          className="h-10 rounded-xl"
-        >
+        <TabsTrigger value="upcoming" className="h-10 rounded-xl">
           กำลังจะมาถึง
         </TabsTrigger>
-        <TabsTrigger
-          value="pending"
-          onClick={() => onFilterChange("pending")}
-          className="h-10 rounded-xl"
-        >
+        <TabsTrigger value="pending" className="h-10 rounded-xl">
           คำขอนัดหมาย
         </TabsTrigger>
-        <TabsTrigger
-          value="toConfirm"
-          onClick={() => onFilterChange("toConfirm")}
-          className="h-10 rounded-xl"
-        >
+        <TabsTrigger value="toConfirm" className="h-10 rounded-xl">
           รอยืนยัน
         </TabsTrigger>
-        <TabsTrigger
-          value="history"
-          onClick={() => onFilterChange("history")}
-          className="h-10 rounded-xl"
-        >
+        <TabsTrigger value="history" className="h-10 rounded-xl">
           ประวัติการนัด
         </TabsTrigger>
-        <TabsTrigger
-          value="canceled"
-          onClick={() => onFilterChange("canceled")}
-          className="h-10 rounded-xl"
-        >
+        <TabsTrigger value="canceled" className="h-10 rounded-xl">
           การนัดหมายที่ยกเลิก
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="all">
-        {/* Content for All Tab (if needed) */}
-      </TabsContent>
-      <TabsContent value="upcoming">
-        {/* Content for Upcoming Tab (if needed) */}
-      </TabsContent>
-      <TabsContent value="canceled">
-        {/* Content for canceled Tab (if needed) */}
-      </TabsContent>
     </Tabs>
   );
 }
