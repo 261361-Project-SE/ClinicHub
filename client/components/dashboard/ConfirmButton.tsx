@@ -10,6 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
 
 export function ConfirmButton({
   buttonTitle,
@@ -17,15 +18,26 @@ export function ConfirmButton({
   description,
   confirmTitle,
   cancelTitle,
-  handleConfirm,
+  onConfirm,
 }: {
   buttonTitle: string;
   title: string;
   description: string;
   confirmTitle: string;
   cancelTitle: string;
-  handleConfirm: () => void;
+  onConfirm: () => Promise<void> | void;
 }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleActionClick = async () => {
+    setLoading(true);
+    try {
+      await onConfirm();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -46,12 +58,13 @@ export function ConfirmButton({
             {cancelTitle}
           </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-pink-200 rounded hover:bg-pink-200/90"
-            onClick={() => {
-              handleConfirm();
-            }}
+            className={`bg-pink-200 rounded hover:bg-pink-200/90 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleActionClick}
+            disabled={loading}
           >
-            {confirmTitle}
+            {loading ? "กำลังดำเนินการ..." : confirmTitle}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
