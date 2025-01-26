@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Noto_Sans_Thai_Looped } from "next/font/google";
+import { Toaster } from "sonner";
 
 const notoSansThaiLooped = Noto_Sans_Thai_Looped({
   subsets: ["thai"],
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={notoSansThaiLooped.className}>{children}</body>
+      <body className={notoSansThaiLooped.className}>
+        <Toaster position="top-center" richColors />
+        {children}
+      </body>
     </html>
   );
 }
