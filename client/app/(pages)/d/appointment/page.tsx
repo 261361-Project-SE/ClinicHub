@@ -51,7 +51,8 @@ const AppointmentsPage = () => {
           );
         case "pending":
           return (
-            appointment.appointment_status === AppointmentStatus.PENDING.value
+            appointment.appointment_status ===
+              AppointmentStatus.PENDING.value && appointmentDate >= now
           );
         case "toConfirm":
           return (
@@ -126,7 +127,20 @@ const AppointmentsPage = () => {
     setFilter(newFilter);
   };
 
-  if (loading) return <Skeleton className="h-full rounded-xl" />;
+  if (loading)
+    return (
+      <>
+        <div className="flex flex-col h-full p-6 bg-white space-y-4 rounded-xl shadow-shadow-bg">
+          <div className="sticky top-0 z-10 bg-white space-y-4">
+            <CreateAppointmentDialog />
+            <AppointmentFilterTab onFilterChange={handleFilterChange} />
+          </div>
+          <Skeleton className="py-1 h-24 rounded-xl" />
+          <Skeleton className="py-1 h-24 rounded-xl" />
+          <Skeleton className="py-1 h-24 rounded-xl" />
+        </div>
+      </>
+    );
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -149,7 +163,7 @@ const AppointmentsPage = () => {
                 const appointments = groupedAppointments[key];
                 return (
                   <div key={key} className="space-y-2">
-                    <h3 className="text-lg font-medium text-darkgray">
+                    <div className="mb-4 text-lg font-medium text-darkgray">
                       {new Date(Number(year), Number(month) - 1).toLocaleString(
                         "th-TH",
                         {
@@ -157,7 +171,7 @@ const AppointmentsPage = () => {
                           month: "long",
                         }
                       )}
-                    </h3>
+                    </div>
                     <div className="space-y-4">
                       {appointments?.map((appointment) => (
                         <AppointmentCard
