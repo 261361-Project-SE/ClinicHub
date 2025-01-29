@@ -183,6 +183,16 @@ class AppointmentService {
         appointment_status: appointment_status || checkBooking.appointment_status,
       }
 
+      const existingBooking = await this.prisma.appointments.findFirst({
+        where: {
+          appointment_dateTime: newData.appointment_dateTime,
+        },
+      });
+
+      if (existingBooking && existingBooking.id !== id) {
+        return { error: "Time slot is busy.", status: 400 };
+      }
+
       if (!this.isChanged(checkBooking, newData)) {
         return { error: "No changes", status: 304 };
       }
@@ -284,6 +294,16 @@ class AppointmentService {
 
       if (!this.isChanged(checkBooking, newData)) {
         return { error: "No changes", status: 304 };
+      }
+
+      const existingBooking = await this.prisma.appointments.findFirst({
+        where: {
+          appointment_dateTime: newData.appointment_dateTime,
+        },
+      });
+
+      if (existingBooking && existingBooking.id !== id) {
+        return { error: "Time slot is busy.", status: 400 };
       }
 
       let eventId = '';
