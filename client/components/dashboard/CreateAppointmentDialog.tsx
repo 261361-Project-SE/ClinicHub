@@ -1,8 +1,3 @@
-import axios from "axios";
-import { Loader2, PlusIcon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-
 import { AppointmentDatePicker } from "@/components/dashboard/AppointmentDatePicker";
 import { AppointmentTimeSelector } from "@/components/dashboard/AppointmentTimeSelector";
 import { ConfirmButton } from "@/components/dashboard/ConfirmButton";
@@ -18,6 +13,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SERVER_URL } from "@/lib/variables";
+import axios from "axios";
+import { Loader2, PlusIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const CreateAppointmentDialog = () => {
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
@@ -103,9 +102,9 @@ const CreateAppointmentDialog = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="mb-4">สร้างการนัดหมาย</DialogTitle>
+          <DialogTitle className="mb-2">สร้างการนัดหมาย</DialogTitle>
         </DialogHeader>
-        <p id="dialog-description" className="mb-4 text-sm text-gray-500">
+        <p id="dialog-description" className="mb-2 text-sm text-gray-500">
           กรุณากรอกรายละเอียดการนัดหมายให้ครบถ้วนก่อนกดยืนยัน
         </p>
         <form
