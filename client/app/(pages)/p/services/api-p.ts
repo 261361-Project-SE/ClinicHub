@@ -46,8 +46,10 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
     const response = await axios.get(
       `${API_BASE_URL}/appointment/time-slot?date=${date}`
     );
+    // Have to add appointment status it  PENDDING or Cancel 
 
     const appointmentsData = response.data?.data ?? response.data;
+    console.log("appointmentsData", appointmentsData);
     const appointments = Array.isArray(appointmentsData)
       ? appointmentsData
       : [];
