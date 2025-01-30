@@ -47,6 +47,8 @@ const DashboardSideBar = () => {
     <div className="flex flex-col h-full p-4 ml-5 bg-white gap-y-12 shadow-shadow-bg">
       <Link href="/d/dashboard">
         <Image
+          priority
+          loading="eager"
           src={logo}
           alt="logo"
           className="flex mx-auto rounded-full shadow-lg hover:shadow-xl duration-300"
