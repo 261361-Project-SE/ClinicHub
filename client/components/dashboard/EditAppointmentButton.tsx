@@ -11,11 +11,13 @@ import {
 import { AppointmentProps } from "@/lib/types";
 import { SERVER_URL } from "@/lib/variables";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
   const { appointment_dateTime, appointment_status, id } = props;
+  const [loading, setLoading] = useState(false);
   const [newAppointmentTime, setNewAppointmentTime] =
     useState(appointment_dateTime);
   const [newAppointmentStatus, setNewAppointmentStatus] =
@@ -54,10 +56,6 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
   };
 
   const handleSaveChanges = async () => {
-    const appointmentUpdateForm = {
-      appointment_status: newAppointmentStatus,
-    };
-
     if (!newAppointmentTime || !newAppointmentStatus) {
       toast.error("ไม่พบการเปลี่ยนแปลง");
       return;
@@ -70,6 +68,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
 
     const newAppointmentDateTime = `${formattedDate}T${formattedTime}:00.000`;
 
+    setLoading(true);
     try {
       await axios.patch(`${SERVER_URL}/doctor/appointment/update`, {
         id,
@@ -77,6 +76,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
         appointment_time: newAppointmentDateTime,
       });
       toast.success("การนัดหมายถูกสร้างเรียบร้อยแล้ว!");
+      setLoading(false);
     } catch (error) {
       toast.error("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่อีกครั้ง");
     }
@@ -113,14 +113,21 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
               />
             </div>
             <div className="items-center mt-2 grid grid-cols-1 gap-4">
-              <ConfirmButton
-                buttonTitle="บันทึก"
-                title="บันทึกการเปลี่ยนแปลง"
-                description="คุณแน่ใจหรือไม่ว่าต้องการบันทึกการเปลี่ยนแปลงนี้"
-                cancelTitle="ยกเลิก"
-                confirmTitle="บันทึก"
-                onConfirm={handleSaveChanges}
-              />
+              {loading ? (
+                <Button disabled>
+                  <Loader2 className="animate-spin" />
+                  กำลังแก้ไขนัดหมาย...
+                </Button>
+              ) : (
+                <ConfirmButton
+                  buttonTitle="บันทึก"
+                  title="บันทึกการเปลี่ยนแปลง"
+                  description="คุณแน่ใจหรือไม่ว่าต้องการบันทึกการเปลี่ยนแปลงนี้"
+                  cancelTitle="ยกเลิก"
+                  confirmTitle="บันทึก"
+                  onConfirm={handleSaveChanges}
+                />
+              )}
             </div>
           </div>
         </div>
