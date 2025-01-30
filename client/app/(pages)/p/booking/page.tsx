@@ -83,6 +83,18 @@ const BookingPage: React.FC = () => {
       setShowBookingDialog(true);
     }
   };
+  
+  const handleClick = (date: Date) => {
+    if (date) {
+      date.setDate(date.getDate() + 1);
+      const selectedDateString = date.toISOString().split("T")[0];
+      if (selectedDate !== selectedDateString) {
+        setSelectedDate(selectedDateString);
+      }
+      date.setDate(date.getDate() - 1);
+      setAppointmentDateTime(date.toISOString());
+    }
+  };
 
   useEffect(() => {
     if (selectedDate) {
@@ -112,12 +124,9 @@ const BookingPage: React.FC = () => {
             }
             onSelect={(date) => {
               if (date) {
-                date.setDate(date.getDate() + 1);
-                const selectedDateString = date.toISOString().split("T")[0];
-                if (selectedDate !== selectedDateString) {
-                  setSelectedDate(selectedDateString);
-                }
+                handleClick(date);
               }
+              console.log("Selected date:", date);
             }}
             disabled={(date) => {
               // Disable dates before today
