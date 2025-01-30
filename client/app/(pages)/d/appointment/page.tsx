@@ -16,103 +16,77 @@ import { useFetchAppointments } from "@/hooks/useFetchAppointments";
 import { AppointmentStatus } from "@/lib/variables";
 import React, { useState, useEffect } from "react";
 
+interface FilterChangeHandler {
+  (newFilter: string): void;
+}
+
 const ITEMS_PER_PAGE = 5;
 
 const AppointmentsPage = () => {
-  const {
-    appointments = [],
-    loading,
-    error,
-  } = useFetchAppointments() || {
-    appointments: [],
-    loading: false,
-    error: null,
-  };
+  const { appointments, loading, error } = useFetchAppointments();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("upcoming");
-
-  // Filtered and Sorted Appointments
-  const filteredAppointments = (appointments || [])
-    .filter((appointment) => {
-      const appointmentDate = new Date(appointment.appointment_dateTime);
-      const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(now.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      const dayAfterTomorrow = new Date(tomorrow);
-      dayAfterTomorrow.setDate(tomorrow.getDate() + 1);
-
-      switch (filter) {
-        case "upcoming":
-          return (
-            appointment.appointment_status ===
-              AppointmentStatus.CONFIRMED.value && appointmentDate >= now
-          );
-        case "pending":
-          return (
-            appointment.appointment_status ===
-              AppointmentStatus.PENDING.value && appointmentDate >= now
-          );
-        case "toConfirm":
-          return (
-            appointment.appointment_status ===
-              AppointmentStatus.CONFIRMED.value &&
-            appointmentDate >= tomorrow &&
-            appointmentDate < dayAfterTomorrow
-          );
-        case "history":
-          return (
-            appointmentDate < now &&
-            appointment.appointment_status !== AppointmentStatus.CANCELED.value
-          );
-        case "canceled":
-          return (
-            appointment.appointment_status === AppointmentStatus.CANCELED.value
-          );
-        default:
-          return true;
-      }
-    })
-    .sort((a, b) => {
-      if (filter === "history") {
-        return (
-          new Date(b.appointment_dateTime).getTime() -
-          new Date(a.appointment_dateTime).getTime()
-        );
-      }
-      return (
-        new Date(a.appointment_dateTime).getTime() -
-        new Date(b.appointment_dateTime).getTime()
-      );
-    });
-
-  // Grouped by Month and Paginated
-  const groupedAppointments = filteredAppointments.reduce(
-    (acc, appointment) => {
-      const date = new Date(appointment.appointment_dateTime);
-      const key = `${date.getFullYear()}-${date.getMonth() + 1}`;
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(appointment);
-      return acc;
-    },
-    {} as Record<string, typeof appointments>
-  );
-
-  const monthKeys = Object.keys(groupedAppointments);
-  const totalPages = Math.ceil(monthKeys.length / ITEMS_PER_PAGE);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [filter]);
 
+  const filteredAppointments = React.useMemo(() => {
+    if (!appointments) return [];
+
+    return appointments
+      .filter((appointment) => {
+        const appointmentDate = new Date(appointment.appointment_dateTime);
+        const now = new Date();
+
+        switch (filter) {
+          case "upcoming":
+            return (
+              appointment.appointment_status ===
+                AppointmentStatus.CONFIRMED.value && appointmentDate >= now
+            );
+          case "pending":
+            return (
+              appointment.appointment_status ===
+                AppointmentStatus.PENDING.value && appointmentDate >= now
+            );
+          case "toConfirm":
+            return (
+              appointment.appointment_status ===
+              AppointmentStatus.CONFIRMED.value
+            );
+          case "history":
+            return (
+              appointmentDate < now &&
+              appointment.appointment_status !==
+                AppointmentStatus.CANCELED.value
+            );
+          case "canceled":
+            return (
+              appointment.appointment_status ===
+              AppointmentStatus.CANCELED.value
+            );
+          default:
+            return true;
+        }
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.appointment_dateTime).getTime() -
+          new Date(b.appointment_dateTime).getTime()
+      );
+  }, [appointments, filter]);
+
+  const totalPages = Math.ceil(filteredAppointments.length / ITEMS_PER_PAGE);
+
   useEffect(() => {
-    if (currentPage > totalPages) {
+    if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
 
-  const paginatedKeys = monthKeys.slice(
+  const paginatedAppointments = filteredAppointments.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -123,24 +97,23 @@ const AppointmentsPage = () => {
     }
   };
 
-  const handleFilterChange = (newFilter: string) => {
+  const handleFilterChange: FilterChangeHandler = (newFilter) => {
     setFilter(newFilter);
   };
 
   if (loading)
     return (
-      <>
-        <div className="flex flex-col h-full p-6 bg-white space-y-4 rounded-xl shadow-shadow-bg">
-          <div className="sticky top-0 z-10 bg-white space-y-4">
-            <CreateAppointmentDialog />
-            <AppointmentFilterTab onFilterChange={handleFilterChange} />
-          </div>
-          <Skeleton className="h-24 py-1 rounded-xl" />
-          <Skeleton className="h-24 py-1 rounded-xl" />
-          <Skeleton className="h-24 py-1 rounded-xl" />
+      <div className="flex flex-col h-full p-6 bg-white space-y-4 rounded-xl shadow-shadow-bg">
+        <div className="sticky top-0 z-10 bg-white space-y-4">
+          <CreateAppointmentDialog />
+          <AppointmentFilterTab onFilterChange={handleFilterChange} />
         </div>
-      </>
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-24 py-1 rounded-xl" />
+        ))}
+      </div>
     );
+
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -151,93 +124,65 @@ const AppointmentsPage = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-4">
-        {!monthKeys.length ? (
+        {paginatedAppointments.length === 0 ? (
           <div className="py-8 text-center text-gray-500">
             ไม่พบการนัดหมายสำหรับหมวดหมู่นี้
           </div>
         ) : (
-          <>
-            <div className="space-y-4">
-              {paginatedKeys.map((key) => {
-                const [year, month] = key.split("-");
-                const appointments = groupedAppointments[key];
-                return (
-                  <div key={key} className="space-y-2">
-                    <div className="mb-4 text-lg font-medium text-darkgray">
-                      {new Date(Number(year), Number(month) - 1).toLocaleString(
-                        "th-TH",
-                        {
-                          year: "numeric",
-                          month: "long",
-                        }
-                      )}
-                    </div>
-                    <div className="space-y-4">
-                      {appointments?.map((appointment) => (
-                        <AppointmentCard
-                          key={appointment.id}
-                          {...appointment}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          paginatedAppointments.map((appointment) => (
+            <AppointmentCard key={appointment.id} {...appointment} />
+          ))
+        )}
 
-            {totalPages > 1 && (
-              <div className="mt-6">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePageChange(currentPage - 1);
-                        }}
-                        className={
-                          currentPage <= 1
-                            ? "pointer-events-none opacity-50"
-                            : ""
-                        }
-                      />
-                    </PaginationItem>
+        {totalPages > 1 && (
+          <div className="mt-6">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage - 1);
+                    }}
+                    className={
+                      currentPage <= 1 ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
 
-                    {[...Array(totalPages)].map((_, index) => (
-                      <PaginationItem key={index}>
-                        <PaginationLink
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handlePageChange(index + 1);
-                          }}
-                          isActive={currentPage === index + 1}
-                        >
-                          {index + 1}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
+                {[...Array(totalPages)].map((_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(index + 1);
+                      }}
+                      isActive={currentPage === index + 1}
+                    >
+                      {index + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
 
-                    <PaginationItem>
-                      <PaginationNext
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePageChange(currentPage + 1);
-                        }}
-                        className={
-                          currentPage >= totalPages
-                            ? "pointer-events-none opacity-50"
-                            : ""
-                        }
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
-          </>
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage + 1);
+                    }}
+                    className={
+                      currentPage >= totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         )}
       </div>
     </div>
