@@ -1,9 +1,5 @@
 "use client";
 
-import { Calendar1Icon, UserIcon } from "lucide-react";
-import Link from "next/link";
-import { useMemo } from "react";
-
 import AppointmentTable from "@/components/dashboard/AppointmentTable";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import { FeedbackChart } from "@/components/dashboard/FeedbackChart";
@@ -13,12 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { patientsData } from "@/helper/SampleData";
 import { useFetchAppointments } from "@/hooks/useFetchAppointments";
-import {
-  AppointmentStatus,
-  currentThaiMonth,
-  currentThaiYear,
-} from "@/lib/variables";
-
+import { currentThaiMonth, currentThaiYear } from "@/lib/variables";
+import { Calendar1Icon, UserIcon } from "lucide-react";
+import Link from "next/link";
+import { useMemo } from "react";
 
 const DashboardPage = () => {
   const { appointments, loading, error } = useFetchAppointments();
@@ -39,13 +33,12 @@ const DashboardPage = () => {
   }, [appointments]);
 
   const pendingAppointmentCount = appointments.filter(
-    (appointment) =>
-      appointment.appointment_status === AppointmentStatus.PENDING.value
+    (appointment) => appointment.appointment_status === "toConfirm"
   ).length;
 
   if (loading) {
     return (
-      <div className="flex flex-col h-screen animate-pulse gap-y-6">
+      <div className="flex flex-col h-full animate-pulse gap-y-6">
         <div className="flex w-full gap-x-9 h-1/4">
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
           <Skeleton className="w-1/3 rounded-xl"></Skeleton>
@@ -116,7 +109,7 @@ const DashboardPage = () => {
         </div>
       </div>
       {/* Middle section */}
-      <div className="flex w-full p-4 bg-white dark:bg-gray-800 gap-x-9 h-2/4 rounded-xl">
+      <div className="flex w-full p-4 bg-white shadow-shadow-bg dark:bg-gray-800 gap-x-9 h-2/4 rounded-xl">
         <div className="flex flex-col items-center justify-between w-1/3">
           <PatientChart />
         </div>
@@ -127,7 +120,7 @@ const DashboardPage = () => {
               <AppointmentTable appointments={todayAppointments || []} />
             </div>
           </div>
-          <div className="font-bold text-pink-200 cursor-pointer hover:text-pink-300">
+          <div className="font-bold text-pink-200 cursor-pointer hover:text-pink-200/90">
             <Link href={"/d/appointment"}>ดูทั้งหมด</Link>
           </div>
         </div>
@@ -152,10 +145,10 @@ const DashboardPage = () => {
               {pendingAppointmentCount}
             </Link>
           </div>
-          <div className="h-40 overflow-y-auto">
+          <div className="h-32 overflow-y-auto">
             <AppointmentTable
               appointments={appointments.filter(
-                (appointment) => appointment.appointment_status === "PENDING"
+                (appointment) => appointment.appointment_status === "toConfirm"
               )}
             />
           </div>
