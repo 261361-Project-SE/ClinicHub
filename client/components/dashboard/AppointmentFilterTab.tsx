@@ -13,7 +13,7 @@ export function AppointmentFilterTab({
       className="rounded-xl"
       onValueChange={(value) => onFilterChange(value)}
     >
-      <TabsList className="h-full grid grid-cols-5 gap-1 rounded-xl text-lightgray bg-lightgray-100">
+      <TabsList className="h-full grid grid-cols-6 gap-1 rounded-xl text-lightgray bg-lightgray-100">
         <TabsTrigger value="upcoming" className="h-10 rounded-xl">
           กำลังจะมาถึง
         </TabsTrigger>
@@ -22,6 +22,9 @@ export function AppointmentFilterTab({
         </TabsTrigger>
         <TabsTrigger value="toConfirm" className="h-10 rounded-xl">
           รอยืนยัน
+        </TabsTrigger>
+        <TabsTrigger value="all" className="h-10 rounded-xl">
+          ทั้งหมด
         </TabsTrigger>
         <TabsTrigger value="history" className="h-10 rounded-xl">
           ประวัติการนัด
