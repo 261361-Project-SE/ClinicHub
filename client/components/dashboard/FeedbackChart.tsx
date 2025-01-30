@@ -10,22 +10,22 @@ import {
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
 const chartData = [
-  { feedback: "Positive", count: 150, fill: "#98C99F" },
-  { feedback: "Neutral", count: 80, fill: "#FFBC41" },
-  { feedback: "Negative", count: 50, fill: "#E57373" },
+  { feedback: "พอใจมาก", count: 150, fill: "#98C99F" },
+  { feedback: "ปานกลาง", count: 80, fill: "#FFBC41" },
+  { feedback: "ไม่พอใจ", count: 50, fill: "#E57373" },
 ];
 
 const chartConfig = {
   Positive: {
-    label: "Positive",
+    label: "พอใจมาก",
     color: "#98C99F",
   },
   Neutral: {
-    label: "Neutral",
+    label: "ปานกลาง",
     color: "#FFBC41",
   },
   Negative: {
-    label: "Negative",
+    label: "ไม่พอใจ",
     color: "#E57373",
   },
 } satisfies ChartConfig;
