@@ -52,9 +52,9 @@ const AppointmentsPage = () => {
                 AppointmentStatus.PENDING.value && appointmentDate >= now
             );
           case "toConfirm":
+            // TODO: change to WAITING_FOR_CONFIRMATION status in the future
             return (
-              appointment.appointment_status ===
-              AppointmentStatus.CONFIRMED.value
+              appointment.appointment_status === AppointmentStatus.PENDING.value
             );
           case "history":
             return (
