@@ -1,5 +1,5 @@
 import { formattedDateTime } from "@/app/utils/formattedDateTime";
-import { AppointmentPopover } from "@/components/dashboard/AppointmentPopover";
+import { EditAppointmentButton } from "@/components/dashboard/EditAppointmentButton";
 import { AppointmentProps } from "@/lib/types";
 import { AppointmentStatus } from "@/lib/variables";
 import { ClipboardPlusIcon, Clock4Icon } from "lucide-react";
@@ -55,10 +55,14 @@ const AppointmentCard: React.FC<AppointmentProps> = (props) => {
             </div>
           </div>
           <div>
-            คนไข้ {firstname} {lastname}
+            <div>
+              คนไข้ {firstname} {lastname}
+            </div>
           </div>
         </div>
-        <div>{!isHistoryOrCanceled && <AppointmentPopover {...props} />}</div>
+        <div>
+          {!isHistoryOrCanceled && <EditAppointmentButton {...props} />}
+        </div>
       </div>
     </div>
   );
