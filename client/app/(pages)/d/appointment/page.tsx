@@ -135,9 +135,9 @@ const AppointmentsPage = () => {
             <CreateAppointmentDialog />
             <AppointmentFilterTab onFilterChange={handleFilterChange} />
           </div>
-          <Skeleton className="py-1 h-24 rounded-xl" />
-          <Skeleton className="py-1 h-24 rounded-xl" />
-          <Skeleton className="py-1 h-24 rounded-xl" />
+          <Skeleton className="h-24 py-1 rounded-xl" />
+          <Skeleton className="h-24 py-1 rounded-xl" />
+          <Skeleton className="h-24 py-1 rounded-xl" />
         </div>
       </>
     );
