@@ -6,6 +6,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { currentThaiMonth, currentThaiYear } from "@/lib/variables";
 import { TrendingUp } from "lucide-react";
 import * as React from "react";
 import { Label, Pie, PieChart } from "recharts";
@@ -45,7 +46,7 @@ export function PatientChart() {
   return (
     <div className="flex flex-col items-center justify-between h-full p-0 border-none shadow-none">
       <div className="font-medium text-darkgray">
-        สรุปจำนวนคนไข้ ธันวาคม 2567
+        สรุปจำนวนคนไข้ {currentThaiMonth} {currentThaiYear}
       </div>
 
       <div className="w-full">
