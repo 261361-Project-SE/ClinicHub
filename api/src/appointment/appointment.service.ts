@@ -1,7 +1,6 @@
 import { Appointments, PrismaClient, Status, Prisma } from "@prisma/client";
 import { calendarService } from "../calendar/calendar.service";
 
-
 class AppointmentService {
   private prisma: PrismaClient;
 
@@ -31,10 +30,10 @@ class AppointmentService {
     }
   }
 
-  private validateTimeSlot(date: string): boolean {
+  private validateTimeSlot(date: string, required: boolean): boolean {
     try {
       if (!date) {
-        return false;
+        return !required;
       }
 
       const todayTime = new Date();
@@ -51,14 +50,17 @@ class AppointmentService {
     }
   }
 
-  private async checkAddableAppointment(date: string, id: number): Promise<boolean> {
+  private async checkAddableAppointment(date: string, id: number, required: boolean): Promise<boolean> {
+    if (!date) {
+      return !required
+    }
+
     try {
       const checkBooking = await this.prisma.appointments.findMany({
         where: {
           appointment_dateTime: date,
           NOT: {
             appointment_status: Status.CANCELED,
-            id: id
           },
         },
         orderBy: {
@@ -66,7 +68,7 @@ class AppointmentService {
         },
       });
 
-      if (checkBooking.length > 0) {
+      if (checkBooking.length > 0 && checkBooking.some(booking => booking.id != id)) {
         return false;
       }
 
@@ -90,6 +92,7 @@ class AppointmentService {
       });
       return { isCreated: true, eventID: response.eventID, cError: undefined }
     } catch (error: any) {
+      console.log(error);
       return { isCreated: false, eventID: undefined, cError: error }
     }
   }
@@ -132,13 +135,13 @@ class AppointmentService {
       return { error: "Missing required fields", status: 400 };
     }
 
-    if (!this.validateTimeSlot(appointment_dateTime)) {
+    if (!this.validateTimeSlot(appointment_dateTime, true)) {
       return { error: "Invalid time slot", status: 400 };
     }
 
     try {
       // Check existing appointment
-      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, -1);
+      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, -1, true);
       if (!isAvailable) {
         return { error: "Time slot already existing", status: 400 };
       }
@@ -271,7 +274,7 @@ class AppointmentService {
     }
 
     // Check time slot
-    if (!this.validateTimeSlot(appointment_dateTime)) {
+    if (!this.validateTimeSlot(appointment_dateTime, false)) {
       return { error: "Invalid time slot", status: 400 };
     }
 
@@ -281,11 +284,6 @@ class AppointmentService {
       appointment_status = Status[status as keyof typeof Status];
     } catch (error) {
       return { error: "Invalid status", status: 400 };
-    }
-
-    // Check avilable time slot
-    if (this.validateTimeSlot(appointment_dateTime)) {
-      return { error: "Invalid time slot", status: 400 };
     }
 
     try {
@@ -301,7 +299,7 @@ class AppointmentService {
       }
 
       // Check existing booking
-      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, id);
+      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, id, false);
       if (!isAvailable) {
         return { error: "Time slot already existing", status: 400 };
       }
@@ -364,7 +362,7 @@ class AppointmentService {
       });
 
       if (!appointments || appointments.length < 1) {
-        return { data: {}, status: 200 };
+        return { error: "No appointments found", status: 404 };
       }
 
       return { data: appointments, status: 200 };
@@ -382,12 +380,7 @@ class AppointmentService {
     }
 
     // Check time slot
-    if (!this.validateTimeSlot(appointment_dateTime)) {
-      return { error: "Invalid time slot", status: 400 };
-    }
-
-    // Check avilable time slot
-    if (this.validateTimeSlot(appointment_dateTime)) {
+    if (!this.validateTimeSlot(appointment_dateTime, false)) {
       return { error: "Invalid time slot", status: 400 };
     }
 
@@ -404,7 +397,7 @@ class AppointmentService {
       }
 
       // Check existing booking
-      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, id);
+      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, id, false);
       if (!isAvailable) {
         return { error: "Time slot already existing", status: 400 };
       }
@@ -417,11 +410,11 @@ class AppointmentService {
       const newData: Appointments = {
         id: checkBooking.id,
         eventId: checkBooking.eventId,
-        firstname: firstname,
-        lastname: lastname,
-        phone_number: phone_number,
-        appointment_dateTime: appointment_dateTime,
-        symptom: symptom,
+        firstname: firstname || checkBooking.firstname,
+        lastname: lastname || checkBooking.lastname,
+        phone_number: phone_number || checkBooking.phone_number,
+        appointment_dateTime: appointment_dateTime || checkBooking.appointment_dateTime,
+        symptom: symptom || checkBooking.symptom,
         appointment_status: checkBooking.appointment_status,
         createdAt: checkBooking.createdAt,
         updatedAt: checkBooking.updatedAt,
