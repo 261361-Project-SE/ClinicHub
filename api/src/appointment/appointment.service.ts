@@ -19,6 +19,12 @@ class AppointmentService {
     }
   }
 
+  private checkTimeSlot(date: string) {
+    const todayTime = new Date();
+    const selectedTime = new Date(date)
+    return selectedTime > todayTime && selectedTime.getMinutes() % 15 === 0;
+  }
+
   async getAppointmentTimeSlot(date: string) {
     try {
       const appointments = await this.prisma.appointments.findMany({
@@ -60,6 +66,10 @@ class AppointmentService {
           appointment_dateTime: "asc",
         },
       });
+
+      if (!this.checkTimeSlot(appointment_dateTime)) {
+        return { error: "Invalid time slot", status: 400 };
+      }
 
       if (checkBooking.length > 0) {
         return { error: "Time slot already taken", status: 400 };
@@ -193,6 +203,10 @@ class AppointmentService {
         return { error: "Time slot is busy.", status: 400 };
       }
 
+      if (!this.checkTimeSlot(newData.appointment_dateTime)) {
+        return { error: "Invalid time slot", status: 400 };
+      }
+
       if (!this.isChanged(checkBooking, newData)) {
         return { error: "No changes", status: 304 };
       }
@@ -301,6 +315,10 @@ class AppointmentService {
           appointment_dateTime: newData.appointment_dateTime,
         },
       });
+
+      if (!this.checkTimeSlot(newData.appointment_dateTime)) {
+        return { error: "Invalid time slot", status: 400 };
+      }
 
       if (existingBooking && existingBooking.id !== id) {
         return { error: "Time slot is busy.", status: 400 };
