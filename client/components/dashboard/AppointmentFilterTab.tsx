@@ -1,6 +1,4 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface AppointmentFilterTabProps {
   onFilterChange: (filter: string) => void;
@@ -9,14 +7,6 @@ interface AppointmentFilterTabProps {
 export function AppointmentFilterTab({
   onFilterChange,
 }: AppointmentFilterTabProps) {
-  const searchParams = useSearchParams();
-  const initialFilter = searchParams.get("filter") || "upcoming";
-  const [filter, setFilter] = useState(initialFilter);
-
-  useEffect(() => {
-    setFilter(initialFilter);
-  }, [initialFilter]);
-
   return (
     <Tabs
       defaultValue="upcoming"
