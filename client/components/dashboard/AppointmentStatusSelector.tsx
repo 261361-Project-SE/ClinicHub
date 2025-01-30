@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import {
   Select,
   SelectContent,
@@ -10,18 +8,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AppointmentStatus } from "@/lib/variables";
+import * as React from "react";
 
 export function AppointmentStatusSelector({
-  appointment_status,
+  defaultValue,
+  setValue,
 }: {
-  readonly appointment_status: string;
+  readonly defaultValue: string;
+  setValue: (newStatus: string) => void;
 }) {
   return (
-    <Select>
+    <Select onValueChange={(value) => setValue(value)}>
       <SelectTrigger>
         <SelectValue
-          defaultValue={appointment_status}
-          placeholder={`${appointment_status}`}
+          defaultValue={defaultValue}
+          placeholder={`${defaultValue}`}
+          onChange={(e) => setValue((e.target as HTMLInputElement).value)}
         />
       </SelectTrigger>
       <SelectContent>
