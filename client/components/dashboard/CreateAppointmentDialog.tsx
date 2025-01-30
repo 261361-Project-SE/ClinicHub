@@ -168,7 +168,7 @@ const CreateAppointmentDialog = () => {
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="appointment_time">เวลานัด</Label>
               <AppointmentTimeSelector
-                appointment_time={appointmentForm.appointment_time}
+                defaultValue={appointmentForm.appointment_time}
                 setValue={(value) =>
                   setAppointmentForm((prevState) => ({
                     ...prevState,
