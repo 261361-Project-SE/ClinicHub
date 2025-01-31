@@ -1,0 +1,175 @@
+export const appointmentsData = [
+  // Upcoming (CONFIRMED future appointments)
+  {
+    id: "1",
+    eventId: "E1",
+    firstname: "John",
+    lastname: "Doe",
+    phone_number: "0812345678",
+    symptom: "โรคหัวใจ",
+    appointment_dateTime: "2024-12-27T09:00:00.000", // Future
+    appointment_status: "CONFIRMED",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-20T00:00:00Z",
+  },
+  {
+    id: "2",
+    eventId: "E2",
+    firstname: "Jane",
+    lastname: "Smith",
+    phone_number: "0812345679",
+    symptom: "ไข้หวัด",
+    appointment_dateTime: "2025-01-05T10:00:00.000", // Future
+    appointment_status: "CONFIRMED",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-20T00:00:00Z",
+  },
+
+  // Waiting to confirm (CONFIRMED appointments for tomorrow)
+  {
+    id: "3",
+    eventId: "E3",
+    firstname: "Alice",
+    lastname: "Johnson",
+    phone_number: "0812345680",
+    symptom: "ปวดหัว",
+    appointment_dateTime: "2024-12-26T14:30:00.000", // Tomorrow
+    appointment_status: "CONFIRMED",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-20T00:00:00Z",
+  },
+
+  // Pending appointments
+  {
+    id: "4",
+    eventId: "E4",
+    firstname: "Bob",
+    lastname: "Brown",
+    phone_number: "0812345681",
+    symptom: "ปวดท้อง",
+    appointment_dateTime: "2024-12-28T15:00:00.000",
+    appointment_status: "PENDING",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-20T00:00:00Z",
+  },
+  {
+    id: "5",
+    eventId: "E5",
+    firstname: "Charlie",
+    lastname: "Davis",
+    phone_number: "0812345682",
+    symptom: "อ่อนเพลีย",
+    appointment_dateTime: "2025-01-10T11:30:00.000",
+    appointment_status: "PENDING",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-20T00:00:00Z",
+  },
+
+  // History (Past appointments, not canceled)
+  {
+    id: "6",
+    eventId: "E6",
+    firstname: "Diana",
+    lastname: "Garcia",
+    phone_number: "0812345683",
+    symptom: "ปวดหลัง",
+    appointment_dateTime: "2024-12-20T16:45:00.000", // Past
+    appointment_status: "COMPLETED",
+    createdAt: "2024-12-15T00:00:00Z",
+    updatedAt: "2024-12-20T00:00:00Z",
+  },
+  {
+    id: "7",
+    eventId: "E7",
+    firstname: "Ethan",
+    lastname: "Martinez",
+    phone_number: "0812345684",
+    symptom: "ปวดข้อ",
+    appointment_dateTime: "2024-12-24T13:15:00.000", // Past
+    appointment_status: "COMPLETED",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-24T00:00:00Z",
+  },
+
+  // Canceled appointments
+  {
+    id: "8",
+    eventId: "E8",
+    firstname: "Fiona",
+    lastname: "Hernandez",
+    phone_number: "0812345685",
+    symptom: "อาการแพ้",
+    appointment_dateTime: "2024-12-26T09:30:00.000", // Future canceled
+    appointment_status: "CANCELED",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-24T00:00:00Z",
+  },
+  {
+    id: "9",
+    eventId: "E9",
+    firstname: "George",
+    lastname: "Lopez",
+    phone_number: "0812345686",
+    symptom: "ปวดกล้ามเนื้อ",
+    appointment_dateTime: "2024-12-23T10:45:00.000", // Past canceled
+    appointment_status: "CANCELED",
+    createdAt: "2024-12-20T00:00:00Z",
+    updatedAt: "2024-12-22T00:00:00Z",
+  },
+  {
+    id: "10",
+    eventId: "E10",
+    firstname: "George",
+    lastname: "Lopez",
+    phone_number: "0812345686",
+    symptom: "ปวดกล้ามเนื้อ",
+    appointment_dateTime: "2024-12-27T10:45:00.000", // Past canceled
+    appointment_status: "CONFIRMED",
+    createdAt: "2024-12-27T00:00:00Z",
+    updatedAt: "2024-12-27T00:00:00Z",
+  },
+];
+
+export const patientsData = [
+  {
+    PatientID: 1,
+    FirstName: "John",
+    LastName: "Doe",
+    Age: 30,
+    Gender: "Male",
+    CitizenID: "1234567890123",
+    BirthDate: "1993-01-01",
+    Address: "123 Main St, Anytown, USA",
+    Phone: "0812345678",
+    LastAppointment: "2023-01-01T00:00:00Z",
+    EmergencyContact: "Jane Doe",
+    Status: "Active",
+    Occupation: "Engineer",
+    Height: 180,
+    Weight: 75,
+    ChronicDisease: "None",
+    Allergies: "None",
+    created_at: "2023-01-01T00:00:00Z",
+    updated_at: "2023-01-01T00:00:00Z",
+  },
+  // {
+  //   PatientID: 2,
+  //   FirstName: "Jane",
+  //   LastName: "Doe",
+  //   Age: 28,
+  //   Gender: "Female",
+  //   CitizenID: "1234567890124",
+  //   BirthDate: "1995-02-02",
+  //   Address: "123 Main St, Anytown, USA",
+  //   Phone: "0812345679",
+  //   EmergencyContact: "John Doe",
+  //   Status: "Active",
+  //   Occupation: "Doctor",
+  //   Height: 165,
+  //   Weight: 60,
+  //   ChronicDisease: "Asthma",
+  //   Allergies: "Peanuts",
+  //   created_at: "2023-01-01T00:00:00Z",
+  //   updated_at: "2023-01-01T00:00:00Z",
+  // },
+];
