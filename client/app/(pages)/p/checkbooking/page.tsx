@@ -1,7 +1,7 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import CheckingLayout from "./CheckLayout";
+import CheckingLayout from "./checkLayout";
 import SearchAppointments from "@/app/(pages)/p/components/SearchAppointments";
 import { Card, CardContent } from "@/app/(pages)/p/components/ui/card";
 import { Appointment } from "@/app/(pages)/p/types/appointment";
@@ -34,10 +34,9 @@ const CheckBookingPage: React.FC = () => {
           `http://localhost:5000/patient/appointment?phoneNumber=${phone}&firstname=${firstName}&lastname=${lastName}`
         );
         const data = await response.json();
-
-        if (response.ok && data.appointments && data.appointments.length > 0) {
-          setBookingData(data.appointments);
-          setFilteredData(data.appointments);
+        if (data.length > 0) {
+          setBookingData(data);
+          setFilteredData(data);
         } else {
           setError("ไม่พบข้อมูลการนัดหมาย");
         }
@@ -59,21 +58,21 @@ const CheckBookingPage: React.FC = () => {
   const cancelAppointment = async (appointment: Appointment) => {
     const appointmentDate = new Date(appointment.appointment_dateTime);
     const now = new Date();
+
     const timeDiff = appointmentDate.getTime() - now.getTime();
     const diffDays = timeDiff / (1000 * 3600 * 24); // Convert time diff to days
-
-    if (diffDays <= 1) {
+    if (diffDays <= 1.0) {
       setCancelError("ไม่สามารถยกเลิกการนัดหมายได้");
       return;
     }
 
     try {
       const response = await fetch("http://localhost:5000/appointment/cancel", {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: appointment.id }),
+        body: JSON.stringify({ id: appointment.id , firstname: appointment.firstname, lastname: appointment.lastname , phone_number: appointment.phone_number}),
       });
 
       if (response.ok) {
@@ -96,7 +95,7 @@ const CheckBookingPage: React.FC = () => {
   const upcomingAppointments = filteredData
     .filter(
       (appointment) =>
-        appointment.appointment_status === "CONFIRMED" && // Only confirmed appointments
+        (appointment.appointment_status === "PENDING" || appointment.appointment_status === "CONFIRMED") &&  // Only confirmed appointments
         new Date(appointment.appointment_dateTime) > now // Future appointments
     )
     .sort(
@@ -114,7 +113,6 @@ const CheckBookingPage: React.FC = () => {
   const handleSearch = (filteredAppointments: Appointment[]) => {
     setFilteredData(filteredAppointments);
   };
-
   return (
     <CheckingLayout>
       {cancelError && (

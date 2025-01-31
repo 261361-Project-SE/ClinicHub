@@ -5,5 +5,5 @@ export interface Appointment {
   phone_number: string;
   symptom: string;
   appointment_dateTime: string;
-  appointment_status: "CONFIRMED" | "CANCELED" | "COMPLETED";
+  appointment_status: "CONFIRMED" | "CANCELED" | "COMPLETED" | "PENDING";
 }
