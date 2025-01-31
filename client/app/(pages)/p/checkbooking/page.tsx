@@ -31,7 +31,7 @@ const CheckBookingPage: React.FC = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:4444/patient/appointment?phoneNumber=${phone}&firstname=${firstName}&lastname=${lastName}`
+          `http://localhost:5000/patient/appointment?phoneNumber=${phone}&firstname=${firstName}&lastname=${lastName}`
         );
         const data = await response.json();
 
@@ -68,7 +68,7 @@ const CheckBookingPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:4444/appointment/cancel", {
+      const response = await fetch("http://localhost:5000/appointment/cancel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
