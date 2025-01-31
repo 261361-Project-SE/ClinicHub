@@ -73,7 +73,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
       await axios.patch(`${SERVER_URL}/doctor/appointment/update`, {
         id,
         status: newAppointmentStatus,
-        appointment_time: newAppointmentDateTime,
+        appointment_dateTime: newAppointmentDateTime,
       });
       toast.success("การนัดหมายถูกสร้างเรียบร้อยแล้ว!");
       setLoading(false);
