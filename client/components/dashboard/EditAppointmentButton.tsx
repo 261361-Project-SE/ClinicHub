@@ -25,7 +25,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
   const appointmentStatusLabel = (() => {
     switch (appointment_status) {
       case "PENDING":
-        return "รอการตอบรับ";
+        return "รอยินยัน";
       case "CONFIRMED":
         return "ยืนยันแล้ว";
       case "CANCELED":
