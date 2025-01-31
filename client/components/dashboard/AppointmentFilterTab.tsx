@@ -13,13 +13,14 @@ export function AppointmentFilterTab({
       className="rounded-xl"
       onValueChange={(value) => onFilterChange(value)}
     >
-      <TabsList className="h-full grid grid-cols-6 gap-1 rounded-xl text-lightgray bg-lightgray-100">
+      <TabsList className="h-full grid grid-cols-5 gap-1 rounded-xl text-lightgray bg-lightgray-100">
         <TabsTrigger value="upcoming" className="h-10 rounded-xl">
           กำลังจะมาถึง
         </TabsTrigger>
-        <TabsTrigger value="pending" className="h-10 rounded-xl">
+        {/* TODO: Uncomment this after add WAITING_TO_CONFIRMATION Status */}
+        {/* <TabsTrigger value="pending" className="h-10 rounded-xl">
           คำขอนัดหมาย
-        </TabsTrigger>
+        </TabsTrigger> */}
         <TabsTrigger value="toConfirm" className="h-10 rounded-xl">
           รอยืนยัน
         </TabsTrigger>
