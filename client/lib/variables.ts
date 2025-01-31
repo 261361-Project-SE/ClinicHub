@@ -2,7 +2,7 @@ import { GenerateAppointmentTimeSlots } from "@/app/utils/GenerateAppointmentTim
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 
-export const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:4444";
+export const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5000";
 
 export const AppointmentTimeSlots = GenerateAppointmentTimeSlots(
   "09:00",

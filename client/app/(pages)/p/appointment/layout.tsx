@@ -1,29 +1,28 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../../../globals.css";
-import Navbar from "../appointment/components/navbar";
-import { headers } from "next/headers";
+import Navbar from "../components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface RootLayoutProps {
+interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+const AppointmentLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.className} min-h-screen antialiased overflow-x-hidden w-full`}
-      >
-        <div className="absolute top-0 left-0 hidden w-full h-1/2 bg-gradient-pink -z-10 lg:block" />
-        <Navbar />
-        <main className="relative w-full mt-16">
-          <div className="container px-4 mx-auto sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl">{children}</div>
-          </div>
-        </main>
-      </body>
-    </html>
+    <div
+      className={`${inter.className} min-h-screen antialiased overflow-x-hidden w-full`}
+    >
+      <div className="absolute top-0 left-0 w-full h-[650px] bg-gradient-to-r from-pink-200 to-pink-300 -z-10 hidden md:block" />
+      {/* <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-r from-pink-200 to-pink-300 -z-10 block md:hidden" /> */}
+      <Navbar />
+      <main className="relative mt-16 w-full">
+        <div className="max-w-7xl mx-auto py-1 flex flex-col items-center justify-center">
+          {children}
+        </div>
+      </main>
+    </div>
   );
-}
+};
+
+export default AppointmentLayout;
