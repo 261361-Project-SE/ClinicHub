@@ -68,7 +68,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full mx-auto gap-y-6 max-w-7xl">
+    <div className="flex flex-col h-full mx-auto gap-y-6">
       {/* Top section */}
       <div className="flex w-full gap-x-9 h-1/4">
         <DashboardCard
