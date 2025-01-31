@@ -12,29 +12,33 @@ import { useFetchAppointments } from "@/hooks/useFetchAppointments";
 import { currentThaiMonth, currentThaiYear } from "@/lib/variables";
 import { Calendar1Icon, UserIcon } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const DashboardPage = () => {
   const { appointments, loading, error } = useFetchAppointments();
+  const [todayDate, setTodayDate] = useState<string | null>(null);
+
+  useEffect(() => {
+    setTodayDate(new Date().toDateString());
+  }, []);
+
   const todayAppointments = useMemo(() => {
-    if (!Array.isArray(appointments)) return [];
-
-    const today = new Date().toDateString();
-
-    return appointments
-      .filter(
-        (appointment) =>
-          new Date(appointment.appointment_dateTime).toDateString() === today
-      )
-      .map((appointment) => ({
-        ...appointment,
-        selectedFilter: "CONFIRMED",
-      }));
-  }, [appointments]);
+    if (!Array.isArray(appointments) || !todayDate) return [];
+    return appointments.filter(
+      (appointment) =>
+        new Date(appointment.appointment_dateTime).toDateString() === todayDate
+    );
+  }, [appointments, todayDate]);
 
   const pendingAppointmentCount = appointments.filter(
     (appointment) => appointment.appointment_status === "toConfirm"
   ).length;
+
+  const handleReload = () => {
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
+  };
 
   if (loading) {
     return (
@@ -60,7 +64,7 @@ const DashboardPage = () => {
     return (
       <div className="flex flex-col items-center text-center text-red-500 gap-y-2">
         <p>เกิดข้อผิดพลาด: {error}</p>
-        <Button onClick={() => window.location.reload()} variant="destructive">
+        <Button onClick={handleReload} variant="destructive">
           ลองใหม่อีกครั้ง
         </Button>
       </div>
