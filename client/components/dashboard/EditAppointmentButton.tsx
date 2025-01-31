@@ -29,7 +29,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
       case "CONFIRMED":
         return "ยืนยันแล้ว";
       case "CANCELED":
-        return "ปฏิเสธ";
+        return "ยกเลิก";
       default:
         return "";
     }
