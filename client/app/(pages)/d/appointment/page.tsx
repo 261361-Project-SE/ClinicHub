@@ -108,7 +108,7 @@ const AppointmentsPage = () => {
           <CreateAppointmentDialog />
           <AppointmentFilterTab onFilterChange={handleFilterChange} />
         </div>
-        {[...Array(3)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <Skeleton key={i} className="h-24 py-1 rounded-xl" />
         ))}
       </div>
