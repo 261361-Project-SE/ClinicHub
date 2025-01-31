@@ -149,6 +149,7 @@ const CreateAppointmentDialog = () => {
               <Textarea
                 placeholder="คนไข้ไม่สบายตัว ปวดหัว"
                 id="symptom"
+                maxLength={16}
                 value={appointmentForm.symptom}
                 onChange={handleInputChange}
               />
