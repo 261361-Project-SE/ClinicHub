@@ -75,7 +75,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
         status: newAppointmentStatus,
         appointment_dateTime: newAppointmentDateTime,
       });
-      toast.success("การนัดหมายถูกสร้างเรียบร้อยแล้ว!");
+      toast.success("การนัดหมายถูกแก้ไขเรียบร้อยแล้ว!");
       setLoading(false);
     } catch (error) {
       toast.error("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่อีกครั้ง");
