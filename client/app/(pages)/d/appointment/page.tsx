@@ -14,11 +14,14 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFetchAppointments } from "@/hooks/useFetchAppointments";
 import { AppointmentStatus } from "@/lib/variables";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
-interface FilterChangeHandler {
-  (newFilter: string): void;
-}
+const formatThaiMonthYear = (date: Date) => {
+  return new Intl.DateTimeFormat("th-TH", {
+    year: "numeric",
+    month: "long",
+  }).format(date);
+};
 
 const ITEMS_PER_PAGE = 5;
 
@@ -32,7 +35,7 @@ const AppointmentsPage = () => {
     setCurrentPage(1);
   }, [filter]);
 
-  const filteredAppointments = React.useMemo(() => {
+  const filteredAppointments = useMemo(() => {
     if (!appointments) return [];
 
     return appointments
@@ -52,7 +55,6 @@ const AppointmentsPage = () => {
                 AppointmentStatus.PENDING.value && appointmentDate >= now
             );
           case "toConfirm":
-            // TODO: change to WAITING_FOR_CONFIRMATION status in the future
             return (
               appointment.appointment_status === AppointmentStatus.PENDING.value
             );
@@ -97,9 +99,23 @@ const AppointmentsPage = () => {
     }
   };
 
-  const handleFilterChange: FilterChangeHandler = (newFilter) => {
+  const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
   };
+
+  const groupedAppointments = useMemo(() => {
+    return paginatedAppointments.reduce((acc, appointment) => {
+      const appointmentDate = new Date(appointment.appointment_dateTime);
+      const monthYear = formatThaiMonthYear(appointmentDate);
+
+      if (!acc[monthYear]) {
+        acc[monthYear] = [];
+      }
+
+      acc[monthYear].push(appointment);
+      return acc;
+    }, {} as Record<string, typeof paginatedAppointments>);
+  }, [paginatedAppointments]);
 
   if (loading)
     return (
@@ -124,14 +140,22 @@ const AppointmentsPage = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-4">
-        {paginatedAppointments.length === 0 ? (
+        {Object.entries(groupedAppointments).length === 0 ? (
           <div className="py-8 text-center text-gray-500">
             ไม่พบการนัดหมายสำหรับหมวดหมู่นี้
           </div>
         ) : (
-          paginatedAppointments.map((appointment) => (
-            <AppointmentCard key={appointment.id} {...appointment} />
-          ))
+          Object.entries(groupedAppointments).map(
+            ([monthYear, appointments]) => (
+              <div key={monthYear} className="space-y-4">
+                <div className="text-lg text-darkgray">{monthYear}</div>
+
+                {appointments.map((appointment) => (
+                  <AppointmentCard key={appointment.id} {...appointment} />
+                ))}
+              </div>
+            )
+          )
         )}
 
         {totalPages > 1 && (
