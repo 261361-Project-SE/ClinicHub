@@ -13,14 +13,14 @@ class AppointmentController {
 
   async getAppointmentTimeSlot(req: Request, res: Response) {
     try {
-      const { date } = req.body;
+      const { date } = req.query;;
 
       if (!date) {
         res.status(400).send({ error: "Date is required" });
         return;
       }
 
-      const result = await appointmentService.getAppointmentTimeSlot(date);
+      const result = await appointmentService.getAppointmentTimeSlot(date as string);
 
       if (!result) {
         res.status(500).send({ error: "Failed to get appointment timeslot" });
