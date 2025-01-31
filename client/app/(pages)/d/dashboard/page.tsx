@@ -30,9 +30,10 @@ const DashboardPage = () => {
     );
   }, [appointments, todayDate]);
 
-  const pendingAppointmentCount = appointments.filter(
-    (appointment) => appointment.appointment_status === "toConfirm"
-  ).length;
+  const pendingAppointmentCount =
+    appointments?.filter(
+      (appointment) => appointment.appointment_status === "toConfirm"
+    ).length || 0;
 
   const handleReload = () => {
     if (typeof window !== "undefined") {
