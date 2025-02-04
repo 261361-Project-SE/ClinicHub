@@ -1,7 +1,7 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import CheckingLayout from "./checkLayout";
+import CheckingLayout from "./CheckLayout";
 import SearchAppointments from "@/app/(pages)/p/components/SearchAppointments";
 import { Card, CardContent } from "@/app/(pages)/p/components/ui/card";
 import { Appointment } from "@/app/(pages)/p/types/appointment";
@@ -135,11 +135,13 @@ const CheckBookingPage: React.FC = () => {
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+               <div className="h-[500px] flex flex-col">
                 <h2 className="text-xl font-bold mb-2">
                   นัดหมายที่กำลังจะมาถึง
-                </h2>
+                    </h2>
+              <div className="overflow-y-auto flex-1">
+                            <div className="space-y-4 pr-4"> 
                 {upcomingAppointments.length > 0 ? (
                   upcomingAppointments.map((appointment, index) => (
                     <Card
@@ -199,6 +201,8 @@ const CheckBookingPage: React.FC = () => {
                   <p className="text-gray-500">ไม่มีนัดหมายที่กำลังจะมาถึง</p>
                 )}
               </div>
+                    </div>
+                    </div>
 
               <div>
                 <h2 className="text-xl font-bold mb-4 text-right">
