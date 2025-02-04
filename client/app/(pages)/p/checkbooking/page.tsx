@@ -166,6 +166,23 @@ const CheckBookingPage: React.FC = () => {
                             appointment.appointment_dateTime
                           ).toLocaleTimeString("th-TH")}
                         </p>
+                        <p className="text-sm">
+                          สถานะ:{" "}
+                          
+                          <span
+                            className={`font-semibold ${
+                              appointment.appointment_status === "PENDING"
+                                ? "text-orange-500"
+                                : appointment.appointment_status === "CONFIRMED"
+                                ? "text-green-500"
+                                : appointment.appointment_status === "CANCELED"
+                                ? "text-red-500"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {appointment.appointment_status}
+                          </span>
+                        </p>
                         <button
                           className="text-white bg-red-500 rounded-lg px-4 py-2 mt-4"
                           onClick={() => {
