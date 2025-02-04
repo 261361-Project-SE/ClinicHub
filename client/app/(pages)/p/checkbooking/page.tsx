@@ -1,7 +1,7 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import CheckingLayout from "./CheckLayout";
+import CheckingLayout from "./checkLayout";
 import SearchAppointments from "@/app/(pages)/p/components/SearchAppointments";
 import { Card, CardContent } from "@/app/(pages)/p/components/ui/card";
 import { Appointment } from "@/app/(pages)/p/types/appointment";
@@ -19,6 +19,7 @@ const CheckBookingPage: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
   const [cancelError, setCancelError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const firstName = searchParams.get("firstname");
   const lastName = searchParams.get("lastname");
@@ -56,39 +57,58 @@ const CheckBookingPage: React.FC = () => {
   }, [firstName, lastName, phone]);
 
   const cancelAppointment = async (appointment: Appointment) => {
-    const appointmentDate = new Date(appointment.appointment_dateTime);
-    const now = new Date();
+  const appointmentDate = new Date(appointment.appointment_dateTime);
+  const now = new Date();
 
-    const timeDiff = appointmentDate.getTime() - now.getTime();
-    const diffDays = timeDiff / (1000 * 3600 * 24); // Convert time diff to days
-    if (diffDays <= 1.0) {
-      setCancelError("ไม่สามารถยกเลิกการนัดหมายได้");
-      return;
+  const timeDiff = appointmentDate.getTime() - now.getTime();
+  const diffDays = timeDiff / (1000 * 3600 * 24);
+  
+  if (diffDays <= 1.0) {
+    setCancelError("ไม่สามารถยกเลิกการนัดหมายได้");
+    setShowCancelDialog(false); // ปิด dialog
+    return;
+  }
+
+  try {
+    setLoading(true); // แสดงสถานะ loading
+    
+    const response = await fetch("http://localhost:5000/appointment/cancel", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: appointment.id,
+        firstname: appointment.firstname,
+        lastname: appointment.lastname,
+        phone_number: appointment.phone_number
+      }),
+    });
+
+    if (response.ok) {
+      const updatedData = bookingData.filter((item) => item.id !== appointment.id);
+      setBookingData(updatedData);
+      setFilteredData(updatedData);
+      
+      setSuccessMessage("ยกเลิกการนัดหมายเรียบร้อยแล้ว");
+      
+      setShowCancelDialog(false);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 4000);
+    } else {
+      setTimeout(() => {
+        setCancelError("ไม่สามารถยกเลิกการนัดหมายได้!");
+      }, 4000);
+      setShowCancelDialog(false);
     }
-
-    try {
-      const response = await fetch("http://localhost:5000/appointment/cancel", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: appointment.id , firstname: appointment.firstname, lastname: appointment.lastname , phone_number: appointment.phone_number}),
-      });
-
-      if (response.ok) {
-        const updatedData = bookingData.filter(
-          (item) => item.id !== appointment.id
-        );
-        setBookingData(updatedData);
-        setFilteredData(updatedData);
-      } else {
-        setCancelError("ไม่สามารถยกเลิกการนัดหมายได้");
-      }
-    } catch (err) {
-      setCancelError("เกิดข้อผิดพลาดในการยกเลิกการนัดหมาย");
-    }
-  };
-
+  } catch (err) {
+    setCancelError("เกิดข้อผิดพลาดในการยกเลิกการนัดหมาย!");
+    setShowCancelDialog(false);
+  } finally {
+    setLoading(false);
+  }
+};
   const now = new Date();
 
   // Filter and sort appointments: Only confirmed ones, future appointments, and sorted by closest date
@@ -123,6 +143,13 @@ const CheckBookingPage: React.FC = () => {
           </AlertDescription>
         </Alert>
       )}
+      {successMessage && (
+        <Alert className="mb-2 bg-white text-green-400 border border-text-success font-noto font-semibold">
+          <AlertTitle>ยกเลิกการนัดหมายสำเร็จ !</AlertTitle>
+          <AlertDescription>
+            กรุณาติดต่อเจ้าหน้าที่หากมีข้อสงสัยเพิ่มเติม
+          </AlertDescription>
+        </Alert>)}
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[700px] md:w-[1440px] md:mx-auto md:max-w-screen-xl md:p-6">
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-8 text-right">นัดหมายทั้งหมด</h1>
