@@ -19,22 +19,22 @@ const DashboardSideBar = () => {
     {
       name: "แดชบอร์ด",
       icon: LayoutDashboardIcon,
-      href: "/d/dashboard",
+      href: "/dashboard/desktop",
     },
     {
       name: "การนัดหมาย",
       icon: CalendarClockIcon,
-      href: "/d/appointment",
+      href: "/dashboard/desktop/appointment",
     },
     {
       name: "ปฏิทิน",
       icon: CalendarDaysIcon,
-      href: "/d/calendar",
+      href: "/dashboard/desktop/calendar",
     },
     {
       name: "ตั้งค่า",
       icon: SettingsIcon,
-      href: "/d/settings",
+      href: "/dashboard/desktop/settings",
     },
     {
       name: "ออกจากระบบ",
@@ -45,7 +45,7 @@ const DashboardSideBar = () => {
 
   return (
     <div className="flex flex-col h-full p-4 ml-5 bg-white gap-y-12 shadow-shadow-bg">
-      <Link href="/d/dashboard">
+      <Link href="/dashboard">
         <Image
           priority
           loading="eager"
