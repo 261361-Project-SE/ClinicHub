@@ -6,6 +6,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import lineicon from "@/public/lineicon.svg";
+import qr from "@/public/qr.png";
 import Image from "next/image";
 import React from "react";
 
@@ -28,11 +29,19 @@ const LineQRDialog = () => {
           <DialogTitle>Contact us on Line</DialogTitle>
         </DialogHeader>
         <div className="flex items-center justify-center p-4">
-          <img
-            src="/api/placeholder/200/200"
-            alt="Line QR Code"
-            className="w-48 h-48 object-contain"
-          />
+          <a
+            href="https://line.me/R/ti/p/@109ggfwd"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src={qr}
+              alt="Line QR Code"
+              width={192}
+              height={192}
+              className="w-fit h-fit object-contain"
+            />
+          </a>
         </div>
         <p className="text-center text-sm text-gray-500">
           Scan this QR code with your Line app to connect with us
