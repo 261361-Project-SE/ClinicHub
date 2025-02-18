@@ -1,5 +1,6 @@
 "use client";
 
+import LineQRDialog from "../components/LineQRDialog";
 import FeedbackLayout from "@/app/(pages)/p/feedback/feedbackLayout";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -36,6 +37,7 @@ const FeedbackPage: React.FC = () => {
             กลับหน้าหลัก
           </Link>
         </div>
+        <LineQRDialog />
       </div>
     </FeedbackLayout>
   );

@@ -1,13 +1,17 @@
 "use client";
 
-import { validateName, validatePhone, validateSymptom } from "../(utils)/validation";
+import {
+  validateName,
+  validatePhone,
+  validateSymptom,
+} from "../(utils)/validation";
 import BookingDialog from "../components/BookingDialog";
+import LineQRDialog from "../components/LineQRDialog";
 import { getfilteredAppointment } from "../services/api-p";
 import BookingLayout from "./BookingLayout";
 import { Calendar } from "@/app/(pages)/p/components/ui/Calendar";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-
 
 const TIME_START = 9 * 60; // 9 AM
 const TIME_END = 16 * 60 + 45;
@@ -40,8 +44,6 @@ const BookingPage: React.FC = () => {
 
   const times = generateTimes(TIME_START, TIME_END, TIME_INTERVAL);
 
-
-
   const setAppointmentDate = (time: string) => {
     const newDateTime = new Date(appointmentDateTime || new Date());
     const [year, month, day] = selectedDate.split("-").map(Number);
@@ -55,36 +57,35 @@ const BookingPage: React.FC = () => {
     console.log("Dialog Open:", showBookingDialog);
   }, [showBookingDialog]);
 
-const handleBooking = async () => {
-  // ทำ validation และอัพเดตค่า invalidFields
-  setInvalidFields((prev) => {
-    const updatedFields = {
-      name: !validateName(name),
-      lastname: !validateName(lastname),
-      phone: !validatePhone(phone),
-      symptom: !validateSymptom(symptom),
-    };
-
-    //เลือกวัน-เวลาครบ ให้เปิด BookingDialog
-    if ( selectedTime && appointmentDateTime) {
-      const appointmentData = {
-        appointmentDateTime,
-        name,
-        lastname,
-        phone,
-        symptom,
+  const handleBooking = async () => {
+    // ทำ validation และอัพเดตค่า invalidFields
+    setInvalidFields((prev) => {
+      const updatedFields = {
+        name: !validateName(name),
+        lastname: !validateName(lastname),
+        phone: !validatePhone(phone),
+        symptom: !validateSymptom(symptom),
       };
-      console.log("Booking initiated", appointmentData);
-      setShowBookingDialog(true);
-    } else {
-      console.log("Booking failed due to validation errors.");
-    }
 
-    return updatedFields;
-  });
-};
+      //เลือกวัน-เวลาครบ ให้เปิด BookingDialog
+      if (selectedTime && appointmentDateTime) {
+        const appointmentData = {
+          appointmentDateTime,
+          name,
+          lastname,
+          phone,
+          symptom,
+        };
+        console.log("Booking initiated", appointmentData);
+        setShowBookingDialog(true);
+      } else {
+        console.log("Booking failed due to validation errors.");
+      }
 
-  
+      return updatedFields;
+    });
+  };
+
   const handleClick = (date: Date) => {
     if (date) {
       date.setDate(date.getDate() + 1);
@@ -148,35 +149,39 @@ const handleBooking = async () => {
             }}
           />
           <div className="w-full md:w-1/2">
-  <label className="block text-gray-600 font-medium text-lg md:pl-10">
-    เลือกเวลาที่ต้องการจอง:
-  </label>
-  <div className="mt-4 md:mt-6 max-h-[600px] overflow-y-auto bg-gray-100 rounded-lg p-2 shadow-md">
-    {times.map((time) => {
-      const isDisabled = selectedDate === "" || filteredTimes.includes(time);
-      return (
-        <button
-          key={time}
-          value={time}
-          className={`block w-full text-left px-4 py-3 my-1 rounded-md transition-all 
-            ${isDisabled ? "bg-gray-300 text-gray-500 cursor-not-allowed" : 
-            selectedTime === time ? "bg-success text-white shadow-lg" : 
-            "bg-white hover:bg-green-200 hover:shadow-md"}`}
-          onClick={() => {
-            if (!isDisabled) {
-              setSelectedTime(time);
-              setAppointmentDate(time);
-            }
-          }}
-          disabled={isDisabled}
-        >
-          {time}
-        </button>
-      );
-    })}
-  </div>
-</div>
-
+            <label className="block text-gray-600 font-medium text-lg md:pl-10">
+              เลือกเวลาที่ต้องการจอง:
+            </label>
+            <div className="mt-4 md:mt-6 max-h-[600px] overflow-y-auto bg-gray-100 rounded-lg p-2 shadow-md">
+              {times.map((time) => {
+                const isDisabled =
+                  selectedDate === "" || filteredTimes.includes(time);
+                return (
+                  <button
+                    key={time}
+                    value={time}
+                    className={`block w-full text-left px-4 py-3 my-1 rounded-md transition-all 
+            ${
+              isDisabled
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : selectedTime === time
+                ? "bg-success text-white shadow-lg"
+                : "bg-white hover:bg-green-200 hover:shadow-md"
+            }`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setSelectedTime(time);
+                        setAppointmentDate(time);
+                      }
+                    }}
+                    disabled={isDisabled}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
       <div className="mt-6 flex flex-col md:items-end items-center">
@@ -193,30 +198,29 @@ const handleBooking = async () => {
             จองการนัด
           </button>
         </div>
+        <LineQRDialog />
       </div>
-<BookingDialog
-  isOpen={showBookingDialog}
-  onClose={() => {
-    setShowBookingDialog(false);
-    setSelectedTime(null); // รีเซ็ตเวลาให้เลือกใหม่ได้
-  }}
-  message="กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด"
-  invalidSymptom={invalidFields.symptom}
-  appointment_dateTime={appointmentDateTime} 
-  symptom={symptom}
-  setSymptom={setSymptom}
-  name={name}
-  lastname={lastname}
-  setName={setName}
-  setLastname={setLastname}
-  phone={phone}
-  setPhone={setPhone}
-  invalidName={invalidFields.name}
-  invalidLastname={invalidFields.lastname}
-  invalidPhone={invalidFields.phone}
-/>
-
-
+      <BookingDialog
+        isOpen={showBookingDialog}
+        onClose={() => {
+          setShowBookingDialog(false);
+          setSelectedTime(null); // รีเซ็ตเวลาให้เลือกใหม่ได้
+        }}
+        message="กรุณากรอกข้อมูลด้านล่างเพื่อยืนยันการจองการนัด"
+        invalidSymptom={invalidFields.symptom}
+        appointment_dateTime={appointmentDateTime}
+        symptom={symptom}
+        setSymptom={setSymptom}
+        name={name}
+        lastname={lastname}
+        setName={setName}
+        setLastname={setLastname}
+        phone={phone}
+        setPhone={setPhone}
+        invalidName={invalidFields.name}
+        invalidLastname={invalidFields.lastname}
+        invalidPhone={invalidFields.phone}
+      />
     </BookingLayout>
   );
 };

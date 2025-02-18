@@ -1,4 +1,5 @@
-const API_END_POINT = process.env.API_END_POINT || "http://localhost:5000";
+const API_END_POINT =
+  process.env.API_END_POINT || `${process.env.BASE_URL_API}`;
 
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
@@ -16,7 +17,10 @@ export const getRequest = async (url: string) => {
   return handleResponse(response);
 };
 
-export const postRequest = async (url: string, data: Record<string, unknown>) => {
+export const postRequest = async (
+  url: string,
+  data: Record<string, unknown>
+) => {
   const response = await fetch(`${API_END_POINT}${url}`, {
     method: "POST",
     cache: "no-cache",

@@ -7,7 +7,7 @@ interface ApiResponse<T> {
   error?: string;
 }
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL_API}`;
 
 export const postRequest = async (
   firstName: string,
@@ -46,7 +46,7 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
     const response = await axios.get(
       `${API_BASE_URL}/appointment/time-slot?date=${date}`
     );
-    // Have to add appointment status it  PENDDING or Cancel 
+    // Have to add appointment status it  PENDDING or Cancel
 
     const appointmentsData = response.data?.data ?? response.data;
     console.log("appointmentsData", appointmentsData);
