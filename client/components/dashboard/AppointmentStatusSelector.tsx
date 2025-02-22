@@ -13,16 +13,22 @@ import * as React from "react";
 export function AppointmentStatusSelector({
   defaultValue,
   setValue,
+  className,
 }: {
   readonly defaultValue: string;
   setValue: (newStatus: string) => void;
+  className?: string;
 }) {
+  const defaultLabel =
+    AppointmentStatus[defaultValue as keyof typeof AppointmentStatus]?.label ||
+    defaultValue;
+
   return (
     <Select onValueChange={(value) => setValue(value)}>
-      <SelectTrigger>
+      <SelectTrigger className={className}>
         <SelectValue
           defaultValue={defaultValue}
-          placeholder={`${defaultValue}`}
+          placeholder={`${defaultLabel}`}
           onChange={(e) => setValue((e.target as HTMLInputElement).value)}
         />
       </SelectTrigger>
