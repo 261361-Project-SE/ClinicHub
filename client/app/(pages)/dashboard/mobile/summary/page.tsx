@@ -1,7 +1,19 @@
 "use client";
 
+import Error from "@/app/error";
+import PageLoader from "@/components/PageLoader";
 import MobileDashboardLayout from "@/components/dashboard/mobile/MobileDashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useFetchAppointments } from "@/hooks/useFetchAppointments";
+import {
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
+import { th } from "date-fns/locale";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -21,32 +33,89 @@ import {
 const MobileSummaryPage = () => {
   const router = useRouter();
 
+  const { appointments, loading, error } = useFetchAppointments();
+  const totalPatients = new Set(
+    appointments.map((appointment) => appointment.phone_number)
+  ).size;
+
   // Statistics data
-  const totalAppointments = 200;
-  const totalPatients = 200;
+  const totalAppointments = appointments.length;
   const totalDoctors = 5;
 
-  // Pie chart data
+  const currentMonth = new Date();
+  const lastMonth = new Date(currentMonth);
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+  const getCurrentMonthPatients = () => {
+    const startDate = startOfMonth(currentMonth);
+    const endDate = endOfMonth(currentMonth);
+
+    return new Set(
+      appointments
+        .filter((apt) => {
+          const aptDate = new Date(apt.appointment_dateTime);
+          return aptDate >= startDate && aptDate <= endDate;
+        })
+        .map((apt) => apt.phone_number)
+    );
+  };
+
+  const getLastMonthPatients = () => {
+    const startDate = startOfMonth(lastMonth);
+    const endDate = endOfMonth(lastMonth);
+
+    return new Set(
+      appointments
+        .filter((apt) => {
+          const aptDate = new Date(apt.appointment_dateTime);
+          return aptDate >= startDate && aptDate <= endDate;
+        })
+        .map((apt) => apt.phone_number)
+    );
+  };
+
+  const currentMonthPatients = getCurrentMonthPatients();
+  const lastMonthPatients = getLastMonthPatients();
+
+  const newPatients = Array.from(currentMonthPatients).filter(
+    (phone) => !lastMonthPatients.has(phone)
+  ).length;
+  const returningPatients = currentMonthPatients.size - newPatients;
+
   const pieData = [
-    { name: "คนไข้ใหม่", value: 120 },
-    { name: "คนไข้เก่า", value: 80 },
+    { name: "คนไข้ใหม่", value: newPatients },
+    { name: "คนไข้เก่า", value: returningPatients },
   ];
+
   const COLORS = ["#FB6F92", "#fbbf24"];
 
-  // Bar chart data
-  const barData = [
-    { name: "จ", appointments: 10 },
-    { name: "อ", appointments: 20 },
-    { name: "พ", appointments: 15 },
-    { name: "พฤ", appointments: 30 },
-    { name: "ศ", appointments: 25 },
-    { name: "ส", appointments: 10 },
-    { name: "อา", appointments: 5 },
-  ];
+  const getWeeklyAppointments = () => {
+    const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const endDate = endOfWeek(new Date(), { weekStartsOn: 1 });
+
+    const daysInWeek = eachDayOfInterval({ start: startDate, end: endDate });
+
+    return daysInWeek.map((day) => {
+      const dayAppointments = appointments.filter((apt) => {
+        const aptDate = new Date(apt.appointment_dateTime);
+        return format(aptDate, "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
+      });
+
+      return {
+        name: format(day, "EEE", { locale: th }).slice(0, 2),
+        appointments: dayAppointments.length,
+        date: format(day, "dd/MM"),
+      };
+    });
+  };
+
+  const barData = getWeeklyAppointments();
+
+  if (loading) return <PageLoader />;
+  if (error) return <Error />;
 
   return (
     <MobileDashboardLayout>
-      {/* Header with back button */}
       <div className="fixed top-0 z-50 w-full px-4 py-6 bg-white">
         <div className="relative flex items-center justify-center">
           <button
@@ -62,34 +131,24 @@ const MobileSummaryPage = () => {
       {/* Content */}
       <div className="mt-[80px] px-4 py-4 flex flex-col gap-4">
         {/* Statistics cards */}
-        <div className="grid grid-cols-3 gap-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>การนัดหมาย</CardTitle>
-            </CardHeader>
-            <CardContent>
+        <Card>
+          <CardContent className="flex flex-col p-6 gap-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground">
+                จำนวนการนัดหมายทั้งหมด
+              </p>
               <p className="text-2xl font-bold">{totalAppointments}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>คนไข้</CardTitle>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">จำนวนคนไข้ทั้งหมด</p>
               <p className="text-2xl font-bold">{totalPatients}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>แพทย์</CardTitle>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">จำนวนแพทย์ทั้งหมด</p>
               <p className="text-2xl font-bold">{totalDoctors}</p>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Pie Chart Card */}
         <Card>
