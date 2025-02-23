@@ -11,6 +11,21 @@ import { Phone, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+export const getStatusColor = (status: string) => {
+  switch (status) {
+    case "PENDING":
+      return "bg-[#FFBC41] hover:bg-yellow-500";
+    case "CONFIRMED":
+      return "bg-success hover:bg-green-600";
+    case "CANCELED":
+      return "bg-error hover:bg-red-600";
+    case "COMPLETED":
+      return "bg-blue-500 hover:bg-blue-600";
+    default:
+      return "bg-gray-400 hover:bg-gray-500";
+  }
+};
+
 const MobileAppointmentCard = (appointment: AppointmentProps) => {
   const [status, setStatus] = useState(appointment.appointment_status);
   const { refetch } = useFetchAppointments();
@@ -24,21 +39,6 @@ const MobileAppointmentCard = (appointment: AppointmentProps) => {
     await refetch();
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return "bg-[#FFBC41] hover:bg-yellow-500";
-      case "CONFIRMED":
-        return "bg-success hover:bg-green-600";
-      case "CANCELED":
-        return "bg-error hover:bg-red-600";
-      case "COMPLETED":
-        return "bg-blue-500 hover:bg-blue-600";
-      default:
-        return "bg-gray-400 hover:bg-gray-500";
-    }
-  };
-
   return (
     <>
       <div
@@ -49,7 +49,7 @@ const MobileAppointmentCard = (appointment: AppointmentProps) => {
           <h4 className="text-lg font-medium">
             คนไข้ {appointment.firstname} {appointment.lastname}
           </h4>
-          <Link href={`appointment/${appointment.id}`}>
+          <Link href={`/dashboard/mobile/appointment/${appointment.id}`}>
             <Button variant="link" className="font-semibold text-pink-200">
               ดูรายละเอียด
             </Button>

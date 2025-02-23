@@ -219,7 +219,7 @@ const MobileCreateAppointmentPage = () => {
             ยกเลิก
           </Button>
           <Button
-            className="flex-1 bg-pink-200 hover:bg-pink-200/90 rounded-full"
+            className="flex-1 bg-pink-200 rounded-full hover:bg-pink-200/90"
             onClick={handleCreateAppointment}
             disabled={isCreating}
           >

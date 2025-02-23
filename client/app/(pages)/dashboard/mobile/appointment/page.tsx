@@ -113,7 +113,7 @@ const MobileAppointment = () => {
                 key={filter.value}
                 onClick={() => setSelectedFilter(filter.value)}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm hover:bg-pink-200 cursor-pointer",
+                  "px-4 py-2 rounded-full text-sm hover:bg-pink-200 hover:text-white cursor-pointer",
                   selectedFilter === filter.value
                     ? "bg-pink-200 text-white"
                     : ""

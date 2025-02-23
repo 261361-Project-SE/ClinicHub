@@ -47,7 +47,7 @@ const MobileSummaryPage = () => {
   return (
     <MobileDashboardLayout>
       {/* Header with back button */}
-      <div className="fixed top-0 w-full bg-white z-50 px-4 py-6">
+      <div className="fixed top-0 z-50 w-full px-4 py-6 bg-white">
         <div className="relative flex items-center justify-center">
           <button
             onClick={() => router.back()}

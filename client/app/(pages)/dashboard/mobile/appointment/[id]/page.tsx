@@ -1,113 +1,152 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import Error from "@/app/error";
+import PageLoader from "@/components/PageLoader";
+import { AppointmentStatusSelector } from "@/components/dashboard/AppointmentStatusSelector";
+import { getStatusColor } from "@/components/dashboard/mobile/MobileAppointmentCard";
 import { Card } from "@/components/ui/card";
-import { Calendar, Phone, Edit2, ChevronLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React from "react";
-
-const appointment = {
-  name: "สมหญิง ใจดี",
-  age: 50,
-  date: "3 ธันวาคม 2567",
-  time: "10:30 น.",
-  phone: "081-234-5678",
-  status: "confirmed",
-};
-
-const history = [
-  { date: "1 ธันวาคม 2567", time: "11:30 น." },
-  { date: "2 ธันวาคม 2567", time: "10:30 น." },
-];
+import {
+  useFetchAppointmentById,
+  useFetchAppointmentByPhone,
+} from "@/hooks/useFetchAppointments";
+import { cn } from "@/lib/utils";
+import { SERVER_URL } from "@/lib/variables";
+import axios from "axios";
+import { format } from "date-fns";
+import { th } from "date-fns/locale";
+import { ArrowLeft } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const MobileAppointmentDescription = () => {
+  const pathname = usePathname();
   const router = useRouter();
+  const id = pathname.split("/").pop();
+  const { appointment, loading, error } = useFetchAppointmentById(Number(id));
+  const {
+    appointment: history,
+    loading: historyLoading,
+    error: historyErr,
+  } = useFetchAppointmentByPhone(appointment?.[0]?.phone_number ?? "");
+  const filteredHistory = history?.filter(
+    (item) => item.id !== appointment?.[0]?.id
+  );
+  const [status, setStatus] = useState<string>("");
+  useEffect(() => {
+    if (appointment?.[0]?.appointment_status) {
+      setStatus(appointment[0].appointment_status.toString());
+    }
+  }, [appointment]);
+
+  if (loading || historyLoading) {
+    return <PageLoader />;
+  }
+
+  if (error || historyErr) {
+    return <Error />;
+  }
+
+  const handleStatusChange = async (status: string) => {
+    await setStatus(status);
+    await axios.patch(`${SERVER_URL}/doctor/appointment/update`, {
+      id: appointment[0].id,
+      status: status,
+    });
+  };
 
   return (
-    <div className="min-h-screen p-4 bg-gray-50">
+    <div className="min-h-screen bg-lightgray-100">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white rounded-lg">
-        <button onClick={() => router.back()} className="text-gray-700">
-          <ChevronLeft size={24} />
-        </button>
-        <h2 className="text-lg font-semibold text-gray-900">
-          รายละเอียดการนัดหมาย
-        </h2>
-        <div></div>
+      <div className="fixed top-0 z-50 w-full px-4 py-6 bg-white">
+        {/* Header Section */}
+        <div className="relative flex items-center justify-center">
+          <button
+            onClick={() => router.back()}
+            className="absolute left-0 text-gray-700"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          <h2 className="text-lg font-medium">รายละเอียดการนัดหมาย</h2>
+        </div>
       </div>
 
-      {/* Patient Info */}
-      <Card className="p-4 mt-4 space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold">{appointment.name}</h3>
-          <Edit2 className="text-pink-500 cursor-pointer" size={20} />
-        </div>
-        <p className="text-gray-500">อายุ {appointment.age} ปี</p>
-
-        {/* Appointment Date & Time */}
-        <div className="flex items-center justify-between p-3 mt-2 bg-gray-100 rounded-lg">
-          <div>
-            <p className="text-sm text-gray-500">วันที่และเวลานัด</p>
-            <p className="text-gray-900">{appointment.date}</p>
-            <p className="text-gray-900">{appointment.time}</p>
-          </div>
-          <Edit2 className="text-pink-500 cursor-pointer" size={20} />
-        </div>
-
-        {/* Phone Number */}
-        <div className="flex items-center justify-between p-3 mt-2 bg-gray-100 rounded-lg">
-          <div>
-            <p className="text-sm text-gray-500">เบอร์โทรศัพท์</p>
-            <p className="text-gray-900">{appointment.phone}</p>
-          </div>
-          <Phone className="text-pink-500 cursor-pointer" size={20} />
-        </div>
-      </Card>
-
-      {/* Appointment Status */}
-      <Card className="p-4 mt-4 space-y-2">
-        <h3 className="text-lg font-semibold text-gray-900">สถานะการนัด</h3>
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-            <p className="text-green-600">ยืนยันแล้ว</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
-            <p className="text-yellow-600">รอยืนยัน</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-            <p className="text-red-600">ยกเลิกโดยคนไข้</p>
-            <span className="text-sm text-red-400">หมายเหตุ</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-pink-500 rounded-full"></div>
-            <p className="text-pink-600">ยกเลิกโดยแพทย์</p>
-            <span className="text-sm text-pink-400">หมายเหตุ</span>
-          </div>
-        </div>
-      </Card>
-
-      {/* Appointment History */}
-      <Card className="p-4 mt-4 space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">ประวัติการนัด</h3>
-          <button className="font-medium text-pink-500">ดูทั้งหมด</button>
-        </div>
-        {history.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between p-3 bg-gray-100 rounded-lg"
-          >
-            <div>
-              <p className="text-gray-900">{item.date}</p>
-              <p className="text-gray-500">{item.time}</p>
+      <div className="px-2 mt-[100px] py-4">
+        {/* Patient Info */}
+        {appointment?.map((item) => (
+          <Card key={item.id} className="p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold">
+                {item.firstname} {item.lastname}
+              </h3>
             </div>
-            <Edit2 className="text-pink-500 cursor-pointer" size={20} />
-          </div>
+
+            {/* Appointment Date & Time */}
+            <div className="flex items-center justify-between p-3 mt-2 bg-gray-100 rounded-lg">
+              <div>
+                <p className="text-sm text-gray-500">วันที่และเวลานัด</p>
+                <p className="text-gray-900">
+                  {format(
+                    new Date(item.appointment_dateTime ?? new Date()),
+                    "d MMMM yyyy, HH:mm น.",
+                    { locale: th }
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Phone Number */}
+            <div className="flex items-center justify-between p-3 mt-2 bg-gray-100 rounded-lg">
+              <div>
+                <p className="text-sm text-gray-500">เบอร์โทรศัพท์</p>
+                <p className="text-gray-900">{item.phone_number}</p>
+              </div>
+            </div>
+          </Card>
         ))}
-      </Card>
+
+        {/* Appointment Status */}
+        <Card className="p-4 mt-4 space-y-2">
+          <h3 className="text-lg font-semibold text-gray-900">สถานะการนัด</h3>
+          <AppointmentStatusSelector
+            defaultValue={status}
+            setValue={handleStatusChange}
+            className={cn(
+              "w-full text-white mt-4 border-none rounded-lg",
+              getStatusColor(status)
+            )}
+          />
+        </Card>
+
+        {/* Appointment History */}
+        <Card className="p-4 mt-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">
+              ประวัติการนัด
+            </h3>
+          </div>
+          {filteredHistory?.map((appointment) => (
+            <div
+              key={appointment.id || ""}
+              className="flex items-center justify-between p-3 bg-gray-100 rounded-lg"
+            >
+              <div>
+                <p className="text-gray-900">
+                  {format(
+                    new Date(appointment.appointment_dateTime ?? new Date()),
+                    "d MMMM yyyy, HH:mm น.",
+                    { locale: th }
+                  )}
+                </p>
+              </div>
+            </div>
+          ))}
+          {!filteredHistory?.length && (
+            <p className="py-4 text-center text-gray-500">
+              ไม่พบประวัติการนัดหมาย
+            </p>
+          )}
+        </Card>
+      </div>
     </div>
   );
 };

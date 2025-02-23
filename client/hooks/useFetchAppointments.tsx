@@ -1,5 +1,6 @@
 "use client";
 
+import { Appointment } from "@/app/(pages)/p/types/appointment";
 import { AppointmentProps } from "@/lib/types";
 import { SERVER_URL } from "@/lib/variables";
 import axios from "axios";
@@ -39,4 +40,72 @@ export const useFetchAppointments = () => {
   }, [fetchAppointments]);
 
   return { appointments, loading, error, refetch: fetchAppointments };
+};
+
+export const useFetchAppointmentById = (id: number) => {
+  const [appointment, setAppointment] = useState<AppointmentProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetchAppointment = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${SERVER_URL}/doctor/appointment`, {
+          params: {
+            id: id,
+          },
+        });
+        setAppointment(response.data);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err : new Error("Failed to fetch appointment")
+        );
+        setAppointment([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchAppointment();
+    }
+  }, [id]);
+
+  return { appointment, loading, error };
+};
+
+export const useFetchAppointmentByPhone = (phone: string) => {
+  const [appointment, setAppointment] = useState<AppointmentProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetchAppointment = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${SERVER_URL}/doctor/appointment`, {
+          params: {
+            phone_number: phone,
+          },
+        });
+        setAppointment(response.data);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err : new Error("Failed to fetch appointment")
+        );
+        setAppointment([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (phone) {
+      fetchAppointment();
+    }
+  }, [phone]);
+
+  return { appointment, loading, error };
 };

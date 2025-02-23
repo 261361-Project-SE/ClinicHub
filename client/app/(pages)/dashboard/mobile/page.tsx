@@ -6,7 +6,12 @@ import MobileAppointmentCard from "@/components/dashboard/mobile/MobileAppointme
 import MobileDashboardLayout from "@/components/dashboard/mobile/MobileDashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { getWeekDays } from "@/helper/getWeekDays";
 import { useFetchAppointments } from "@/hooks/useFetchAppointments";
 import { currentThaiMonth, currentThaiYear } from "@/lib/variables";
@@ -36,6 +41,7 @@ const MobileDashboard = () => {
                 <Menu className="text-black" size={24} />
               </Button>
             </SheetTrigger>
+            <SheetTitle hidden />
             <SheetContent side="left" className="w-[300px]">
               <div className="mt-4">
                 <nav className="flex flex-col space-y-4">
