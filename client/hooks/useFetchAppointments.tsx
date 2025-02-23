@@ -1,6 +1,5 @@
 "use client";
 
-import { Appointment } from "@/app/(pages)/p/types/appointment";
 import { AppointmentProps } from "@/lib/types";
 import { SERVER_URL } from "@/lib/variables";
 import axios from "axios";
