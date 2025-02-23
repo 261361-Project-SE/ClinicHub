@@ -134,17 +134,15 @@ const MobileSummaryPage = () => {
         <Card>
           <CardContent className="flex flex-col p-6 gap-y-4">
             <div>
-              <p className="text-sm text-muted-foreground">
-                จำนวนการนัดหมายทั้งหมด
-              </p>
+              <p className="text-sm text-muted-foreground">การนัดหมายทั้งหมด</p>
               <p className="text-2xl font-bold">{totalAppointments}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">จำนวนคนไข้ทั้งหมด</p>
+              <p className="text-sm text-muted-foreground">คนไข้ทั้งหมด</p>
               <p className="text-2xl font-bold">{totalPatients}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">จำนวนแพทย์ทั้งหมด</p>
+              <p className="text-sm text-muted-foreground">แพทย์ทั้งหมด</p>
               <p className="text-2xl font-bold">{totalDoctors}</p>
             </div>
           </CardContent>
