@@ -8,14 +8,20 @@ class AppointmentService {
     this.prisma = new PrismaClient();
   }
 
-
   private isChanged(dbdata: Appointments, newData: Appointments): boolean {
     try {
       if (!dbdata || !newData) {
         return true;
       }
 
-      const fields = ['firstname', 'lastname', 'phone_number', 'appointment_dateTime', 'symptom', 'appointment_status'] as (keyof Appointments)[];
+      const fields = [
+        "firstname",
+        "lastname",
+        "phone_number",
+        "appointment_dateTime",
+        "symptom",
+        "appointment_status",
+      ] as (keyof Appointments)[];
 
       for (const field of fields) {
         if (dbdata[field] !== newData[field]) {
@@ -25,7 +31,7 @@ class AppointmentService {
 
       return false;
     } catch (error) {
-      console.error('Error checking if appointment has changed:', error);
+      console.error("Error checking if appointment has changed:", error);
       return true;
     }
   }
@@ -50,9 +56,13 @@ class AppointmentService {
     }
   }
 
-  private async checkAddableAppointment(date: string, id: number, required: boolean): Promise<boolean> {
+  private async checkAddableAppointment(
+    date: string,
+    id: number,
+    required: boolean
+  ): Promise<boolean> {
     if (!date) {
-      return !required
+      return !required;
     }
 
     try {
@@ -68,18 +78,27 @@ class AppointmentService {
         },
       });
 
-      if (checkBooking.length > 0 && checkBooking.some(booking => booking.id != id)) {
+      if (
+        checkBooking.length > 0 &&
+        checkBooking.some((booking) => booking.id != id)
+      ) {
         return false;
       }
 
       return true;
-
     } catch (error: any) {
       return false;
     }
   }
 
-  private async createGoogleCalendar(date: string, symptom: string): Promise<{ isCreated: boolean, eventID: string | undefined, cError: string | undefined }> {
+  private async createGoogleCalendar(
+    date: string,
+    symptom: string
+  ): Promise<{
+    isCreated: boolean;
+    eventID: string | undefined;
+    cError: string | undefined;
+  }> {
     try {
       const dateTime = new Date(date);
       const response = await calendarService.createEvent({
@@ -90,10 +109,10 @@ class AppointmentService {
         minute: dateTime.getMinutes(),
         description: symptom || "No description",
       });
-      return { isCreated: true, eventID: response.eventID, cError: undefined }
+      return { isCreated: true, eventID: response.eventID, cError: undefined };
     } catch (error: any) {
       console.log(error);
-      return { isCreated: false, eventID: undefined, cError: error }
+      return { isCreated: false, eventID: undefined, cError: error };
     }
   }
 
@@ -126,12 +145,27 @@ class AppointmentService {
 
       return { data: appointments, status: 200 };
     } catch (error) {
-      return { error: "Error while fetching appointment time slot service: " + error, status: 500 };
+      return {
+        error: "Error while fetching appointment time slot service: " + error,
+        status: 500,
+      };
     }
   }
 
-  async creteBooking(firstname: string, lastname: string, phone_number: string, symptom: string, appointment_dateTime: string) {
-    if (!firstname || !lastname || !phone_number || !symptom || !appointment_dateTime) {
+  async creteBooking(
+    firstname: string,
+    lastname: string,
+    phone_number: string,
+    symptom: string,
+    appointment_dateTime: string
+  ) {
+    if (
+      !firstname ||
+      !lastname ||
+      !phone_number ||
+      !symptom ||
+      !appointment_dateTime
+    ) {
       return { error: "Missing required fields", status: 400 };
     }
 
@@ -141,15 +175,27 @@ class AppointmentService {
 
     try {
       // Check existing appointment
-      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, -1, true);
+      const isAvailable = await this.checkAddableAppointment(
+        appointment_dateTime,
+        -1,
+        true
+      );
       if (!isAvailable) {
         return { error: "Time slot already existing", status: 400 };
       }
 
       // Create Google Calendar event
-      const { isCreated, eventID, cError } = await this.createGoogleCalendar(appointment_dateTime, symptom);
+      const { isCreated, eventID, cError } = await this.createGoogleCalendar(
+        appointment_dateTime,
+        symptom
+      );
       if (!isCreated || !eventID) {
-        return { error: "Error while creating google calendar: " + (cError || 'unknown error'), status: 500 };
+        return {
+          error:
+            "Error while creating google calendar: " +
+            (cError || "unknown error"),
+          status: 500,
+        };
       }
 
       // Create booking on database
@@ -181,10 +227,14 @@ class AppointmentService {
         appointment_status: Status[booking.appointment_status] as string,
       };
       return { data: constructedData, status: 200 };
-
     } catch (error) {
       if (error instanceof Error) {
-        return { error: "Error while creating appointment service: " + (error.message || error), status: 500 };
+        return {
+          error:
+            "Error while creating appointment service: " +
+            (error.message || error),
+          status: 500,
+        };
       }
       return { error: "An unexpected error occurred", status: 500 };
     }
@@ -204,7 +254,7 @@ class AppointmentService {
       }
 
       // Construct return data
-      const constructedData = appointments.map(appointment => ({
+      const constructedData = appointments.map((appointment) => ({
         id: appointment.id,
         firstname: appointment.firstname,
         lastname: appointment.lastname,
@@ -215,31 +265,47 @@ class AppointmentService {
       }));
 
       return { data: constructedData, status: 200 };
-
     } catch (error) {
       if (error instanceof Error) {
-        return { error: "Error while fetching all doctor appointment service: " + error.message, status: 500 };
+        return {
+          error:
+            "Error while fetching all doctor appointment service: " +
+            error.message,
+          status: 500,
+        };
       }
       return { error: "An unexpected error occurred", status: 500 };
     }
   }
 
-  async getDoctorAppointmentByParameter(date: string, firstname: string, lastname: string, status: string, phone_number: string) {
+  async getDoctorAppointmentByParameter(
+    date: string,
+    firstname: string,
+    lastname: string,
+    status: string,
+    phone_number: string,
+    id: number | undefined
+  ) {
     try {
-      const status_prisma = status ? Status[status.toUpperCase() as keyof typeof Status] : undefined;
+      const status_prisma = status
+        ? Status[status.toUpperCase() as keyof typeof Status]
+        : undefined;
       const where: Prisma.AppointmentsWhereInput = {
         appointment_dateTime: {
-          contains: date || '',
+          contains: date || "",
         },
         firstname: {
-          contains: firstname || '',
+          contains: firstname || "",
         },
         lastname: {
-          contains: lastname || '',
+          contains: lastname || "",
         },
         phone_number: {
-          contains: phone_number || '',
-        }
+          contains: phone_number || "",
+        },
+        id: {
+          equals: id || undefined,
+        },
       };
 
       if (status_prisma) {
@@ -258,16 +324,24 @@ class AppointmentService {
       }
 
       return { data: appointments, status: 200 };
-
     } catch (error) {
       if (error instanceof Error) {
-        return { error: "Error while fetching doctor appointment by parameters service: " + error.message, status: 500 };
+        return {
+          error:
+            "Error while fetching doctor appointment by parameters service: " +
+            error.message,
+          status: 500,
+        };
       }
       return { error: "An unexpected error occurred", status: 500 };
     }
   }
 
-  async updateDoctorAppointment(id: number, appointment_dateTime: string, status: string) {
+  async updateDoctorAppointment(
+    id: number,
+    appointment_dateTime: string,
+    status: string
+  ) {
     // Check required id and one of status or datetime
     if (!id || (!appointment_dateTime && !status)) {
       return { error: "Missing required fields", status: 400 };
@@ -278,7 +352,7 @@ class AppointmentService {
       return { error: "Invalid time slot", status: 400 };
     }
 
-    // Check appointment status 
+    // Check appointment status
     let appointment_status = undefined;
     try {
       appointment_status = Status[status as keyof typeof Status];
@@ -299,7 +373,11 @@ class AppointmentService {
       }
 
       // Check existing booking
-      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, id, false);
+      const isAvailable = await this.checkAddableAppointment(
+        appointment_dateTime,
+        id,
+        false
+      );
       if (!isAvailable) {
         return { error: "Time slot already existing", status: 400 };
       }
@@ -309,17 +387,25 @@ class AppointmentService {
         ...checkBooking,
         appointment_dateTime: appointment_dateTime,
         appointment_status: appointment_status,
-      }
+      };
 
       if (!this.isChanged(checkBooking, newData)) {
         return { error: "No changes", status: 304 };
       }
 
       // create google calendar event
-      const { isCreated, eventID, cError } = await this.createGoogleCalendar(appointment_dateTime, checkBooking.symptom);
+      const { isCreated, eventID, cError } = await this.createGoogleCalendar(
+        appointment_dateTime,
+        checkBooking.symptom
+      );
 
       if (!isCreated) {
-        return { error: "Error while creating google calendar: " + (cError || 'unknown error'), status: 500 };
+        return {
+          error:
+            "Error while creating google calendar: " +
+            (cError || "unknown error"),
+          status: 500,
+        };
       }
 
       // Delete google calendar event
@@ -339,13 +425,20 @@ class AppointmentService {
       return { data: booking, status: 200 };
     } catch (error) {
       if (error instanceof Error) {
-        return { error: "Error while updating doctor appointment service: " + error, status: 500 };
+        return {
+          error: "Error while updating doctor appointment service: " + error,
+          status: 500,
+        };
       }
       return { error: "An unexpected error occurred", status: 500 };
     }
   }
 
-  async getPatientAppointment(phone_number: string, firstname: string, lastname: string) {
+  async getPatientAppointment(
+    phone_number: string,
+    firstname: string,
+    lastname: string
+  ) {
     if (!phone_number || !firstname || !lastname) {
       return { error: "Missing required fields", status: 400 };
     }
@@ -368,14 +461,33 @@ class AppointmentService {
       return { data: appointments, status: 200 };
     } catch (error) {
       if (error instanceof Error) {
-        return { error: "Error while fetching patient appointment service: " + error.message, status: 500 };
+        return {
+          error:
+            "Error while fetching patient appointment service: " +
+            error.message,
+          status: 500,
+        };
       }
       return { error: "An unexpected error occurred", status: 500 };
     }
   }
 
-  async updatePatientAppointment(id: number, firstname: string, lastname: string, phone_number: string, appointment_dateTime: string, symptom: string) {
-    if (!id || (!appointment_dateTime && !symptom && !firstname && !lastname && !phone_number)) {
+  async updatePatientAppointment(
+    id: number,
+    firstname: string,
+    lastname: string,
+    phone_number: string,
+    appointment_dateTime: string,
+    symptom: string
+  ) {
+    if (
+      !id ||
+      (!appointment_dateTime &&
+        !symptom &&
+        !firstname &&
+        !lastname &&
+        !phone_number)
+    ) {
       return { error: "Missing required fields", status: 400 };
     }
 
@@ -397,7 +509,11 @@ class AppointmentService {
       }
 
       // Check existing booking
-      const isAvailable = await this.checkAddableAppointment(appointment_dateTime, id, false);
+      const isAvailable = await this.checkAddableAppointment(
+        appointment_dateTime,
+        id,
+        false
+      );
       if (!isAvailable) {
         return { error: "Time slot already existing", status: 400 };
       }
@@ -413,22 +529,31 @@ class AppointmentService {
         firstname: firstname || checkBooking.firstname,
         lastname: lastname || checkBooking.lastname,
         phone_number: phone_number || checkBooking.phone_number,
-        appointment_dateTime: appointment_dateTime || checkBooking.appointment_dateTime,
+        appointment_dateTime:
+          appointment_dateTime || checkBooking.appointment_dateTime,
         symptom: symptom || checkBooking.symptom,
         appointment_status: checkBooking.appointment_status,
         createdAt: checkBooking.createdAt,
         updatedAt: checkBooking.updatedAt,
-      }
+      };
 
       if (!this.isChanged(checkBooking, newData)) {
         return { error: "No changes", status: 304 };
       }
 
       // create google calendar event
-      const { isCreated, eventID, cError } = await this.createGoogleCalendar(appointment_dateTime, checkBooking.symptom);
+      const { isCreated, eventID, cError } = await this.createGoogleCalendar(
+        appointment_dateTime,
+        checkBooking.symptom
+      );
 
       if (!isCreated) {
-        return { error: "Error while creating google calendar: " + (cError || 'unknown error'), status: 500 };
+        return {
+          error:
+            "Error while creating google calendar: " +
+            (cError || "unknown error"),
+          status: 500,
+        };
       }
 
       // Delete google calendar event
@@ -446,7 +571,8 @@ class AppointmentService {
           lastname: lastname || checkBooking.lastname,
           phone_number: phone_number || checkBooking.phone_number,
           symptom: symptom || checkBooking.symptom,
-          appointment_dateTime: appointment_dateTime || checkBooking.appointment_dateTime,
+          appointment_dateTime:
+            appointment_dateTime || checkBooking.appointment_dateTime,
           eventId: eventID || checkBooking.eventId,
         },
       });
@@ -454,12 +580,14 @@ class AppointmentService {
       return { data: booking, status: 200 };
     } catch (error) {
       if (error instanceof Error) {
-        return { error: "Error while updating patient appointment service: " + error, status: 500 };
+        return {
+          error: "Error while updating patient appointment service: " + error,
+          status: 500,
+        };
       }
       return { error: "An unexpected error occurred", status: 500 };
     }
   }
-
 
   async cancelAppointment(data: any) {
     try {
@@ -479,7 +607,7 @@ class AppointmentService {
       if (!booking) {
         return { error: "Booking not found", status: 404 };
       } else if (booking.appointment_status == Status.CANCELED) {
-        return { error: "Booking already cancled.", status: 304 }
+        return { error: "Booking already cancled.", status: 304 };
       }
 
       //Delete the google calendar event
@@ -487,7 +615,10 @@ class AppointmentService {
         try {
           await calendarService.deleteEvent(booking.eventId);
         } catch (error) {
-          return { error: "Error while deleting the Google Calendar event.", status: 500 };
+          return {
+            error: "Error while deleting the Google Calendar event.",
+            status: 500,
+          };
         }
       }
 
@@ -508,13 +639,16 @@ class AppointmentService {
         phone_number: updateBooking.phone_number,
         symptom: updateBooking.symptom,
         appointment_dateTime: updateBooking.appointment_dateTime,
-        appointment_status: Status[updateBooking.appointment_status] as string
+        appointment_status: Status[updateBooking.appointment_status] as string,
       };
 
       return { data: cancledBooking, status: 200 };
     } catch (error) {
       if (error instanceof Error) {
-        return { error: "Error while deleting booking service:" + error, status: 500 };
+        return {
+          error: "Error while deleting booking service:" + error,
+          status: 500,
+        };
       }
       return { error: "An unexpected error occurred", status: 500 };
     }
