@@ -31,11 +31,11 @@ const DashboardSideBar = () => {
       icon: CalendarDaysIcon,
       href: "/dashboard/desktop/calendar",
     },
-    {
-      name: "ตั้งค่า",
-      icon: SettingsIcon,
-      href: "/dashboard/desktop/settings",
-    },
+    // {
+    //   name: "ตั้งค่า",
+    //   icon: SettingsIcon,
+    //   href: "/dashboard/desktop/settings",
+    // },
     {
       name: "ออกจากระบบ",
       icon: LogOutIcon,
