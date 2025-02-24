@@ -83,7 +83,7 @@ const MobileAppointmentCard = (appointment: AppointmentProps) => {
           defaultValue={status}
           setValue={handleStatusChange}
           className={cn(
-            "w-full text-white mt-4 border-none rounded-lg",
+            "w-full mt-4 border-none text-white font-medium rounded-lg",
             getStatusColor(status)
           )}
         />
