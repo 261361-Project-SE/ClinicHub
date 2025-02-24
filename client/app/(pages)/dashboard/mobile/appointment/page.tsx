@@ -16,7 +16,7 @@ import { AppointmentProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -101,7 +101,7 @@ const MobileAppointment = () => {
           <div className="flex items-center p-2 bg-white rounded-full gap-2">
             <div
               className={cn(
-                "px-4 py-2 rounded-full text-sm hover:bg-pink-200 cursor-pointer",
+                "px-4 py-2 rounded-full hover:text-white text-sm hover:bg-pink-200 cursor-pointer",
                 selectedFilter === "all" ? "bg-pink-200 text-white" : ""
               )}
               onClick={() => setSelectedFilter("all")}

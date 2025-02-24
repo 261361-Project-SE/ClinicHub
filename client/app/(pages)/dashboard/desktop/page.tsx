@@ -66,7 +66,7 @@ const DesktopDashboard = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center text-center text-red-500 gap-y-2">
+      <div className="flex flex-col items-center justify-center h-screen text-center text-red-500 gap-y-2">
         <p>เกิดข้อผิดพลาด: {error}</p>
         <Button onClick={handleReload} variant="destructive">
           ลองใหม่อีกครั้ง
