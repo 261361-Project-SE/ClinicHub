@@ -100,7 +100,7 @@ const CreateAppointmentDialog = () => {
         <PlusIcon className="mr-1" />
         สร้างการนัดหมาย
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="mb-2">สร้างการนัดหมาย</DialogTitle>
         </DialogHeader>
@@ -154,6 +154,7 @@ const CreateAppointmentDialog = () => {
                 onChange={handleInputChange}
               />
             </div>
+
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="appointment_date">วันที่</Label>
               <AppointmentDatePicker
@@ -166,6 +167,7 @@ const CreateAppointmentDialog = () => {
                 }
               />
             </div>
+
             <div className="flex flex-col gap-y-2">
               <Label htmlFor="appointment_time">เวลานัด</Label>
               <AppointmentTimeSelector
