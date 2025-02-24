@@ -74,7 +74,7 @@ const MobileAppointment = () => {
             <Button
               variant={"outline"}
               className={cn(
-                "w-full justify-start text-left border-none p-2 font-normal py-4 pl-10 pr-4 bg-white hover:bg-white rounded-full relative",
+                "w-full justify-start text-left border-none p-2 shadow-shadow-bg font-normal py-4 pl-10 pr-4 bg-white hover:bg-white rounded-full relative",
                 !date && "text-muted-foreground"
               )}
             >
@@ -98,7 +98,7 @@ const MobileAppointment = () => {
 
         {/* Filter Tabs */}
         <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex items-center p-2 bg-white rounded-full gap-2">
+          <div className="flex items-center p-2 bg-white rounded-full shadow-shadow-bg gap-2">
             <div
               className={cn(
                 "px-4 py-2 rounded-full hover:text-white text-sm hover:bg-pink-200 cursor-pointer",
