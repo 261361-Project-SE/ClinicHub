@@ -49,7 +49,7 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
     // Have to add appointment status it  PENDDING or Cancel
 
     const appointmentsData = response.data?.data ?? response.data;
-    console.log("appointmentsData", appointmentsData);
+
     const appointments = Array.isArray(appointmentsData)
       ? appointmentsData
       : [];

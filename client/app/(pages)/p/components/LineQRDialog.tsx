@@ -6,7 +6,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import lineicon from "@/public/lineicon.svg";
-import qr from "@/public/qr.png";
 import Image from "next/image";
 import React from "react";
 
@@ -35,7 +34,7 @@ const LineQRDialog = () => {
             rel="noopener noreferrer"
           >
             <Image
-              src={qr}
+              src="/qr.png"
               alt="Line QR Code"
               width={192}
               height={192}
