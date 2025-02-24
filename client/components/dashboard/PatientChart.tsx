@@ -6,23 +6,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useFetchAppointments } from "@/hooks/useFetchAppointments";
 import { currentThaiMonth, currentThaiYear } from "@/lib/variables";
+import { endOfMonth, startOfMonth } from "date-fns";
 import { TrendingUp } from "lucide-react";
-import * as React from "react";
+import { useMemo } from "react";
 import { Label, Pie, PieChart } from "recharts";
-
-const chartData = [
-  {
-    patient: "คนไข้ใหม่",
-    count: 400,
-    fill: "#FB6F93",
-  },
-  {
-    patient: "คนไข้เก่า",
-    count: 200,
-    fill: "#FFBC41",
-  },
-];
 
 const chartConfig = {
   patient: {
@@ -39,9 +28,67 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function PatientChart() {
-  const totalPatients = React.useMemo(() => {
+  const { appointments, loading, error } = useFetchAppointments();
+
+  const currentMonth = new Date();
+  const lastMonth = new Date(currentMonth);
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+  const getCurrentMonthPatients = () => {
+    const startDate = startOfMonth(currentMonth);
+    const endDate = endOfMonth(currentMonth);
+
+    return new Set(
+      appointments
+        .filter((apt) => {
+          const aptDate = new Date(apt.appointment_dateTime);
+          return aptDate >= startDate && aptDate <= endDate;
+        })
+        .map((apt) => apt.phone_number)
+    );
+  };
+
+  const getLastMonthPatients = () => {
+    const startDate = startOfMonth(lastMonth);
+    const endDate = endOfMonth(lastMonth);
+
+    return new Set(
+      appointments
+        .filter((apt) => {
+          const aptDate = new Date(apt.appointment_dateTime);
+          return aptDate >= startDate && aptDate <= endDate;
+        })
+        .map((apt) => apt.phone_number)
+    );
+  };
+
+  const currentMonthPatients = getCurrentMonthPatients();
+  const lastMonthPatients = getLastMonthPatients();
+
+  const newPatients = Array.from(currentMonthPatients).filter(
+    (phone) => !lastMonthPatients.has(phone)
+  ).length;
+  const returningPatients = currentMonthPatients.size - newPatients;
+
+  const chartData = useMemo(
+    () => [
+      {
+        patient: "คนไข้ใหม่",
+        count: Number(newPatients),
+        fill: "#FB6F93",
+      },
+      {
+        patient: "คนไข้เก่า",
+        count: Number(returningPatients),
+        fill: "#FFBC41",
+      },
+    ],
+    [newPatients, returningPatients]
+  );
+
+  const totalPatients = useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.count, 0);
-  }, []);
+  }, [chartData]);
 
   return (
     <div className="flex flex-col items-center justify-between h-full p-0 border-none shadow-none">
