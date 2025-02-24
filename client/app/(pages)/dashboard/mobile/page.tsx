@@ -52,7 +52,7 @@ const MobileDashboard = () => {
                     สร้างการนัดหมาย
                   </Link>
                   <Link
-                    href="/dashboard/mobile/appointment"
+                    href="/dashboard/appointment"
                     className="flex items-center p-2 rounded-lg gap-2"
                   >
                     <div className="w-2 h-2 bg-pink-200" />
@@ -113,7 +113,7 @@ const MobileDashboard = () => {
             สร้างการนัดหมาย
           </Link>
           <Link
-            href="/dashboard/mobile/appointment"
+            href="/dashboard/appointment"
             className="w-full py-4 text-center bg-white rounded-lg shadow-shadow-bg"
           >
             การนัดหมายทั้งหมด
@@ -125,7 +125,7 @@ const MobileDashboard = () => {
           <div className="flex items-center justify-between">
             <h3 className="text-lg">จำนวนการนัดหมาย</h3>
             <Link
-              href={"/dashboard/mobile/appointment"}
+              href={"/dashboard/appointment"}
               className="font-medium text-pink-200"
             >
               ดูทั้งหมด

@@ -132,7 +132,7 @@ const DesktopDashboard = () => {
               </div>
             </div>
             <div className="font-bold text-pink-200 cursor-pointer hover:text-pink-200/90">
-              <Link href={"/d/appointment"}>ดูทั้งหมด</Link>
+              <Link href={"/dashboard/desktop/appointment"}>ดูทั้งหมด</Link>
             </div>
           </div>
           <div className="flex flex-col w-1/3 p-2 bg-pink-300/20 rounded-xl">
