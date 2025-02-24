@@ -69,9 +69,13 @@ const CreateAppointmentDialog = () => {
     const dateTimeString = `${appointment_date}T${formattedTime}:00.000`;
 
     setIsAppointmentCreating(true);
+    console.log(appointmentForm);
     try {
       await axios.post(`${SERVER_URL}/appointment/create`, {
-        ...appointmentForm,
+        firstname,
+        lastname,
+        phone_number,
+        symptom,
         appointment_dateTime: dateTimeString,
       });
       toast.success("การนัดหมายถูกสร้างเรียบร้อยแล้ว!");
