@@ -141,7 +141,7 @@ const MobileDashboard = () => {
                 className="relative px-3 py-3 bg-white rounded-full shadow-shadow-bg min-w-[76px] text-center"
               >
                 {day.count > 0 && (
-                  <span className="absolute w-2 h-2 bg-red-500 rounded-full top-2 right-2" />
+                  <span className="absolute w-3 h-3 bg-red-500 rounded-full animate-pulse top-2 right-2" />
                 )}
                 <p className="text-gray-600">
                   {day.day},{day.date}
