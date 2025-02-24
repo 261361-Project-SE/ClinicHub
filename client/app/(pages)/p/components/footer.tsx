@@ -3,7 +3,7 @@ import React from "react";
 const Footer: React.FC<{ className?: string }> = ({ className }) => {
   return (
     <footer
-      className={`bg-gradient-pink opacity-80 text-white py-4 ${className}`}
+      className={`bg-gradient-to-r from-pink-500 to-purple-500 opacity-80 text-white py-4 ${className}`}
     >
       <div className="container mx-auto text-center">
         <p className="mb-2">

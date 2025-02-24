@@ -40,7 +40,7 @@ const MobileSummaryPage = () => {
 
   // Statistics data
   const totalAppointments = appointments.length;
-  const totalDoctors = 5;
+  const totalDoctors = 3;
 
   const currentMonth = new Date();
   const lastMonth = new Date(currentMonth);

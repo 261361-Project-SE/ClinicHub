@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 
 const notoSansThaiLooped = Noto_Sans_Thai_Looped({
   subsets: ["thai"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {

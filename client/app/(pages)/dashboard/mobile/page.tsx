@@ -33,7 +33,7 @@ const MobileDashboard = () => {
   return (
     <MobileDashboardLayout>
       {/* Sticky Header */}
-      <div className="fixed top-0 left-0 right-0 pb-6 bg-gradient-to-tr from-pink-200 to-pink-100 rounded-b-2xl">
+      <div className="fixed top-0 left-0 right-0 z-10 pb-6 bg-gradient-to-tr from-pink-200 to-pink-100 rounded-b-2xl">
         <div className="flex items-center justify-between px-4 py-2">
           <Sheet>
             <SheetTrigger asChild>
@@ -126,7 +126,7 @@ const MobileDashboard = () => {
             <h3 className="text-lg">จำนวนการนัดหมาย</h3>
             <Link
               href={"/dashboard/mobile/appointment"}
-              className="text-pink-200"
+              className="font-medium text-pink-200"
             >
               ดูทั้งหมด
             </Link>
@@ -138,14 +138,14 @@ const MobileDashboard = () => {
             {getWeekDays(appointments).map((day, index) => (
               <div
                 key={index}
-                className="px-3 py-3 bg-white rounded-full shadow-shadow-bg min-w-[76px] text-center"
+                className="relative px-3 py-3 bg-white rounded-full shadow-shadow-bg min-w-[76px] text-center"
               >
+                {day.count > 0 && (
+                  <span className="absolute w-2 h-2 bg-red-500 rounded-full top-2 right-2" />
+                )}
                 <p className="text-gray-600">
                   {day.day},{day.date}
                 </p>
-                {day.count > 0 && (
-                  <span className="block w-2 h-2 mx-auto mt-1 bg-red-500 rounded-full" />
-                )}
                 <span className="mt-1 text-xl font-bold text-pink-200">
                   {day.count}
                 </span>
@@ -160,7 +160,7 @@ const MobileDashboard = () => {
             <h3 className="text-lg font-medium">การนัดหมายที่รอยืนยัน</h3>
             <Link
               href={"/dashboard/mobile/appointment"}
-              className="text-pink-200"
+              className="font-medium text-pink-200"
             >
               ดูทั้งหมด
             </Link>
@@ -177,7 +177,7 @@ const MobileDashboard = () => {
             href={"/dashboard/mobile/appointment"}
             className="flex justify-center mt-4"
           >
-            <Button variant="outline" className="w-full rounded-lg">
+            <Button variant="outline" className="w-full font-medium rounded-lg">
               ดูทั้งหมด
             </Button>
           </Link>

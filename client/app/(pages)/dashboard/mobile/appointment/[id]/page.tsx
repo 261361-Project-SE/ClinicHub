@@ -111,7 +111,7 @@ const MobileAppointmentDescription = () => {
             defaultValue={status}
             setValue={handleStatusChange}
             className={cn(
-              "w-full text-white mt-4 border-none rounded-lg",
+              "w-full text-white mt-4 font-medium border-none rounded-lg",
               getStatusColor(status)
             )}
           />

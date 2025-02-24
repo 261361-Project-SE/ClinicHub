@@ -40,43 +40,6 @@ const IconButton = memo(({ onClick, ariaLabel, icon }: ButtonProps) => (
 
 IconButton.displayName = "IconButton";
 
-const NotificationButton = memo(
-  ({ onNotificationClick }: Pick<NavbarProps, "onNotificationClick">) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <IconButton
-          ariaLabel="Notifications"
-          icon={
-            <BellIcon className="h-6 w-6 text-black transition-transform hover:scale-110" />
-          }
-        />
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Notifications</DialogTitle>
-          <DialogDescription>Here are your notifications.</DialogDescription>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
-  )
-);
-
-NotificationButton.displayName = "NotificationButton";
-
-const MessageButton = memo(
-  ({ onMessageClick }: Pick<NavbarProps, "onMessageClick">) => (
-    <IconButton
-      ariaLabel="Messages"
-      onClick={onMessageClick}
-      icon={
-        <MessagesSquare className="h-6 w-6 text-black transition-transform hover:scale-110" />
-      }
-    />
-  )
-);
-
-MessageButton.displayName = "MessageButton";
-
 const Logo = memo(({ src, alt }: { src: string; alt: string }) => (
   <Link href="/">
     <div className="rounded-full overflow-hidden w-16 h-16 transition-transform hover:scale-105">
@@ -94,20 +57,6 @@ const Logo = memo(({ src, alt }: { src: string; alt: string }) => (
 
 Logo.displayName = "Logo";
 
-const ActionButtons = memo(
-  ({
-    onMessageClick,
-    onNotificationClick,
-  }: Pick<NavbarProps, "onMessageClick" | "onNotificationClick">) => (
-    <div className="flex items-center gap-2">
-      <MessageButton onMessageClick={onMessageClick} />
-      <NotificationButton onNotificationClick={onNotificationClick} />
-    </div>
-  )
-);
-
-ActionButtons.displayName = "ActionButtons";
-
 const MobileNav = memo(
   ({
     onMenuClick,
@@ -124,10 +73,6 @@ const MobileNav = memo(
             <p className="text-white text-base font-bold font-noto md:text-lg lg:text-xl">
               จองการนัด และ ตรวจสอบนัดหมาย
             </p>
-            <ActionButtons
-              onMessageClick={onMessageClick}
-              onNotificationClick={onNotificationClick}
-            />
           </div>
           <div className="mt-6 flex items-center justify-start px-12 space-x-8">
             <Logo src={logoSrc} alt={logoAlt} />
@@ -164,10 +109,6 @@ const DesktopNav = memo(
                 จองการนัด และ ตรวจสอบนัดหมาย
               </h1>
             </div>
-            <ActionButtons
-              onMessageClick={onMessageClick}
-              onNotificationClick={onNotificationClick}
-            />
           </div>
         </div>
       </div>
