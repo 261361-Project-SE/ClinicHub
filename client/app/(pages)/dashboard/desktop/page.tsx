@@ -98,12 +98,12 @@ const DesktopDashboard = () => {
             <div className="flex flex-col gap-y-2">
               <div className="flex flex-col gap-y-2">
                 <div className="text-darkgray dark:text-gray-300">
-                  คนไข้ทั้งหมด
+                  การนัดหมายทั้งหมด
                 </div>
                 <div className="flex items-center gap-x-2">
-                  <UserIcon className="mt-1" color="#FB6F92" size={30} />
+                  <Calendar1Icon className="mt-1" color="#FB6F92" size={30} />
                   <div className="text-3xl font-medium dark:text-white">
-                    200
+                    {appointments.length}
                   </div>
                 </div>
               </div>
@@ -113,9 +113,7 @@ const DesktopDashboard = () => {
                 </div>
                 <div className="flex items-center gap-x-2">
                   <UserIcon className="mt-1" color="#FB6F92" size={30} />
-                  <div className="text-3xl font-medium dark:text-white">
-                    200
-                  </div>
+                  <div className="text-3xl font-medium dark:text-white">3</div>
                 </div>
               </div>
             </div>
