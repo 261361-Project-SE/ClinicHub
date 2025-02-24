@@ -173,7 +173,7 @@ const DesktopDashboard = () => {
           {/* Calendar */}
           <Link
             className="relative items-center w-1/3 p-4 overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-shadow-bg dark:shadow-none hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            href="/d/calendar"
+            href="/dashboard/desktop/calendar"
           >
             <div className="flex flex-col gap-y-2">
               <div className="flex justify-between">
