@@ -33,3 +33,10 @@ model Appointments {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
+
+model Feedback {
+  id           Int      @id @default(autoincrement()) 
+  rating       Int      
+  comment      String? 
+  createdAt    DateTime @default(now())
+}
