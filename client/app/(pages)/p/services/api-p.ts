@@ -15,29 +15,21 @@ export const postRequest = async (
   phone: string,
   symptom: string,
   appointment_dateTime: string
-): Promise<ApiResponse<Appointment>> => {
+) => {
   try {
-    const response = await axios.post<ApiResponse<Appointment>>(
-      `${API_BASE_URL}/appointment/create`,
-      {
-        firstname: firstName,
-        lastname: lastName,
-        phone_number: phone,
-        symptom: symptom,
-        appointment_dateTime: appointment_dateTime,
-      }
-    );
-
-    if (!response.data.success) {
-      throw new Error(response.data.error || "Failed to create appointment");
-    }
-
-    return response.data;
+    const response = await axios.post(`${API_BASE_URL}/appointment/create`, {
+      firstname: firstName,
+      lastname: lastName,
+      phone_number: phone,
+      symptom: symptom,
+      appointment_dateTime: appointment_dateTime,
+    });
+    return response;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       throw new Error(
         `Error while creating appointment service: ${
-          error.response?.data?.error || error.message
+          error.response?.data || error.message
         }`
       );
     } else {
