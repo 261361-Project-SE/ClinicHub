@@ -96,3 +96,36 @@ export const getfilteredAppointment = async (
     }
   }
 };
+
+interface Feedback {
+  rating: number;
+  comment: string;
+}
+
+export const createFeedback = async (rating: number, comment: string) => {
+  try {
+    const response = await axios.post<Feedback>(
+      `${API_BASE_URL}/feedback/create`,
+      {
+        rating,
+        comment,
+      }
+    );
+
+    if (!response.data) {
+      throw new Error(response.data || "Failed to create feedback");
+    }
+
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Error while creating feedback: ${
+          error.response?.data?.error || error.message
+        }`
+      );
+    } else {
+      throw new Error(`Error while creating feedback: ${String(error)}`);
+    }
+  }
+};
