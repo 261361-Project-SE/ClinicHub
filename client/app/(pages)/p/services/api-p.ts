@@ -1,4 +1,4 @@
-import { Appointment } from "@/app/(pages)/p/types/appointment";
+import { Appointment } from "../types/appointment";
 import axios from "axios";
 
 interface ApiResponse<T> {
@@ -15,21 +15,29 @@ export const postRequest = async (
   phone: string,
   symptom: string,
   appointment_dateTime: string
-) => {
+): Promise<ApiResponse<Appointment>> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/appointment/create`, {
-      firstname: firstName,
-      lastname: lastName,
-      phone_number: phone,
-      symptom: symptom,
-      appointment_dateTime: appointment_dateTime,
-    });
-    return response;
+    const response = await axios.post<ApiResponse<Appointment>>(
+      `${API_BASE_URL}/appointment/create`,
+      {
+        firstname: firstName,
+        lastname: lastName,
+        phone_number: phone,
+        symptom: symptom,
+        appointment_dateTime: appointment_dateTime,
+      }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || "Failed to create appointment");
+    }
+
+    return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       throw new Error(
         `Error while creating appointment service: ${
-          error.response?.data || error.message
+          error.response?.data?.error || error.message
         }`
       );
     } else {
@@ -40,13 +48,14 @@ export const postRequest = async (
   }
 };
 
-export const getfilteredAppointment = async (appointment_dateTime: string) => {
+export const getfilteredAppointment = async (
+  appointment_dateTime: string
+): Promise<string[]> => {
   try {
     const date = appointment_dateTime.split("T")[0];
-    const response = await axios.get(
+    const response = await axios.get<ApiResponse<Appointment[]>>(
       `${API_BASE_URL}/appointment/time-slot?date=${date}`
     );
-    // Have to add appointment status it  PENDDING or Cancel
 
     const appointmentsData = response.data?.data ?? response.data;
 
@@ -60,7 +69,7 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
     }
 
     const times = appointments
-      .map((appointment: any) => {
+      .map((appointment: Appointment) => {
         try {
           const timeString = appointment.appointment_dateTime
             .split("T")[1]
@@ -71,7 +80,7 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
           return null;
         }
       })
-      .filter((time) => time !== null);
+      .filter((time): time is string => time !== null);
 
     return times;
   } catch (error: unknown) {
@@ -86,7 +95,9 @@ export const getfilteredAppointment = async (appointment_dateTime: string) => {
         return [];
       }
       throw new Error(
-        `Error fetching appointments: ${error.response?.data || error.message}`
+        `Error fetching appointments: ${
+          error.response?.data?.error || error.message
+        }`
       );
     } else {
       throw new Error(`Unexpected error: ${String(error)}`);
