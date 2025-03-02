@@ -25,7 +25,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
   const appointmentStatusLabel = (() => {
     switch (appointment_status) {
       case "PENDING":
-        return "รอยินยัน";
+        return "รอยืนยัน";
       case "CONFIRMED":
         return "ยืนยันแล้ว";
       case "CANCELED":
@@ -66,7 +66,10 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
       2
     )}:${newAppointmentTime.slice(2)}`;
 
-    const newAppointmentDateTime = `${formattedDate}T${formattedTime}:00.000`;
+    const newAppointmentDateTime =
+      newAppointmentTime === ""
+        ? appointment_dateTime
+        : `${formattedDate}T${formattedTime}:00.000`;
 
     setLoading(true);
     try {
@@ -79,6 +82,8 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
       setLoading(false);
     } catch (error) {
       toast.error("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      window.location.reload();
     }
   };
 
@@ -103,6 +108,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
               <AppointmentTimeSelector
                 setValue={handleNewTimeChange}
                 defaultValue={appointmentTime}
+                appointment_time={appointmentTime}
               />
             </div>
             <div className="items-center mt-2 grid grid-cols-1 gap-4">

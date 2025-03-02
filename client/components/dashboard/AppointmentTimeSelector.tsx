@@ -23,7 +23,7 @@ export function AppointmentTimeSelector({
       <SelectTrigger>
         <SelectValue
           defaultValue={defaultValue}
-          placeholder={appointment_time ? `${appointment_time}` : "เลือกเวลา"}
+          placeholder={appointment_time}
           onChange={(e) => setValue((e.target as HTMLInputElement).value)}
           className="p-2 border rounded"
         />
@@ -32,7 +32,7 @@ export function AppointmentTimeSelector({
         <SelectGroup>
           <SelectLabel>เวลา</SelectLabel>
           {AppointmentTimeSlots.map((time) => (
-            <SelectItem key={time} value={time}>
+            <SelectItem defaultValue={appointment_time} key={time} value={time}>
               {`${time.slice(0, 2)}:${time.slice(2)}`}
             </SelectItem>
           ))}

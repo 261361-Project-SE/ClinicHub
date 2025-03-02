@@ -19,12 +19,12 @@ const DashboardSideBar = () => {
     {
       name: "แดชบอร์ด",
       icon: LayoutDashboardIcon,
-      href: "/dashboard/desktop",
+      href: "/dashboard",
     },
     {
       name: "การนัดหมาย",
       icon: CalendarClockIcon,
-      href: "/dashboard/desktop/appointment",
+      href: "/dashboard/appointment",
     },
     {
       name: "ปฏิทิน",
