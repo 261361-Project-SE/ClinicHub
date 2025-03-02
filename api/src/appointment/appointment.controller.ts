@@ -296,7 +296,12 @@ class AppointmentController {
 
       if (result.error) {
         res.status(result.status).send({ error: result.error });
-      } else res.status(200).send(result.data);
+      } else {
+        res.status(200).send(result.data);
+        await sendLineNotification(
+          `🔄 ผู้ป่วยอัปเดตการนัดหมาย\n📌 ID: ${id}\n👤 ${firstname} ${lastname}\n📞 ${phone_number}\n🕒 เวลาใหม่: ${appointment_dateTime}`
+        );
+      }
     } catch (err: any) {
       res.status(500).send({
         error:
@@ -308,11 +313,17 @@ class AppointmentController {
 
   async cancelAppointment(req: Request, res: Response) {
     try {
+      const { id, firstname, lastname, phone_number } = req.body;
       const result = await appointmentService.cancelAppointment(req.body);
 
       if (result.error) {
         res.status(result.status).send({ error: result.error });
-      } else res.status(200).send(result.data);
+      } else {
+        res.status(200).send(result.data);
+        await sendLineNotification(
+          `❌ ยกเลิกการนัดหมาย\n📌 ID: ${id}\n👤 ${firstname} ${lastname}\n📞 ${phone_number}`
+        );
+      }
     } catch (err: any) {
       res.status(500).send({
         error:
