@@ -1,16 +1,18 @@
 "use client";
 
+import Error from "@/app/error";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-// import { SmileIcon, MehIcon, FrownIcon } from "lucide-react";
+import { useFetchFeedback } from "@/hooks/useFetchFeedback";
+import { useMemo } from "react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
 const chartData = [
-  { feedback: "พอใจมาก", count: 150, fill: "#98C99F" },
+  { feedback: "พอใจมาก", count: 100, fill: "#98C99F" },
   { feedback: "ปานกลาง", count: 80, fill: "#FFBC41" },
   { feedback: "ไม่พอใจ", count: 50, fill: "#E57373" },
 ];
@@ -31,10 +33,46 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function FeedbackChart() {
+  const { feedback, loading, error } = useFetchFeedback();
+  const processedData = useMemo(() => {
+    if (!feedback || loading) return chartData;
+
+    const counts = {
+      Positive: 0,
+      Neutral: 0,
+      Negative: 0,
+    };
+
+    feedback.forEach((item: any) => {
+      if (item.rating === 3) counts.Positive++;
+      else if (item.rating === 2) counts.Neutral++;
+      else if (item.rating === 1) counts.Negative++;
+    });
+
+    return [
+      {
+        feedback: "พอใจมาก",
+        count: counts.Positive,
+        fill: chartConfig.Positive.color,
+      },
+      {
+        feedback: "ปานกลาง",
+        count: counts.Neutral,
+        fill: chartConfig.Neutral.color,
+      },
+      {
+        feedback: "ไม่พอใจ",
+        count: counts.Negative,
+        fill: chartConfig.Negative.color,
+      },
+    ];
+  }, [feedback, loading]);
+  if (error) return <Error />;
+
   return (
     <ChartContainer config={chartConfig} className="max-h-32">
       <BarChart
-        data={chartData}
+        data={processedData}
         layout="vertical"
         margin={{
           left: 0,
