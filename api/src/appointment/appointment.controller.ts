@@ -1,6 +1,30 @@
 import e, { Request, Response } from "express";
 import { Status } from "@prisma/client";
 import { appointmentService } from "./appointment.service";
+import axios from "axios";
+import * as dotenv from "dotenv";
+dotenv.config();
+
+const sendLineNotification = async (message: string) => {
+  try {
+    const response = await axios.post(
+      "https://api.line.me/v2/bot/message/push",
+      {
+        to: process.env.LINE_USER_ID,
+        messages: [{ type: "text", text: message }],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.LINE_ACCESS_TOKEN}`,
+        },
+      }
+    );
+    console.log("LINE Notification Sent:", response.data);
+  } catch (error) {
+    console.error("Error sending LINE notification:", error);
+  }
+};
 
 const validateDateTimeFormat = (dateTime: string): boolean => {
   const dateTimeFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}$/;
@@ -63,10 +87,7 @@ class AppointmentController {
         return;
       }
 
-      if (
-        appointment_dateTime &&
-        !validateDateTimeFormat(appointment_dateTime)
-      ) {
+      if (!validateDateTimeFormat(appointment_dateTime)) {
         res
           .status(400)
           .send({ error: "Appointment date time is invalid", status: 400 });
@@ -85,11 +106,14 @@ class AppointmentController {
         res.status(result.status).send({ error: result.error });
       } else {
         res.status(200).send(result.data);
+        await sendLineNotification(
+          `📅 มีการนัดหมายใหม่!\n👤 ${firstname} ${lastname}\n📞 ${phone_number}\n🩺 อาการ: ${symptom}\n🕒 วันที่: ${appointment_dateTime}`
+        );
       }
     } catch (err: any) {
       res.status(500).send({
         error:
-          "An unexpected error occurred while creating appointment controller:" +
+          "An unexpected error occurred while creating appointment: " +
           err.message,
         status: 500,
       });
@@ -173,12 +197,19 @@ class AppointmentController {
 
       if (result.error) {
         res.status(result.status).send({ error: result.error });
-      } else res.status(200).send(result.data);
+      } else {
+        res.status(200).send(result.data);
+        await sendLineNotification(
+          `✅ อัปเดตการนัดหมาย\n📌 ID: ${id}\n🕒 เวลาใหม่: ${
+            appointment_dateTime || "ไม่เปลี่ยนแปลง"
+          }\n📌 สถานะ: ${status || "ไม่เปลี่ยนแปลง"}`
+        );
+      }
     } catch (err: any) {
       res.status(500).send({
         error:
-          "An unexpected error occurred while updating doctor appointment controller:" +
-          err,
+          "An unexpected error occurred while updating appointment: " +
+          err.message,
       });
     }
   }
