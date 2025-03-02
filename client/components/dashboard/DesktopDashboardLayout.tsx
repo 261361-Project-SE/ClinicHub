@@ -1,13 +1,13 @@
 "use client";
 
-import Searchbar from "@/components/dashboard/Searchbar";
+// import Searchbar from "@/components/dashboard/Searchbar";
 import Sidebar from "@/components/ui/DashboardSidebar";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const PAGE_TITLES: Record<string, string> = {
-  "/dashboard/desktop": "แดชบอร์ด",
-  "/dashboard/desktop/appointment": "การนัดหมาย",
+  "/dashboard": "แดชบอร์ด",
+  "/dashboard/appointment": "การนัดหมาย",
   "/dashboard/desktop/calendar": "ปฏิทิน",
   "/dashboard/desktop/settings": "การตั้งค่า",
 };
@@ -37,9 +37,7 @@ export default function DesktopDashboardLayout({
           <h1 className="text-2xl font-medium text-darkgray md:text-3xl xl:text-4xl">
             {pageTitle}
           </h1>
-          <div className="min-w-[300px]">
-            <Searchbar />
-          </div>
+          <div className="min-w-[300px]">{/* <Searchbar /> */}</div>
         </header>
 
         <div className="h-[calc(100vh-130px)] mt-5 overflow-auto">
