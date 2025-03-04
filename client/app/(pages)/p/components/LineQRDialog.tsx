@@ -29,7 +29,7 @@ const LineQRDialog = () => {
         </DialogHeader>
         <div className="flex items-center justify-center p-4">
           <a
-            href="https://line.me/R/ti/p/@109ggfwd"
+            href="https://line.me/R/ti/p/@260kyvuk"
             target="_blank"
             rel="noopener noreferrer"
           >
