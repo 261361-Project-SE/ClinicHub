@@ -1,14 +1,15 @@
-import { AppointmentStatusSelector } from "@/components/dashboard/AppointmentStatusSelector";
-import { Button } from "@/components/ui/button";
-import { AppointmentProps } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { SERVER_URL } from "@/lib/variables";
 import axios from "axios";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import { Phone, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+
+import { AppointmentStatusSelector } from "@/components/dashboard/AppointmentStatusSelector";
+import { Button } from "@/components/ui/button";
+import { AppointmentProps } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { SERVER_URL } from "@/lib/variables";
 
 export const getStatusColor = (status: string) => {
   switch (status) {

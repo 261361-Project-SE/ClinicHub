@@ -1,8 +1,16 @@
 "use client";
 
+import axios from "axios";
+import { format } from "date-fns";
+import { th } from "date-fns/locale";
+import { ArrowLeft } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import Error from "@/app/error";
 import PageLoader from "@/components/PageLoader";
 import { AppointmentStatusSelector } from "@/components/dashboard/AppointmentStatusSelector";
+import { AppointmentTimeSelector } from "@/components/dashboard/AppointmentTimeSelector";
 import { getStatusColor } from "@/components/dashboard/mobile/MobileAppointmentCard";
 import { Card } from "@/components/ui/card";
 import {
@@ -11,12 +19,6 @@ import {
 } from "@/hooks/useFetchAppointments";
 import { cn } from "@/lib/utils";
 import { SERVER_URL } from "@/lib/variables";
-import axios from "axios";
-import { format } from "date-fns";
-import { th } from "date-fns/locale";
-import { ArrowLeft } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 const MobileAppointmentDescription = () => {
   const pathname = usePathname();
@@ -51,6 +53,26 @@ const MobileAppointmentDescription = () => {
     await axios.patch(`${SERVER_URL}/doctor/appointment/update`, {
       id: appointment[0].id,
       status: status,
+    });
+  };
+
+  const formattedDate = new Date(appointment?.[0]?.appointment_dateTime)
+    .toISOString()
+    .split("T")[0];
+
+  const appointmentTime = new Date(
+    appointment?.[0]?.appointment_dateTime
+  ).toLocaleTimeString("th-TH", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const handleNewTimeChange = async (newTime: string) => {
+    const formattedTime = `${newTime.slice(0, 2)}:${newTime.slice(2)}`;
+    const newAppointmentDateTime = `${formattedDate}T${formattedTime}:00.000`;
+    await axios.patch(`${SERVER_URL}/doctor/appointment/update`, {
+      id: appointment[0].id,
+      appointment_dateTime: newAppointmentDateTime,
     });
   };
 
@@ -114,6 +136,15 @@ const MobileAppointmentDescription = () => {
               "w-full text-white mt-4 font-medium border-none rounded-lg",
               getStatusColor(status)
             )}
+          />
+        </Card>
+
+        <Card className="p-4 mt-4 space-y-2">
+          <h3 className="text-lg font-semibold text-gray-900">เวลานัด</h3>
+          <AppointmentTimeSelector
+            setValue={handleNewTimeChange}
+            defaultValue={appointmentTime}
+            appointment_time={appointmentTime}
           />
         </Card>
 

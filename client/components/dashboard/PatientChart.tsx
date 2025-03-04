@@ -1,5 +1,12 @@
 "use client";
 
+import { endOfMonth, startOfMonth } from "date-fns";
+import { TrendingUp } from "lucide-react";
+import { useMemo } from "react";
+import { Label, Pie, PieChart } from "recharts";
+
+import Error from "@/app/error";
+import PageLoader from "@/components/PageLoader";
 import {
   ChartConfig,
   ChartContainer,
@@ -8,10 +15,6 @@ import {
 } from "@/components/ui/chart";
 import { useFetchAppointments } from "@/hooks/useFetchAppointments";
 import { currentThaiMonth, currentThaiYear } from "@/lib/variables";
-import { endOfMonth, startOfMonth } from "date-fns";
-import { TrendingUp } from "lucide-react";
-import { useMemo } from "react";
-import { Label, Pie, PieChart } from "recharts";
 
 const chartConfig = {
   patient: {
@@ -90,6 +93,18 @@ export function PatientChart() {
     return chartData.reduce((acc, curr) => acc + curr.count, 0);
   }, [chartData]);
 
+  const patientIncreasement = useMemo(() => {
+    const lastMonthTotal = lastMonthPatients.size;
+    if (lastMonthTotal === 0) return 0;
+    const currentMonthTotal = currentMonthPatients.size;
+    const percentage =
+      ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
+    return Math.max(0, Math.min(100, Math.round(percentage)));
+  }, [lastMonthPatients, currentMonthPatients]);
+
+  if (loading) return <PageLoader />;
+  if (error) return <Error error={error} />;
+
   return (
     <div className="flex flex-col items-center justify-between h-full p-0 border-none shadow-none">
       <div className="font-medium text-darkgray">
@@ -148,7 +163,7 @@ export function PatientChart() {
       <div className="flex-col text-sm gap-2">
         <div className="flex items-center justify-center gap-1">
           <TrendingUp size={16} />
-          <span className="text-[#98C99F]">+20%</span>
+          <span className="text-[#98C99F]">+{patientIncreasement}%</span>
           <span className="text-darkgray">จากเดือนที่แล้ว</span>
         </div>
         <div className="text-darkgray">
