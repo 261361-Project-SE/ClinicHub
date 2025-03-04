@@ -12,28 +12,15 @@ import { AppointmentProps } from "@/lib/types";
 import { SERVER_URL } from "@/lib/variables";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 
 export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
   const { appointment_dateTime, appointment_status, id } = props;
   const [loading, setLoading] = useState(false);
-  const [newAppointmentTime, setNewAppointmentTime] =
-    useState(appointment_dateTime);
+  const [newAppointmentTime, setNewAppointmentTime] = useState("");
   const [newAppointmentStatus, setNewAppointmentStatus] =
     useState(appointment_status);
-  const appointmentStatusLabel = (() => {
-    switch (appointment_status) {
-      case "PENDING":
-        return "รอยืนยัน";
-      case "CONFIRMED":
-        return "ยืนยันแล้ว";
-      case "CANCELED":
-        return "ยกเลิก";
-      default:
-        return "";
-    }
-  })();
 
   const formattedDate = new Date(appointment_dateTime)
     .toISOString()
@@ -47,6 +34,8 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
     }
   );
 
+  const originalTimeFormatted = appointmentTime.replace(":", "");
+
   const handleNewTimeChange = (newTime: string) => {
     setNewAppointmentTime(newTime);
   };
@@ -55,21 +44,28 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
     setNewAppointmentStatus(newStatus);
   };
 
+  const hasChanges = useMemo(() => {
+    const timeChanged =
+      newAppointmentTime !== "" && newAppointmentTime !== originalTimeFormatted;
+    const statusChanged = newAppointmentStatus !== appointment_status;
+    return timeChanged || statusChanged;
+  }, [
+    newAppointmentTime,
+    newAppointmentStatus,
+    originalTimeFormatted,
+    appointment_status,
+  ]);
+
   const handleSaveChanges = async () => {
-    if (!newAppointmentTime || !newAppointmentStatus) {
+    if (!hasChanges) {
       toast.error("ไม่พบการเปลี่ยนแปลง");
       return;
     }
 
-    const formattedTime = `${newAppointmentTime.slice(
-      0,
-      2
-    )}:${newAppointmentTime.slice(2)}`;
+    const timeToUse = newAppointmentTime || originalTimeFormatted;
+    const formattedTime = `${timeToUse.slice(0, 2)}:${timeToUse.slice(2)}`;
 
-    const newAppointmentDateTime =
-      newAppointmentTime === ""
-        ? appointment_dateTime
-        : `${formattedDate}T${formattedTime}:00.000`;
+    const newAppointmentDateTime = `${formattedDate}T${formattedTime}:00.000`;
 
     setLoading(true);
     try {
@@ -79,10 +75,10 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
         appointment_dateTime: newAppointmentDateTime,
       });
       toast.success("การนัดหมายถูกแก้ไขเรียบร้อยแล้ว!");
-      setLoading(false);
     } catch (error) {
       toast.error("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่อีกครั้ง");
     } finally {
+      setLoading(false);
       window.location.reload();
     }
   };
@@ -114,14 +110,14 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
             <div className="items-center mt-2 grid grid-cols-1 gap-4">
               <Label htmlFor="maxWidth">สถานะ</Label>
               <AppointmentStatusSelector
-                defaultValue={appointmentStatusLabel}
+                defaultValue={appointment_status}
                 setValue={handleNewStatusChange}
               />
             </div>
             <div className="items-center mt-2 grid grid-cols-1 gap-4">
               {loading ? (
                 <Button disabled>
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   กำลังแก้ไขนัดหมาย...
                 </Button>
               ) : (
@@ -132,6 +128,7 @@ export const EditAppointmentButton: React.FC<AppointmentProps> = (props) => {
                   cancelTitle="ยกเลิก"
                   confirmTitle="บันทึก"
                   onConfirm={handleSaveChanges}
+                  disabled={!hasChanges}
                 />
               )}
             </div>

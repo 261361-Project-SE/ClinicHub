@@ -19,6 +19,7 @@ export function ConfirmButton({
   confirmTitle,
   cancelTitle,
   onConfirm,
+  disabled = false,
 }: {
   buttonTitle: string;
   title: string;
@@ -26,6 +27,7 @@ export function ConfirmButton({
   confirmTitle: string;
   cancelTitle: string;
   onConfirm: () => Promise<void> | void;
+  disabled?: boolean;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -44,6 +46,7 @@ export function ConfirmButton({
         <Button
           variant="default"
           className="bg-pink-200 rounded hover:bg-pink-200/90"
+          disabled={disabled}
         >
           {buttonTitle}
         </Button>
