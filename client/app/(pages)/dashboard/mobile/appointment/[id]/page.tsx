@@ -27,7 +27,7 @@ const MobileAppointmentDescription = () => {
     appointment: history,
     loading: historyLoading,
     error: historyErr,
-  } = useFetchAppointmentByPhone(appointment?.[0]?.phone_number ?? "");
+  } = useFetchAppointmentByPhone(appointment?.[0]?.phone_number);
   const filteredHistory = history?.filter(
     (item) => item.id !== appointment?.[0]?.id
   );
