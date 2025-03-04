@@ -24,15 +24,13 @@ export function AppointmentTimeSelector({
         <SelectValue
           defaultValue={defaultValue}
           placeholder={appointment_time}
-          onChange={(e) => setValue((e.target as HTMLInputElement).value)}
-          className="p-2 border rounded"
         />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>เวลา</SelectLabel>
           {AppointmentTimeSlots.map((time) => (
-            <SelectItem defaultValue={appointment_time} key={time} value={time}>
+            <SelectItem key={time} value={time}>
               {`${time.slice(0, 2)}:${time.slice(2)}`}
             </SelectItem>
           ))}
