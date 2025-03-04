@@ -1,6 +1,5 @@
 import { AppointmentStatusSelector } from "@/components/dashboard/AppointmentStatusSelector";
 import { Button } from "@/components/ui/button";
-import { useFetchAppointments } from "@/hooks/useFetchAppointments";
 import { AppointmentProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { SERVER_URL } from "@/lib/variables";
@@ -28,7 +27,6 @@ export const getStatusColor = (status: string) => {
 
 const MobileAppointmentCard = (appointment: AppointmentProps) => {
   const [status, setStatus] = useState(appointment.appointment_status);
-  const { refetch } = useFetchAppointments();
 
   const handleStatusChange = async (status: string) => {
     await setStatus(status);
@@ -36,7 +34,6 @@ const MobileAppointmentCard = (appointment: AppointmentProps) => {
       id: appointment.id,
       status: status,
     });
-    await refetch();
   };
 
   return (
