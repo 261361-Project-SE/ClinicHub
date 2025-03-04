@@ -84,7 +84,7 @@ const MobileDashboard = () => {
           />
           <div className="flex flex-col">
             <div className="text-lg font-medium">สวัสดี,</div>
-            <div className="text-2xl font-semibold">คุณหมอ Stuart</div>
+            <div className="text-2xl font-semibold">Mongkol Clinic</div>
           </div>
         </div>
 
