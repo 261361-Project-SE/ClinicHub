@@ -20,7 +20,6 @@ const sendLineNotification = async (message: string) => {
         },
       }
     );
-    console.log("LINE Notification Sent:", response.data);
   } catch (error) {
     console.error("Error sending LINE notification:", error);
   }
