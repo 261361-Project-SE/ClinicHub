@@ -92,13 +92,13 @@ const FeedbackPage: React.FC = () => {
           </button>
         </div>
 
-        {/* <textarea
+        <textarea
           className="w-full p-2 border border-gray-300 rounded-md h-[400px]"
           placeholder="เขียนฟีดแบ็กที่นี่..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>} */}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         
 
         <div className="flex justify-end">
