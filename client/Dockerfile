@@ -1,7 +1,8 @@
 FROM node:22.7.0
-WORKDIR /app/frontend
+WORKDIR /app
 COPY  package*.json ./
-RUN npm install
 COPY . .
+RUN npm ci
+RUN npm run build
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
