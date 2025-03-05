@@ -8,9 +8,9 @@ import { Card, CardContent } from "@/app/(pages)/p/components/ui/card";
 import { Appointment } from "@/app/(pages)/p/types/appointment";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
-const CheckBookingPage: React.FC = () => {
+function BookingContent() {
   const searchParams = useSearchParams();
   const [bookingData, setBookingData] = useState<Appointment[]>([]);
   const [filteredData, setFilteredData] = useState<Appointment[]>([]);
@@ -115,6 +115,7 @@ const CheckBookingPage: React.FC = () => {
       setLoading(false);
     }
   };
+
   const now = new Date();
 
   // Filter and sort appointments: Only confirmed ones, future appointments, and sorted by closest date
@@ -140,6 +141,7 @@ const CheckBookingPage: React.FC = () => {
   const handleSearch = (filteredAppointments: Appointment[]) => {
     setFilteredData(filteredAppointments);
   };
+
   return (
     <CheckingLayout>
       {cancelError && (
@@ -344,6 +346,14 @@ const CheckBookingPage: React.FC = () => {
         </div>
       )}
     </CheckingLayout>
+  );
+}
+
+const CheckBookingPage: React.FC = () => {
+  return (
+    <Suspense fallback={<div className="p-4 text-center">กำลังโหลด...</div>}>
+      <BookingContent />
+    </Suspense>
   );
 };
 
