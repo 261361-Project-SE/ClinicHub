@@ -96,7 +96,7 @@ const MobileDashboard = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="relative px-4 mt-4">
+        {/* <div className="relative px-4 mt-4">
           <Search
             className="absolute text-gray-400 left-7 top-1/2 transform -translate-y-1/2"
             size={20}
@@ -106,11 +106,11 @@ const MobileDashboard = () => {
             placeholder="ค้นหาการนัด, ชื่อคนไข้, เบอร์โทรศัพท์"
             className="w-full py-2 pl-10 pr-4 bg-white rounded-xl"
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Main Scrollable Content */}
-      <div className="flex-1 mt-[240px] pb-20 overflow-y-auto">
+      <div className="flex-1 mt-[180px] pb-20 overflow-y-auto">
         {/* Tabs Section */}
         <div className="flex px-4 mt-4 gap-2">
           <Link
