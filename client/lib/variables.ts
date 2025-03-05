@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { th } from "date-fns/locale";
 
 export const SERVER_URL =
-  process.env.NEXT_PUBLIC_BASE_URL_API || "http://localhost:5007";
+  process.env.NEXT_PUBLIC_BASE_URL_API;
 
 export const AppointmentTimeSlots = GenerateAppointmentTimeSlots(
   "09:00",
