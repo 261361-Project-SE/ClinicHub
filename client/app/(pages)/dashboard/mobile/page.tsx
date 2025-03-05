@@ -65,6 +65,13 @@ const MobileDashboard = () => {
                     <div className="w-2 h-2 bg-pink-200" />
                     <span>สรุปผลทั้งหมด</span>
                   </Link>
+                  <Link
+                    href="/dashboard/feedback"
+                    className="flex items-center p-2 rounded-lg gap-2"
+                  >
+                    <div className="w-2 h-2 bg-pink-200" />
+                    <span>ความพึงพอใจ</span>
+                  </Link>
                 </nav>
               </div>
             </SheetContent>

@@ -5,8 +5,9 @@ import {
   CalendarClockIcon,
   CalendarDaysIcon,
   LayoutDashboardIcon,
-  LogOutIcon,
-  SettingsIcon,
+  // LogOutIcon,
+  MessageCircleMore,
+  // SettingsIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,10 +38,15 @@ const DashboardSideBar = () => {
     //   href: "/dashboard/desktop/settings",
     // },
     {
-      name: "ออกจากระบบ",
-      icon: LogOutIcon,
-      href: "#",
+      name: "ความพึงพอใจ",
+      icon: MessageCircleMore,
+      href: "/dashboard/feedback",
     },
+    // {
+    //   name: "ออกจากระบบ",
+    //   icon: LogOutIcon,
+    //   href: "https://clinic.se.cpe.eng.cmu.ac.th/",
+    // },
   ];
 
   return (

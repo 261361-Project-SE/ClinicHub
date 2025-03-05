@@ -6,7 +6,13 @@ import { useState, useEffect, useCallback } from "react";
 
 export const useFetchFeedback = () => {
   const [feedback, setFeedback] = useState<
-    { feedback: string; count: number }[]
+    {
+      feedback: string;
+      count: number;
+      id: number;
+      rating: number;
+      comment: string;
+    }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

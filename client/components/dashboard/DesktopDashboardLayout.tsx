@@ -10,6 +10,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/dashboard/appointment": "การนัดหมาย",
   "/dashboard/desktop/calendar": "ปฏิทิน",
   "/dashboard/desktop/settings": "การตั้งค่า",
+  "/dashboard/feedback": "ความพึงพอใจ",
 };
 
 interface DashboardLayoutProps {
