@@ -33,7 +33,7 @@ const DesktopDashboard = () => {
 
   const pendingAppointmentCount =
     appointments?.filter(
-      (appointment) => appointment.appointment_status === "toConfirm"
+      (appointment) => appointment.appointment_status === "PENDING"
     ).length || 0;
 
   const handleReload = () => {
