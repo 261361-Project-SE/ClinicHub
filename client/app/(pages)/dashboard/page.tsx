@@ -16,12 +16,7 @@ const MobileDashboard = dynamic(
   }
 );
 
-export default function DashboardPage() {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-
-  return isMobile ? <MobileDashboard /> : <DesktopDashboard />;
-}
-export function useMediaQuery({ maxWidth }: { maxWidth: number }) {
+function useMediaQuery({ maxWidth }: { maxWidth: number }) {
   const [matches, setMatches] = useState(false);
 
   useEffect(() => {
@@ -37,4 +32,10 @@ export function useMediaQuery({ maxWidth }: { maxWidth: number }) {
   }, [maxWidth]);
 
   return matches;
+}
+
+export default function DashboardPage() {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
+  return isMobile ? <MobileDashboard /> : <DesktopDashboard />;
 }
