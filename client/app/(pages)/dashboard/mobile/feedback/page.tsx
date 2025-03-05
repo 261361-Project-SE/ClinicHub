@@ -3,10 +3,12 @@
 import Error from "@/app/error";
 import PageLoader from "@/components/PageLoader";
 import MobileDashboardLayout from "@/components/dashboard/mobile/MobileDashboardLayout";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useFetchFeedback } from "@/hooks/useFetchFeedback";
 import { ArrowLeft, StarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface FeedbackItem {
   id: number;
@@ -17,6 +19,7 @@ interface FeedbackItem {
 const FeedbackPage = () => {
   const { feedback, loading, error } = useFetchFeedback();
   const router = useRouter();
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
   if (loading) {
     <PageLoader />;
@@ -24,6 +27,10 @@ const FeedbackPage = () => {
   if (error) {
     return <Error error={error} />;
   }
+
+  const filteredFeedback = selectedRating
+    ? feedback.filter((item) => item.rating === selectedRating)
+    : feedback;
 
   return (
     <MobileDashboardLayout>
@@ -40,14 +47,59 @@ const FeedbackPage = () => {
       </div>
 
       <div className="container mx-auto mt-[80px] px-2 py-4">
+        <div className="flex items-center justify-between mb-6">
+          <Card className="flex p-2 bg-white shadow-shadow-bg w-full overflow-y-scroll items-center space-x-2">
+            <div className="flex space-x-1">
+              {[1, 2, 3].map((rating) => (
+                <Button
+                  key={rating}
+                  variant={selectedRating === rating ? "default" : "outline"}
+                  size="sm"
+                  className={`px-3 ${
+                    selectedRating === rating
+                      ? "bg-pink-200 hover:bg-pink-300"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    setSelectedRating(selectedRating === rating ? null : rating)
+                  }
+                >
+                  <StarIcon
+                    className={`h-4 w-4 mr-1 ${
+                      selectedRating === rating
+                        ? "fill-white text-white"
+                        : "fill-yellow-400 text-yellow-400"
+                    }`}
+                  />
+                  <span>{rating}</span>
+                </Button>
+              ))}
+              {selectedRating && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedRating(null)}
+                  className="text-gray-500"
+                >
+                  ล้างตัวกรอง
+                </Button>
+              )}
+            </div>
+          </Card>
+        </div>
+
         <div className="grid grid-cols-1 gap-6">
-          {feedback.length > 0 ? (
-            feedback.map((feedback) => (
-              <FeedbackCard key={feedback.id} feedback={feedback} />
+          {filteredFeedback.length > 0 ? (
+            filteredFeedback.map((feedbackItem) => (
+              <FeedbackCard key={feedbackItem.id} feedback={feedbackItem} />
             ))
           ) : (
             <div className="text-center py-10">
-              <p className="text-gray-500">ไม่พบข้อมูลความคิดเห็น</p>
+              <p className="text-gray-500">
+                {selectedRating
+                  ? `ไม่พบความคิดเห็นที่มีคะแนน ${selectedRating} ดาว`
+                  : "ไม่พบข้อมูลความคิดเห็น"}
+              </p>
             </div>
           )}
         </div>
