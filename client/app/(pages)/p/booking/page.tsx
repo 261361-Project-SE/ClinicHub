@@ -53,9 +53,7 @@ const BookingPage: React.FC = () => {
     setAppointmentDateTime(newDateTime.toISOString());
   };
 
-  useEffect(() => {
-    console.log("Dialog Open:", showBookingDialog);
-  }, [showBookingDialog]);
+  useEffect(() => {}, [showBookingDialog]);
 
   const handleBooking = async () => {
     // ทำ validation และอัพเดตค่า invalidFields
@@ -76,7 +74,6 @@ const BookingPage: React.FC = () => {
           phone,
           symptom,
         };
-        console.log("Booking initiated", appointmentData);
         setShowBookingDialog(true);
       } else {
         console.log("Booking failed due to validation errors.");

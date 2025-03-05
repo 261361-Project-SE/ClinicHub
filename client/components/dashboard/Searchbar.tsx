@@ -22,8 +22,6 @@ const Searchbar = () => {
         (phone_number && phone_number.toLowerCase().includes(lowerSearchTerm))
       );
     });
-
-    console.log("Search Results:", searchResults);
   };
 
   return (
