@@ -163,7 +163,7 @@ const DesktopDashboard = () => {
               <AppointmentTable
                 appointments={appointments.filter(
                   (appointment) =>
-                    appointment.appointment_status === "toConfirm"
+                    appointment.appointment_status === "PENDING"
                 )}
               />
             </div>

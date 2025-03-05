@@ -5,7 +5,9 @@ class FeedbackController {
   constructor() {}
   async createFeedback(req: Request, res: Response): Promise<any> {
     try {
-      const { rating, comment } = req.body;
+
+      let { rating, comment } = req.body;
+      comment = "test";
       if (!rating || !comment) {
         return res.status(400).send({ error: "Missing required fields" });
       }
