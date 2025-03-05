@@ -7,7 +7,7 @@ const CanlendarPage = () => {
         <iframe
           loading="eager"
           title="appointment-calendar"
-          src="https://calendar.google.com/calendar/embed?src=mongkolclinic.calendar%40gmail.com&ctz=Asia%2FBangkok"
+          src={`${process.env.NEXT_PUBLIC_BASE_URL_CANLENDAR}`}
           className="w-full h-full border-0 rounded-xl"
         ></iframe>
       </div>
