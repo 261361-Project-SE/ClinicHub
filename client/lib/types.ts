@@ -16,28 +16,28 @@ export type AppointmentTableProps = {
   appointments: AppointmentProps[];
 };
 
-export type PatientProps = {
-  PatientID: number;
+export interface IPatientData {
+  PatientID?: string;
   FirstName: string;
   LastName: string;
-  Age: number;
+  citizenID: string;
+  age: number;
   Gender: string;
-  CitizenID: string;
   BirthDate: string;
-  Address: string;
+  address: string;
   Phone: string;
-  EmergencyContact: string;
-  Status: string;
-  Occupation: string;
-  LastAppointment: string;
+  emergencyContact: string;
+  relationship: string;
+  bloodType: string;
+  occupation: string;
   Height: number;
   Weight: number;
-  ChronicDisease: string;
-  Allergies: string;
+  chronicDisease: string;
+  allergic: string;
+  allergicFood: string;
+  allergicMedicine: string;
+  role: string;
+  imageUrl: string;
   created_at: string;
-  updated_at: string;
-};
-
-export type PatientTableProps = {
-  patients: PatientProps[];
-};
+  LastAppointment: string;
+}

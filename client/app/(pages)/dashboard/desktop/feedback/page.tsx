@@ -35,7 +35,7 @@ const FeedbackPage = () => {
     <DesktopDashboardLayout>
       <div className="container mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <Card className="flex p-2 bg-white shadow-shadow-bg w-full items-center space-x-2">
+          <Card className="flex items-center w-full p-2 bg-white shadow-shadow-bg space-x-2">
             <div className="flex space-x-1">
               {[1, 2, 3].map((rating) => (
                 <Button
@@ -81,7 +81,7 @@ const FeedbackPage = () => {
               <FeedbackCard key={feedbackItem.id} feedback={feedbackItem} />
             ))
           ) : (
-            <div className="text-center py-10">
+            <div className="py-10 text-center">
               <p className="text-gray-500">
                 {selectedRating
                   ? `ไม่พบความคิดเห็นที่มีคะแนน ${selectedRating} ดาว`
@@ -113,7 +113,7 @@ const FeedbackCard = ({ feedback }: { feedback: FeedbackItem }) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="mt-2 text-gray-700 bg-gray-50 p-4 rounded-lg">
+        <div className="p-4 mt-2 text-gray-700 rounded-lg bg-gray-50">
           {feedback.comment}
         </div>
       </CardContent>

@@ -8,9 +8,10 @@ import { PatientChart } from "@/components/dashboard/PatientChart";
 import PatientInformation from "@/components/dashboard/PatientInformation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { patientsData } from "@/helper/SampleData";
 import { useFetchAppointments } from "@/hooks/useFetchAppointments";
+import { IPatientData } from "@/lib/types";
 import { currentThaiMonth, currentThaiYear } from "@/lib/variables";
+import axios from "axios";
 import { Calendar1Icon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -35,6 +36,34 @@ const DesktopDashboard = () => {
     appointments?.filter(
       (appointment) => appointment.appointment_status === "PENDING"
     ).length || 0;
+
+  const latestAppointment = useMemo(() => {
+    if (!Array.isArray(appointments)) return null;
+    return appointments[0];
+  }, [appointments]);
+
+  const [patientData, setPatientData] = useState<IPatientData | null>(null);
+
+  useEffect(() => {
+    if (latestAppointment) {
+      axios
+        .get<IPatientData>(`${process.env.CLINIC_API_ENDPOINT}/api/patients`, {
+          params: {
+            firstName: latestAppointment.firstname,
+            lastName: latestAppointment.lastname,
+          },
+          headers: {
+            Authorization: `Bearer ${process.env.CLINIC_API_KEY}`,
+          },
+        })
+        .then((response) => {
+          setPatientData(response.data);
+        })
+        .catch(() => {
+          setPatientData(null);
+        });
+    }
+  }, [latestAppointment]);
 
   const handleReload = () => {
     if (typeof window !== "undefined") {
@@ -137,7 +166,7 @@ const DesktopDashboard = () => {
           </div>
           <div className="flex flex-col w-1/3 p-2 bg-pink-300/20 rounded-xl">
             รายละเอียดคนไข้คนถัดไป
-            <PatientInformation patients={patientsData} />
+            {patientData && <PatientInformation {...patientData} />}
           </div>
         </div>
         {/* Bottom section */}
@@ -162,8 +191,7 @@ const DesktopDashboard = () => {
             <div className="h-32 overflow-y-auto">
               <AppointmentTable
                 appointments={appointments.filter(
-                  (appointment) =>
-                    appointment.appointment_status === "PENDING"
+                  (appointment) => appointment.appointment_status === "PENDING"
                 )}
               />
             </div>
