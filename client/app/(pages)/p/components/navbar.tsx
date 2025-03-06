@@ -42,7 +42,7 @@ IconButton.displayName = "IconButton";
 
 const Logo = memo(({ src, alt }: { src: string; alt: string }) => (
   <Link href="/">
-    <div className="rounded-full overflow-hidden w-16 h-16 transition-transform hover:scale-105">
+    <div className="rounded-full overflow-hidden w-24 h-24 transition-transform hover:scale-105">
       <Image
         src={src}
         alt={alt}
@@ -59,9 +59,6 @@ Logo.displayName = "Logo";
 
 const MobileNav = memo(
   ({
-    onMenuClick,
-    onMessageClick,
-    onNotificationClick,
     logoSrc = "/logo.png",
     logoAlt = "Mongkhonsi",
     greeting,
@@ -77,8 +74,8 @@ const MobileNav = memo(
           <div className="mt-6 flex items-center justify-start px-12 space-x-8">
             <Logo src={logoSrc} alt={logoAlt} />
             <div className="text-black">
-              <div className="text-lg font-noto font-semibold">สวัสดี,</div>
-              <div className="text-2xl font-bold font-noto">{greeting}</div>
+              <div className="text-2xl font-noto font-semibold">สวัสดี,</div>
+              <div className="text-4xl font-bold font-noto">{greeting}</div>
             </div>
           </div>
         </div>
