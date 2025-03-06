@@ -1,16 +1,16 @@
 services:
-  # nginx:
-  #   depends_on:
-  #     - api
-  #     - client
-  #   restart: always
-  #   build:
-  #     dockerfile: Dockerfile.dev
-  #     context: ./nginx
-  #   ports:
-  #     - "8007:80"
-  #   networks:
-  #     - client
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - "8007:80"
+    networks:
+      - client
 
   client:
     build:
