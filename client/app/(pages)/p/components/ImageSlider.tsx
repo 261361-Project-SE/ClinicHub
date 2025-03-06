@@ -16,14 +16,14 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       changeSlide(1);
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [currentIndex]);
 
   return (
-    <div className="relative h-full overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center">
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="absolute inset-0 flex items-center justify-center h-full w-full">
         {images.map((src, index) => (
           <img
             key={src}
