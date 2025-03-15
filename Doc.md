@@ -36,23 +36,22 @@ PostgreSQL เป็นฐานข้อมูลที่ใช้ในระ
 
 ก่อนทำการรันโปรเจกต์ ต้องแก้ไขไฟล์ .env โดยตั้งค่าตามความเหมาะสม:
 
-DATABASE_URL=postgres://postgres:admin@postgres:5432/prisma
+    DATABASE_URL=postgres://postgres:admin@postgres:5432/prisma
+    GOOGLE_CLIENT_ID="pls insert your google client id"
+    GOOGLE_CLIENT_SECRET="pls insert your google client secret"
+    GOOGLE_REFRESH_TOKEN="pls insert your google refresh token"
+    LINE_ACCESS_TOKEN="pls insert your line access token"
+    LINE_USER_ID="pls insert your line user id"
 
-GOOGLE_CLIENT_ID="pls insert your google client id"
-GOOGLE_CLIENT_SECRET="pls insert your google client secret"
-GOOGLE_REFRESH_TOKEN="pls insert your google refresh token"
-LINE_ACCESS_TOKEN="pls insert your line access token"
-LINE_USER_ID="pls insert your line user id"
+    "pls modify the following variables to your own"
+    NEXT_PUBLIC_BASE_URL_API=https://booking.clinic.se.cpe.eng.cmu.ac.th/api
+    API_END_POINT=https://booking.clinic.se.cpe.eng.cmu.ac.th/api
+    BASE_URL_API=https://booking.clinic.se.cpe.eng.cmu.ac.th/api
 
-"pls modify the following variables to your own"
-NEXT_PUBLIC_BASE_URL_API=https://booking.clinic.se.cpe.eng.cmu.ac.th/api
-API_END_POINT=https://booking.clinic.se.cpe.eng.cmu.ac.th/api
-BASE_URL_API=https://booking.clinic.se.cpe.eng.cmu.ac.th/api
+    NEXT_PUBLIC_BASE_URL_CANLENDAR="pls insert your google calendar url"
 
-NEXT_PUBLIC_BASE_URL_CANLENDAR="pls insert your google calendar url"
-
-CLINIC_API_ENDPOINT=https://clinic.se.cpe.eng.cmu.ac.th/api
-CLINIC_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    CLINIC_API_ENDPOINT=https://clinic.se.cpe.eng.cmu.ac.th/api
+    CLINIC_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 หมายเหตุ: ต้องแก้ไขค่าต่างๆ ให้ตรงกับข้อมูลจริงก่อนเริ่มใช้งาน
 
