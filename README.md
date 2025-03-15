@@ -31,7 +31,7 @@ Clinic Hub is a web application for managing doctor and patient appointments.
 
 ### API Documentation
 
-The API documentation is available at `[Postman](https://clinichub.postman.co/workspace/Clinichub-Workspace~b6ca8d8d-b4c1-465c-80e2-585dc4343ff3/request/33819234-fd5c061c-ce7d-430a-9f95-0e4c17209ab2?action=share&creator=39520427&ctx=documentation&active-environment=39520427-a6106596-5502-4dd0-a4d3-e751c8268120)`.
+The API documentation is available at [Postman](https://clinichub.postman.co/workspace/Clinichub-Workspace~b6ca8d8d-b4c1-465c-80e2-585dc4343ff3/request/33819234-fd5c061c-ce7d-430a-9f95-0e4c17209ab2?action=share&creator=39520427&ctx=documentation&active-environment=39520427-a6106596-5502-4dd0-a4d3-e751c8268120).
 
 ### Running Tests
 
