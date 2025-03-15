@@ -39,4 +39,4 @@ To run tests, use `npm run test` or `yarn test`.
 
 ## Deployment
 
-The application can be deployed to Vercel or other platforms that support Next.js.
+The application can be deployed with docker that support Next.js.
