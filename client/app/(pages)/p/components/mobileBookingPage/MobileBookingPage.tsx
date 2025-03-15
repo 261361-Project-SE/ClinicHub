@@ -29,9 +29,9 @@ const MobileBookingPage: React.FC<MobileBookingPageProps> = ({
       <div className="flex items-center justify-center gap-10">
         <Link
           href="/p/booking"
-          className="w-[150px] h-[50px] bg-pink-200 text-white rounded-full hover:scale-105 transition-transform flex items-center justify-center"
+          className="w-[150px] h-[100px] bg-pink-200 text-white rounded-xl hover:scale-105 transition-transform flex items-center justify-center"
         >
-          จองการนัด
+          <span className="font-noto font-medium text-xl">จองการนัด</span>
         </Link>
         <AppointmentDialogmobile
           firstName={firstName}

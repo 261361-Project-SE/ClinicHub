@@ -112,7 +112,7 @@ const BookingPage: React.FC = () => {
   return (
     <BookingLayout>
       <div className="bg-gray-50 rounded-xl shadow-xl md:h-[760px] md:w-[1440px] md:mx-auto md:max-w-screen-xl md:p-6 ">
-        <h1 className="text-3xl font-bold text-gray-800 text-right md:text-left ">
+        <h1 className="text-3xl font-bold text-gray-800 text-center md:text-left ">
           จองการนัดหมาย
         </h1>
         <div className="mt-2 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto gap-6">

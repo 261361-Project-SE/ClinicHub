@@ -82,7 +82,7 @@ const AppointmentDialog: React.FC<AppointmentDialogProps> = ({
         <button className="flex items-center justify-center w-full sm:w-[350px] md:w-[400px] lg:w-[480px] h-[200px] sm:h-[225px] md:h-[225px] lg:h-[255px] bg-amber-400 text-white hover:shadow-xl hover:scale-[1.05] transition-transform duration-200 rounded-2xl shadow-md">
           <div className="flex items-center">
             <ClipboardCheck className="icon-size w-24 h-24" strokeWidth={2} />
-            <span className="mt-4 text-4xl font-medium">ตรวจสอบนัดหมาย</span>
+            <span className="mt-4 md:text-4xl font-medium">ตรวจสอบนัดหมาย</span>
           </div>
         </button>
       </DialogTrigger>

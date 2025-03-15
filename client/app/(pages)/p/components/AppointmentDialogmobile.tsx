@@ -79,10 +79,8 @@ const AppointmentDialogMobile: React.FC<AppointmentDialogMobileProps> = ({
     <Dialog>
       <div className="max-w-sm mx-auto p-4">
         <DialogTrigger asChild>
-          <button className="w-full h-[50px] bg-gray-100 text-gray-700 rounded-full hover:scale-105 transition-transform">
-            <span className="font-noto font-medium text-lg">
-              ตรวจสอบนัดหมาย
-            </span>
+          <button className="w-[150px] h-[100px] bg-gray-100 text-gray-700 rounded-xl hover:scale-105 transition-transform">
+            <div className="font-noto font-medium text-xl">ตรวจสอบนัดหมาย</div>
           </button>
         </DialogTrigger>
         <DialogContent>
