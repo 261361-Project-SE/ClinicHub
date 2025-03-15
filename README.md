@@ -14,7 +14,7 @@ Clinic Hub is a web application for managing doctor and patient appointments.
 
 - Frontend: Next.js, Tailwind CSS, React Hook Form
 - Backend: Node.js, Express.js, PostgreSQL
-- API Documentation: Swagger
+- API Documentation: Postman
 
 ## Development
 
